@@ -23,18 +23,21 @@ public class Robot extends IterativeRobot {
 	public static OI oi;
 
     Command autonomousCommand;
-    SendableChooser driveschooser;
+    SendableChooser autochooser;
+    SendableChooser drivechooser;
 
     /**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
      */
     public void robotInit() {
+    	
 		oi = new OI();
-        drivechooser = new SendableChooser();
-        chooser.addDefault("Default Auto", new ExampleCommand());
-//        chooser.addObject("My Auto", new MyAutoCommand());
-        SmartDashboard.putData("Auto mode", drivechooser);
+		
+        //drivechooser = new SendableChooser();
+        //chooser.addDefault("Default Auto", new TankDrive());
+        //chooser.addObject("My Auto", new ArcadeDrive());
+        //SmartDashboard.putData("Auto mode", drivechooser);
     }
 	
 	/**
