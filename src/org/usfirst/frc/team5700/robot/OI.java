@@ -1,5 +1,6 @@
 package org.usfirst.frc.team5700.robot;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import org.usfirst.frc.team5700.robot.commands.ExampleCommand;
 
@@ -9,7 +10,14 @@ import org.usfirst.frc.team5700.robot.commands.ExampleCommand;
  */
 
 public class OI {
-    //// CREATING BUTTONS
+	
+	//create Joysticks and squared inputs for driving tankDrive
+		private Joystick rightStick = new Joystick(1);
+		private Joystick leftStick = new Joystick(0);
+	    
+	    // Setting squaredInput to true decreases the sensitivity for tankdrive at lower speeds
+	    private boolean squaredInput = true;
+	//// CREATING BUTTONS
     // One type of button is a joystick button which is any button on a joystick.
     // You create one by telling it which joystick it's on and which button
     // number it is.
@@ -35,5 +43,15 @@ public class OI {
     // Start the command when the button is released  and let it run the command
     // until it is finished as determined by it's isFinished method.
     // button.whenReleased(new ExampleCommand());
+	    public Joystick getLeftStick() {
+	    	return leftStick;	
+	    }
+	    
+	    public Joystick getRightStick() {
+	    	return rightStick;
+	    }
+	    public boolean getSquaredInput() {
+	    	return squaredInput;
+	    }
 }
 
