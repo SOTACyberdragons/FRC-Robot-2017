@@ -9,6 +9,13 @@ import org.usfirst.frc.team5700.robot.commands.ExampleCommand;
  * interface to the commands and command groups that allow control of the robot.
  */
 
+//random edit
+
+/**
+ * I'm making a rondom comment
+ * @author dmitrydimov
+ *
+ */
 public class OI {
 	
 	//create Joysticks and squared inputs for driving tankDrive
