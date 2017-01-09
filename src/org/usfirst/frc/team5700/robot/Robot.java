@@ -23,7 +23,7 @@ public class Robot extends IterativeRobot {
 	public static OI oi;
 
     Command autonomousCommand;
-    SendableChooser chooser;
+    SendableChooser driveschooser;
 
     /**
      * This function is run when the robot is first started up and should be
@@ -31,10 +31,10 @@ public class Robot extends IterativeRobot {
      */
     public void robotInit() {
 		oi = new OI();
-        chooser = new SendableChooser();
+        drivechooser = new SendableChooser();
         chooser.addDefault("Default Auto", new ExampleCommand());
 //        chooser.addObject("My Auto", new MyAutoCommand());
-        SmartDashboard.putData("Auto mode", chooser);
+        SmartDashboard.putData("Auto mode", drivechooser);
     }
 	
 	/**
