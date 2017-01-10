@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import org.usfirst.frc.team5700.robot.commands.ExampleCommand;
+import org.usfirst.frc.team5700.robot.commands.ResetGyroAngle;
 import org.usfirst.frc.team5700.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team5700.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -101,7 +102,9 @@ public class Robot extends IterativeRobot {
         Scheduler.getInstance().run();
         
         SmartDashboard.putNumber("gyro angle", drivetrain.getGyroAngle());
+        SmartDashboard.putData("reset gyro angle", new ResetGyroAngle());
     }
+    
     
     /**
      * This function is called periodically during test mode

@@ -37,6 +37,9 @@ public class DriveTrain extends Subsystem {
 		gyro.calibrate();
 	}
 	
+	public void resetGyroAngle() {
+		gyro.reset();
+	}
 	/**
 	 * gets gyro's angle
 	 * @return
