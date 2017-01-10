@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import org.usfirst.frc.team5700.robot.commands.ExampleCommand;
 import org.usfirst.frc.team5700.robot.commands.ResetGyroAngle;
 import org.usfirst.frc.team5700.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team5700.robot.subsystems.ExampleSubsystem;
@@ -34,10 +33,11 @@ public class Robot extends IterativeRobot {
     public void robotInit() {
         drivetrain = new DriveTrain();
     	oi = new OI();
-       chooser = new SendableChooser();
-        chooser.addDefault("Default Auto", new ExampleCommand());
-//        chooser.addObject("My Auto", new MyAutoCommand());
-        SmartDashboard.putData("Auto mode", chooser);
+    	
+//       chooser = new SendableChooser();
+//       chooser.addDefault("Default Auto", new ExampleCommand());
+//       chooser.addObject("My Auto", new MyAutoCommand());
+//       SmartDashboard.putData("Auto mode", chooser);
     }
 	
 	/**
