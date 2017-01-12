@@ -4,6 +4,8 @@ package org.usfirst.frc.team5700.robot.subsystems;
 
 import org.usfirst.frc.team5700.robot.RobotMap;
 import org.usfirst.frc.team5700.robot.commands.TankDriveWithJoysticks;
+
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Spark;
@@ -19,6 +21,8 @@ public class DriveTrain extends Subsystem {
 	private SpeedController front_left_motor, back_left_motor,
 	front_right_motor, back_right_motor;
 	
+	private ADXRS450_Gyro gyro;
+	
 	public DriveTrain() {
 		super();
 		front_left_motor = new Spark(RobotMap.FRONT_LEFT_DRIVE_MOTOR);
@@ -27,8 +31,23 @@ public class DriveTrain extends Subsystem {
 		back_right_motor = new Spark(RobotMap.BACK_RIGHT_DRIVE_MOTOR);
 		drive = new RobotDrive(front_left_motor, back_left_motor,
 							   front_right_motor, back_right_motor);
+		
+		gyro = new ADXRS450_Gyro();
+		gyro.reset();
+		gyro.calibrate();
 	}
-
+	
+	public void resetGyroAngle() {
+		gyro.reset();
+	}
+	/**
+	 * gets gyro's angle
+	 * @return
+	 */
+	public double getGyroAngle() {
+		return gyro.getAngle();
+	}
+	
 	
 	/**
 	 * Uses inputs from two joysticks to drive tank
