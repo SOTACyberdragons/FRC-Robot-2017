@@ -44,7 +44,7 @@ public class OI {
 	    // until it is finished as determined by it's isFinished method.
 	    // button.whenPressed(new ExampleCommand());
 	    
-		climbTrigger.whenPressed(new ClimbUp());
+		climbTrigger.whileHeld(new ClimbUp());
 	    // Run the command while the button is being held down and interrupt it once
 	    // the button is released.
 	    // button.whileHeld(new ExampleCommand());
