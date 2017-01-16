@@ -42,6 +42,21 @@ public class DriveTrain extends Subsystem {
 	public void tankDrive(Joystick left, Joystick right, boolean squaredInputs) {
 		drive.tankDrive(-left.getY(), -right.getY(), squaredInputs);
 	}
+	public void tankDriveNoSq(Joystick left, Joystick right) {
+		drive.tankDrive(-left.getY(), -right.getY());
+	}
+	public void arcadeDrive(Joystick left, boolean squaredInputs) {
+		drive.arcadeDrive(-left.getY(), -left.getTwist(), squaredInputs);
+	}
+	public void arcadeDriveNoSq(Joystick left) {
+		drive.arcadeDrive(-left.getY(), -left.getTwist());
+	}
+	public void planeDrive(Joystick left, Joystick right, boolean squaredinputs){
+		drive.tankDrive(-left.getY(),-right.getX(), squaredinputs);
+	}
+	public void planeDriveNoSq(Joystick left, Joystick right){
+		drive.tankDrive(-left.getY(),-right.getX());
+	}
 	/**
 	 * Tank style driving for the DriveTrain.
 	 * @param left Speed in range [-1,1]

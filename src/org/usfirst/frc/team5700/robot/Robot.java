@@ -5,11 +5,7 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import org.usfirst.frc.team5700.robot.commands.ExampleCommand;
-import org.usfirst.frc.team5700.robot.subsystems.ArcadeTrain;
 import org.usfirst.frc.team5700.robot.subsystems.DriveTrain;
-import org.usfirst.frc.team5700.robot.subsystems.DriveTrainNoSq;
-import org.usfirst.frc.team5700.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -22,9 +18,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends IterativeRobot {
 	public static DriveTrain drivetrain;
-	public static DriveTrainNoSq drivetrainnosq;
-	public static ArcadeTrain arcadetrain;
-	public static final ExampleSubsystem exampleSubsystem = new ExampleSubsystem();
 	public static OI oi;
 
     Command autonomousCommand;
@@ -40,10 +33,11 @@ public class Robot extends IterativeRobot {
     	
 		oi = new OI();
 		
+
+        //SmartDashboard.putData("Auto mode", drivechooser);
         //drivechooser = new SendableChooser();
         //chooser.addDefault("Default Auto", new TankDrive());
         //chooser.addObject("My Auto", new ArcadeDrive());
-        //SmartDashboard.putData("Auto mode", drivechooser);
     }
 	
 	/**

@@ -19,8 +19,12 @@ public class TankDriveWithJoysticks extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.drivetrain.tankDrive(Robot.oi.getLeftStick(), Robot.oi.getRightStick(),
-    			Robot.oi.getSquaredInput());
+    	Robot.drivetrain.tankDrive(Robot.oi.getLeftStick(), Robot.oi.getRightStick(),Robot.oi.getSquaredInput());
+    	Robot.drivetrain.tankDriveNoSq(Robot.oi.getLeftStick(), Robot.oi.getRightStick());
+    	Robot.drivetrain.arcadeDriveNoSq(Robot.oi.getLeftStick());
+    	Robot.drivetrain.arcadeDrive(Robot.oi.getLeftStick(), Robot.oi.getSquaredInput());
+    	Robot.drivetrain.planeDrive(Robot.oi.getLeftStick(), Robot.oi.getRightStick(), Robot.oi.getSquaredInput());
+    	Robot.drivetrain.planeDriveNoSq(Robot.oi.getLeftStick(), Robot.oi.getRightStick());
     }
 
     // Make this return true when this Command no longer needs to run execute()
