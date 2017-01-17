@@ -99,7 +99,10 @@ public class Robot extends IterativeRobot {
      */
     public void teleopPeriodic() {
         Scheduler.getInstance().run();
+        
+        SmartDashboard.putNumber("voltage",drivetrain.getUltrasonicSensorVoltage());
     }
+    
     
     /**
      * This function is called periodically during test mode
