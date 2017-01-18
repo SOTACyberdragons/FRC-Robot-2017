@@ -14,7 +14,6 @@ import org.usfirst.frc.team5700.robot.commands.ExampleCommand;
 /**
  * I'm making a rondom comment
  * @author dmitrydimov
- *
  */
 public class OI {
 	

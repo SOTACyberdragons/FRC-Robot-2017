@@ -40,6 +40,11 @@ public class DriveTrain extends Subsystem {
 		return ultrasonicSensor.getVoltage();
 	}
 	
+	public double getRangefinderDistance() {
+		return ultrasonicSensor.getVoltage()/0.009766;
+	}
+
+				
 	/**
 	 * Uses inputs from two joysticks to drive tank
 	 * Joystick inputs are reversed
