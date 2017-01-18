@@ -100,11 +100,8 @@ public class Robot extends IterativeRobot {
     public void teleopPeriodic() {
         Scheduler.getInstance().run();
         SmartDashboard.putNumber("voltage",drivetrain.getUltrasonicSensorVoltage());
-        SmartDashboard.putNumber("distance from rangefinder",drivetrain.getRangefinderDistance());
+        SmartDashboard.putNumber("distance from rangefinder",drivetrain.getRangefinderDistanceInFeet());
     }
-    /**
-     * we need to fackering use voltage to return inches
-     */
     
     /**
      * This function is called periodically during test mode

@@ -40,8 +40,8 @@ public class DriveTrain extends Subsystem {
 		return ultrasonicSensor.getVoltage();
 	}
 	
-	public double getRangefinderDistance() {
-		return ultrasonicSensor.getVoltage()/0.0008138333;
+	public double getRangefinderDistanceInFeet() {
+		return ultrasonicSensor.getVoltage()/0.117192;
 	}
 
 				
