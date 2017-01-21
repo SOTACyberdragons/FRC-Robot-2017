@@ -102,8 +102,8 @@ public class Robot extends IterativeRobot {
         
         SmartDashboard.putNumber("gyro angle", drivetrain.getGyroAngle());
         SmartDashboard.putData("reset gyro angle", new ResetGyroAngle());
+        SmartDashboard.putNumber("get distance", drivetrain.getDistance());
     }
-    
     
     /**
      * This function is called periodically during test mode
