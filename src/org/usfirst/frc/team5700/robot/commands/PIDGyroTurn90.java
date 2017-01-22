@@ -1,7 +1,5 @@
 package org.usfirst.frc.team5700.robot.commands;
 
-
-
 import org.usfirst.frc.team5700.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -9,52 +7,40 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class TurnNinetyClockwise extends Command {
+public class PIDGyroTurn90 extends Command {
+	
+	private double turnAngle;
 
-    public TurnNinetyClockwise() {
+    public PIDGyroTurn90() {
         // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis);
-    	requires(Robot.drivetrain);
+        requires(Robot.drivetrain);
+        
+        //set angle for turn
+        turnAngle = 90;
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.drivetrain.resetGyroAngle();
+    	Robot.drivetrain.PIDGyroTurn(turnAngle);
     }
-    
-    double distanceFrom90() {
-		return (90 - Robot.drivetrain.getGyroAngle());
-	}
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	
-//    	if (Robot.drivetrain.getGyroAngle() > 90) {
-//    		Robot.drivetrain.drive(-0.7, 0.7);
-//    	}
-//    	else if (Robot.drivetrain.getGyroAngle() < 90) {
-//    		Robot.drivetrain.drive(0.7, -0.7);
-//    	}
-//    	else {
-//    		Robot.drivetrain.drive(0, 0);
-//    	}
- 
-    //Robot.drivetrain.drive(- (),);
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    	return false;
+        return Robot.drivetrain.gyroOnTarget();
     }
 
     // Called once after isFinished returns true
     protected void end() {
-    	Robot.drivetrain.drive(0, 0);
+    	Robot.drivetrain.stop();
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
-    	Robot.drivetrain.drive(0, 0);
+    	end();
     }
 }

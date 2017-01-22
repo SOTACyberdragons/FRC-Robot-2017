@@ -1,5 +1,6 @@
 package org.usfirst.frc.team5700.robot;
 
+import org.usfirst.frc.team5700.robot.commands.PIDGyroTurn90;
 import org.usfirst.frc.team5700.robot.commands.TurnNinetyClockwise;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -33,6 +34,7 @@ public class OI {
 		    // number it is.
 		    // Joystick stick = new Joystick(port);
 		    JoystickButton leftTrigger = new JoystickButton(leftStick, 1);
+		    JoystickButton PID90Turn = new JoystickButton(leftStick, 2);
 		    
 		    // There are a few additional built in buttons you can use. Additionally,
 		    // by subclassing Button you can create custom triggers and bind those to
@@ -46,6 +48,7 @@ public class OI {
 		    // until it is finished as determined by it's isFinished method.
 		    // button.whenPressed(new ExampleCommand());
 		    leftTrigger.whileHeld(new TurnNinetyClockwise());
+		    PID90Turn.whenPressed(new PIDGyroTurn90());
 		    
 		    // Run the command while the button is being held down and interrupt it once
 		    // the button is released.
