@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.RobotDrive;
-import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -39,7 +38,7 @@ public class DriveTrain extends Subsystem {
 		drive = new RobotDrive(front_left_motor, back_left_motor,
 							   front_right_motor, back_right_motor);
 		
-		gyro = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
+		gyro = new ADXRS450_Gyro();
 		gyro.calibrate();
 		System.out.println("Calibrating gyro.");
 		gyro.reset();
