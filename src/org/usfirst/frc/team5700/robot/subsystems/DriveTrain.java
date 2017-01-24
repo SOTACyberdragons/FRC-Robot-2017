@@ -5,7 +5,6 @@ package org.usfirst.frc.team5700.robot.subsystems;
 import org.usfirst.frc.team5700.robot.RobotMap;
 import org.usfirst.frc.team5700.robot.commands.TankDriveWithJoysticks;
 
-import com.ni.vision.NIVision.SegmentationDistanceLevel;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Encoder;
@@ -15,9 +14,6 @@ import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
-/**
- *
- */
 public class DriveTrain extends Subsystem {
 	
 	private RobotDrive drive;
