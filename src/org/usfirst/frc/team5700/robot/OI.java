@@ -2,6 +2,8 @@ package org.usfirst.frc.team5700.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+
+import org.usfirst.frc.team5700.robot.commands.AntiClimb;
 import org.usfirst.frc.team5700.robot.commands.ClimbUp;
 
 /**
@@ -33,6 +35,7 @@ public class OI {
     // Button button = new JoystickButton(stick, buttonNumber);
 	public OI() {
 		JoystickButton climbTrigger = new JoystickButton(rightStick, 1);
+		JoystickButton antiClimbButton = new JoystickButton(rightStick, 2);
 	    
 	    // There are a few additional built in buttons you can use. Additionally,
 	    // by subclassing Button you can create custom triggers and bind those to
@@ -47,6 +50,7 @@ public class OI {
 	    // button.whenPressed(new ExampleCommand());
 	    
 		climbTrigger.whileHeld(new ClimbUp());
+		antiClimbButton.whileHeld(new AntiClimb());
 	    // Run the command while the button is being held down and interrupt it once
 	    // the button is released.
 	    // button.whileHeld(new ExampleCommand());
