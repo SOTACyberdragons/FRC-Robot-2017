@@ -17,8 +17,8 @@ public class RopeClimber extends Subsystem {
 	private SpeedController climb1, climb2;
 	
 	public RopeClimber() {
-		climb1 = new Spark(RobotMap.CLIMB1_MOTOR);
-		climb2 = new Spark(RobotMap.CLIMB2_MOTOR);
+		climb1 = new Spark(RobotMap.CLIMB_MOTORS);
+		climb2 = new Spark(RobotMap.CLIMB_MOTORS);
 	}
 	
 	public void climb(double speed) {
