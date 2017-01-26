@@ -1,8 +1,6 @@
 package org.usfirst.frc.team5700.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.buttons.Button;
-import org.usfirst.frc.team5700.robot.commands.ExampleCommand;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -19,8 +17,8 @@ import org.usfirst.frc.team5700.robot.commands.ExampleCommand;
 public class OI {
 	
 	//create Joysticks and squared inputs for driving tankDrive
-		private Joystick rightStick = new Joystick(1);
-		private Joystick leftStick = new Joystick(0);
+		private Joystick rightStick = new Joystick(0);
+		private Joystick leftStick = new Joystick(1);
 	    
 	    // Setting squaredInput to true decreases the sensitivity for tankdrive at lower speeds
 	    private boolean squaredInput = true;
