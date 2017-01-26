@@ -24,9 +24,9 @@ public class DriveTrain extends Subsystem {
 	
 	private ADXRS450_Gyro gyro;
 	
-	//private PIDController gyroControl;
-	//private PIDOutput turnValue;
-	//private double PIDAbsoluteTolerance;
+//	private PIDController gyroControl;
+//	private PIDOutput turnValue;
+//	private double PIDAbsoluteTolerance;
 	
 	public DriveTrain() {
 		super();
@@ -39,14 +39,14 @@ public class DriveTrain extends Subsystem {
 		
 		gyro = new ADXRS450_Gyro();
 		gyro.calibrate();
-		System.out.println("Calibrating gyro.");
+		System.out.println("calibrating gyro.");
 		gyro.reset();
-		System.out.println("Reset gyro.");
-		System.out.println("Gyro rate: " + gyro.getRate());
+		System.out.println("reset gyro.");
+		System.out.println("gyro rate: " + gyro.getRate());
 		
-//		gyroControl = new PIDController(0.1, 0.01, 0.001, gyro, df);
-//		PIDAbsoluteTolerance = 3;
-//		gyroControl.setAbsoluteTolerance(PIDAbsoluteTolerance);
+//		gyroControl = new pidController(0.1, 0.01, 0.001, gyro, df);
+//		PIDCbsoluteTolerance = 3;
+//		GyroControl.setAbsoluteTolerance(PIDAbsoluteTolerance);
 	}
 	
 //	public void PIDGyroTurn(double turnAngle) {
@@ -97,7 +97,7 @@ public class DriveTrain extends Subsystem {
 
     public void initDefaultCommand() {
     	setDefaultCommand(new TankDriveWithJoysticks());
-        // Set the default command for a subsystem here.
-        //setDefaultCommand(new MySpecialCommand());
+        //Set the default command for a subsystem here.
+        //SetDefaultCommand(new MySpecialCommand());
     }
 }

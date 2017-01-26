@@ -14,16 +14,14 @@ public class RopeClimber extends Subsystem {
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
 	
-	private SpeedController climb1, climb2;
+	private SpeedController climb1;
 	
 	public RopeClimber() {
 		climb1 = new Spark(RobotMap.CLIMB_MOTORS);
-		climb2 = new Spark(RobotMap.CLIMB_MOTORS);
 	}
 	
 	public void climb(double speed) {
 		climb1.set(speed);
-		climb2.set(speed);
 	}
 	
     public void initDefaultCommand() {
