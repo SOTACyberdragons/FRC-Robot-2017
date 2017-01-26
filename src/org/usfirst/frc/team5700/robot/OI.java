@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
 import org.usfirst.frc.team5700.robot.commands.AntiClimb;
 import org.usfirst.frc.team5700.robot.commands.ClimbUp;
+
 /**
  * This class is the glue that binds the controls on the physical operator
  * interface to the commands and command groups that allow control of the robot.
@@ -20,8 +21,9 @@ import org.usfirst.frc.team5700.robot.commands.ClimbUp;
 public class OI {
 	
 	//create Joysticks and squared inputs for driving tankDrive
-	private Joystick rightStick = new Joystick(1);
-	private Joystick leftStick = new Joystick(0);
+
+		private Joystick rightStick = new Joystick(0);
+		private Joystick leftStick = new Joystick(1);
 	    
 	// Setting squaredInput to true decreases the sensitivity for tankdrive at lower speeds
 	private boolean squaredInput = true;
