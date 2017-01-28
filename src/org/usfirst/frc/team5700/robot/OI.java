@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
 import org.usfirst.frc.team5700.robot.commands.AntiClimb;
 import org.usfirst.frc.team5700.robot.commands.ClimbUp;
+import org.usfirst.frc.team5700.robot.commands.GearDrop;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -34,8 +35,11 @@ public class OI {
     // Joystick stick = new Joystick(port);
     // Button button = new JoystickButton(stick, buttonNumber);
 	public OI() {
-		JoystickButton climbTrigger = new JoystickButton(rightStick, 1);
-		JoystickButton antiClimbButton = new JoystickButton(rightStick, 2);
+		JoystickButton climbTrigger = new JoystickButton(leftStick, 1);
+		JoystickButton antiClimbButton = new JoystickButton(leftStick, 2);
+		
+		JoystickButton gearDropTrigger = new JoystickButton(rightStick, 1);
+		
 	    
 	    // There are a few additional built in buttons you can use. Additionally,
 	    // by subclassing Button you can create custom triggers and bind those to
@@ -51,6 +55,8 @@ public class OI {
 	    
 		climbTrigger.whileHeld(new ClimbUp());
 		antiClimbButton.whileHeld(new AntiClimb());
+		
+		gearDropTrigger.whileHeld(new GearDrop());
 	    // Run the command while the button is being held down and interrupt it once
 	    // the button is released.
 	    // button.whileHeld(new ExampleCommand());
