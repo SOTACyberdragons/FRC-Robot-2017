@@ -3,7 +3,7 @@ package org.usfirst.frc.team5700.robot.subsystems;
 
 
 import org.usfirst.frc.team5700.robot.RobotMap;
-import org.usfirst.frc.team5700.robot.commands.TankDriveWithJoysticks;
+import org.usfirst.frc.team5700.robot.commands.ArcadeDriveWithJoysticks;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Joystick;
