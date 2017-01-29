@@ -86,7 +86,7 @@ public class DriveTrain extends Subsystem {
 	 * @nickmak
 	 */
 	public void arcadeDrive(Joystick left, Joystick right, boolean squaredInputs) {
-		drive.arcadeDrive(-left.getY(), -right.getX(), squaredInputs);
+		drive.arcadeDrive(-right.getY(), -left.getX(), squaredInputs);
 	}
 	
 	/**
