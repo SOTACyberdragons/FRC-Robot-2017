@@ -99,10 +99,6 @@ public class DriveTrain extends Subsystem {
 		drive.tankDrive(left, right);
 	}
 	
-	public void drive(double left, double right) {
-		drive.arcadeDrive(left, right);
-	}
-	
 	public void stop() {
 		drive(0,0);
 	}
