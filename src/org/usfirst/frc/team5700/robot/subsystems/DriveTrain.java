@@ -104,7 +104,7 @@ public class DriveTrain extends Subsystem {
 	}
 
     public void initDefaultCommand() {
-    	setDefaultCommand(new TankDriveWithJoysticks());
+    	setDefaultCommand(new ArcadeDriveWithJoysticks());
         //Set the default command for a subsystem here.
         //SetDefaultCommand(new MySpecialCommand());
     }
