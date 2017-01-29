@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.SpeedController;
-import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
@@ -31,8 +30,8 @@ public class DriveTrain extends Subsystem {
 	public DriveTrain() {
 		super();
 		front_left_motor = new Spark(RobotMap.FRONT_LEFT_DRIVE_MOTOR);
-		back_left_motor = new Talon(RobotMap.BACK_LEFT_DRIVE_MOTOR);
-		front_right_motor = new Talon(RobotMap.FRONT_RIGHT_DRIVE_MOTOR);
+		back_left_motor = new Spark(RobotMap.BACK_LEFT_DRIVE_MOTOR);
+		front_right_motor = new Spark(RobotMap.FRONT_RIGHT_DRIVE_MOTOR);
 		back_right_motor = new Spark(RobotMap.BACK_RIGHT_DRIVE_MOTOR);
 		drive = new RobotDrive(front_left_motor, back_left_motor,
 							   front_right_motor, back_right_motor);
