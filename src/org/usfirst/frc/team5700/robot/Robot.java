@@ -9,9 +9,6 @@ import org.usfirst.frc.team5700.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team5700.robot.subsystems.GearSystem;
 import org.usfirst.frc.team5700.robot.subsystems.RopeClimber;
 
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-//import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the IterativeRobot
@@ -26,7 +23,7 @@ public class Robot extends IterativeRobot {
 	public static RopeClimber ropeclimber;
 
     Command autonomousCommand;
-    SendableChooser chooser;
+    //SendableChooser chooser;
 
     /**
      * This function is run when the robot is first started up and should be
@@ -66,7 +63,7 @@ public class Robot extends IterativeRobot {
 	 * or additional comparisons to the switch structure below with additional strings & commands.
 	 */
     public void autonomousInit() {
-        autonomousCommand = (Command) chooser.getSelected();
+        //autonomousCommand = (Command) chooser.getSelected();
         
 		/* String autoSelected = SmartDashboard.getString("Auto Selector", "Default");
 		switch(autoSelected) {

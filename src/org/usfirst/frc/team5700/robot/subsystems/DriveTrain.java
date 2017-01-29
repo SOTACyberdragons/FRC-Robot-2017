@@ -3,7 +3,7 @@ package org.usfirst.frc.team5700.robot.subsystems;
 
 
 import org.usfirst.frc.team5700.robot.RobotMap;
-import org.usfirst.frc.team5700.robot.commands.TankDriveWithJoysticks;
+import org.usfirst.frc.team5700.robot.commands.ArcadeDriveWithJoysticks;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Joystick;
@@ -79,6 +79,15 @@ public class DriveTrain extends Subsystem {
 	public void tankDrive(Joystick left, Joystick right, boolean squaredInputs) {
 		drive.tankDrive(-left.getY(), -right.getY(), squaredInputs);
 	}
+	/*
+	 * Arcade Drive//
+	 * Right joystick is for moving forwards and backwards
+	 * Left joystick is for turning
+	 * @nickmak
+	 */
+	public void arcadeDrive(Joystick left, Joystick right, boolean squaredInputs) {
+		drive.arcadeDrive(-right.getY(), -left.getX(), squaredInputs);
+	}
 	
 	/**
 	 * Tank style driving for the DriveTrain.
@@ -95,7 +104,7 @@ public class DriveTrain extends Subsystem {
 	}
 
     public void initDefaultCommand() {
-    	setDefaultCommand(new TankDriveWithJoysticks());
+    	setDefaultCommand(new ArcadeDriveWithJoysticks());
         //Set the default command for a subsystem here.
         //SetDefaultCommand(new MySpecialCommand());
     }
