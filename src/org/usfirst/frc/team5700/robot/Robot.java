@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import org.usfirst.frc.team5700.robot.subsystems.DriveTrain;
-import org.usfirst.frc.team5700.robot.subsystems.ExampleSubsystem;
+import org.usfirst.frc.team5700.robot.subsystems.GearSystem;
 import org.usfirst.frc.team5700.robot.subsystems.RopeClimber;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
  */
 public class Robot extends IterativeRobot {
 	public static DriveTrain drivetrain;
-	public static final ExampleSubsystem exampleSubsystem = new ExampleSubsystem();
+	public static GearSystem gearsystem;
 	public static OI oi;
 	public static RopeClimber ropeclimber;
 
@@ -35,6 +35,7 @@ public class Robot extends IterativeRobot {
     public void robotInit() {
         drivetrain = new DriveTrain();
         ropeclimber = new RopeClimber();
+        gearsystem = new GearSystem();
     	oi = new OI();
     	
 //       chooser = new SendableChooser();
