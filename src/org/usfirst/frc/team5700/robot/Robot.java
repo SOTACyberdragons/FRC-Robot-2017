@@ -46,6 +46,7 @@ public class Robot extends IterativeRobot {
     	//default constructor uses USB camera 0
         usbCamera0 = cameraserver.startAutomaticCapture();
         int height = prefs.getInt("Video Height", 360);
+        //Microsoft LifeCam HD-3000 standard resolution: 1280x720
         usbCamera0.setResolution(height*1280/720, height);
     	
 //       chooser = new SendableChooser();
