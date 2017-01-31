@@ -1,8 +1,10 @@
 
 package org.usfirst.frc.team5700.robot;
 
+import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -24,6 +26,8 @@ public class Robot extends IterativeRobot {
 	public static OI oi;
 	public static RopeClimber ropeclimber;
 	public static CameraServer cameraserver;
+	public static UsbCamera usbCamera0, usbCamera1; //will eventually have 2 cameras
+	public static Preferences prefs;
 
     Command autonomousCommand;
     //SendableChooser chooser;
@@ -39,9 +43,10 @@ public class Robot extends IterativeRobot {
     	oi = new OI();
     	
     	cameraserver = CameraServer.getInstance();
-        cameraserver.setQuality(10);
-        //the camera name (ex "cam0") can be found through the roborio web interface
-        cameraserver.startAutomaticCapture("cam0");
+    	//default constructor uses USB camera 0
+        usbCamera0 = cameraserver.startAutomaticCapture();
+        int height = prefs.getInt("Video Height", 360);
+        usbCamera0.setResolution(height*1280/720, height);
     	
 //       chooser = new SendableChooser();
 //       chooser.addDefault("Default Auto", new ExampleCommand());
