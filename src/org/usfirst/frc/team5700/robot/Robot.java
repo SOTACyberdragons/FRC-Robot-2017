@@ -1,6 +1,7 @@
 
 package org.usfirst.frc.team5700.robot;
 
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -17,10 +18,12 @@ import org.usfirst.frc.team5700.robot.subsystems.RopeClimber;
  * directory.
  */
 public class Robot extends IterativeRobot {
+	
 	public static DriveTrain drivetrain;
 	public static GearSystem gearsystem;
 	public static OI oi;
 	public static RopeClimber ropeclimber;
+	public static CameraServer cameraserver;
 
     Command autonomousCommand;
     //SendableChooser chooser;
@@ -34,6 +37,11 @@ public class Robot extends IterativeRobot {
         ropeclimber = new RopeClimber();
         gearsystem = new GearSystem();
     	oi = new OI();
+    	
+    	cameraserver = CameraServer.getInstance();
+        cameraserver.setQuality(10);
+        //the camera name (ex "cam0") can be found through the roborio web interface
+        cameraserver.startAutomaticCapture("cam0");
     	
 //       chooser = new SendableChooser();
 //       chooser.addDefault("Default Auto", new ExampleCommand());
