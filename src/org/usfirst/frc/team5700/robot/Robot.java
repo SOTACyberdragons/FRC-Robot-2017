@@ -3,9 +3,12 @@ package org.usfirst.frc.team5700.robot;
 
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import org.usfirst.frc.team5700.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team5700.robot.subsystems.GearSystem;
 import org.usfirst.frc.team5700.robot.subsystems.RopeClimber;
@@ -18,6 +21,8 @@ import org.usfirst.frc.team5700.robot.subsystems.RopeClimber;
  * directory.
  */
 public class Robot extends IterativeRobot {
+	
+	public static Preferences preferences;
 	
 	public static DriveTrain drivetrain;
 	public static GearSystem gearsystem;
@@ -33,13 +38,16 @@ public class Robot extends IterativeRobot {
      * used for any initialization code.
      */
     public void robotInit() {
+    	
+    	preferences = Preferences.getInstance();
+    	
         drivetrain = new DriveTrain();
         ropeclimber = new RopeClimber();
         gearsystem = new GearSystem();
     	oi = new OI();
     	
     	cameraserver = CameraServer.getInstance();
-        cameraserver.setQuality(10);
+        cameraserver.setQuality(preferences.getInt("Camera Quality", 50));
         //the camera name (ex "cam0") can be found through the roborio web interface
         cameraserver.startAutomaticCapture("cam0");
     	

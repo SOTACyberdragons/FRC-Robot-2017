@@ -4,6 +4,7 @@ package org.usfirst.frc.team5700.robot.subsystems;
 
 import org.usfirst.frc.team5700.robot.RobotMap;
 import org.usfirst.frc.team5700.robot.commands.ArcadeDriveWithJoysticks;
+import org.usfirst.frc.team5700.robot.commands.OneStickArcadeDrive;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Joystick;
@@ -104,8 +105,12 @@ public class DriveTrain extends Subsystem {
 	}
 
     public void initDefaultCommand() {
-    	setDefaultCommand(new ArcadeDriveWithJoysticks());
+    	setDefaultCommand(new OneStickArcadeDrive());
         //Set the default command for a subsystem here.
         //SetDefaultCommand(new MySpecialCommand());
     }
+    
+    public void arcadeDrive(Joystick right, boolean squaredInputs) {
+		drive.arcadeDrive(-right.getY(), -right.getX(), squaredInputs);
+    };
 }
