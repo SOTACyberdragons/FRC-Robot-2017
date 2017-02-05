@@ -1,10 +1,15 @@
 
 package org.usfirst.frc.team5700.robot;
 
+import edu.wpi.first.wpilibj.AnalogGyro;
+import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+
 import org.usfirst.frc.team5700.robot.commands.ResetGyroAngle;
 import org.usfirst.frc.team5700.robot.subsystems.DriveTrain;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -24,6 +29,25 @@ public class Robot extends IterativeRobot {
 
     Command autonomousCommand;
     SendableChooser chooser;
+    final int gyroChannel = 0; //analog input
+    final int joystickChannel = 0; //usb number in DriverStation
+
+    //channels for motors
+    final int leftMotorChannel = 1;
+    final int rightMotorChannel = 0;
+    final int leftRearMotorChannel = 3;
+    final int rightRearMotorChannel = 2;
+
+    double angleSetpoint = 0.0;
+    final double pGain = .006; //propotional turning constant
+
+    //gyro calibration constant, may need to be adjusted;
+    //gyro value of 360 is set to correspond to one full revolution
+    final double voltsPerDegreePerSecond = .0128;
+
+    RobotDrive myRobot;
+    AnalogGyro gyro;
+    Joystick joystick;
 
     /**
      * This function is run when the robot is first started up and should be
@@ -33,7 +57,12 @@ public class Robot extends IterativeRobot {
     	
         drivetrain = new DriveTrain();
     	oi = new OI();
-    	
+    	 //make objects for the drive train, gyro, and joystick
+        myRobot = new RobotDrive(new CANTalon(leftMotorChannel), new CANTalon(
+          leftRearMotorChannel), new CANTalon(rightMotorChannel),
+          new CANTalon(rightRearMotorChannel));
+        gyro = new AnalogGyro(gyroChannel);
+        joystick = new Joystick(joystickChannel);
 //       chooser = new SendableChooser();
 //       chooser.addDefault("Default Auto", new ExampleCommand());
 //       chooser.addObject("My Auto", new MyAutoCommand());
@@ -105,7 +134,22 @@ public class Robot extends IterativeRobot {
         SmartDashboard.putData("reset gyro angle", new ResetGyroAngle());
     }
     
-    
+    public void operatorControl() {
+        double turningValue;
+        gyro.setSensitivity(voltsPerDegreePerSecond); //calibrates gyro values to equal degrees
+        while (isOperatorControl() && isEnabled()) {
+
+            turningValue =  (angleSetpoint - gyro.getAngle())*pGain;
+            if(joystick.getY() <= 0)
+            {
+                //forwards
+                myRobot.drive(joystick.getY(), turningValue);
+            } else {
+                //backwards
+                myRobot.drive(joystick.getY(), -turningValue);
+            }
+            }
+        }
     /**
      * This function is called periodically during test mode
      */
