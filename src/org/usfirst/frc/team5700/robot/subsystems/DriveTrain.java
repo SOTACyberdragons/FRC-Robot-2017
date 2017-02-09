@@ -6,6 +6,7 @@ import org.usfirst.frc.team5700.robot.RobotMap;
 import org.usfirst.frc.team5700.robot.commands.ArcadeDriveWithJoysticks;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Spark;
@@ -22,6 +23,8 @@ public class DriveTrain extends Subsystem {
 	front_right_motor, back_right_motor;
 	
 	private ADXRS450_Gyro gyro;
+	
+	private Encoder encoder;
 	
 //	private PIDController gyroControl;
 //	private PIDOutput turnValue;
@@ -46,6 +49,10 @@ public class DriveTrain extends Subsystem {
 //		gyroControl = new pidController(0.1, 0.01, 0.001, gyro, df);
 //		PIDCbsoluteTolerance = 3;
 //		GyroControl.setAbsoluteTolerance(PIDAbsoluteTolerance);
+		
+		encoder = new Encoder(0,1);
+		encoder.reset();
+		encoder.setDistancePerPulse((Math.PI*4)/360);
 	}
 	
 //	public void PIDGyroTurn(double turnAngle) {
@@ -56,6 +63,16 @@ public class DriveTrain extends Subsystem {
 //	public boolean gyroOnTarget() {
 //		return gyroControl.onTarget();
 //	}
+	
+	public void DriveDistance(double setpoint) {
+		double linearCoefficient = 0.1;
+		double output = linearCoefficient*(setpoint - encoder.getDistance());
+		drive(output,output);
+	}
+	
+	public void resetEncoder() {
+		encoder.reset();
+	}
 	
 	public void resetGyroAngle() {
 		gyro.reset();

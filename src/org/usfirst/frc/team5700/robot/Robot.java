@@ -1,7 +1,6 @@
 
 package org.usfirst.frc.team5700.robot;
 
-import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Preferences;
@@ -26,7 +25,7 @@ public class Robot extends IterativeRobot {
 	public static OI oi;
 	public static RopeClimber ropeclimber;
 	public static CameraServer cameraserver;
-	public static UsbCamera usbCamera0, usbCamera1; //will eventually have 2 cameras
+	//public static UsbCamera usbCamera0, usbCamera1; //will eventually have 2 cameras
 	public static Preferences prefs;
 
     Command autonomousCommand;
@@ -42,12 +41,12 @@ public class Robot extends IterativeRobot {
         gearsystem = new GearSystem();
     	oi = new OI();
     	
-    	cameraserver = CameraServer.getInstance();
-    	//default constructor uses USB camera 0
-        usbCamera0 = cameraserver.startAutomaticCapture();
-        int height = prefs.getInt("Video Height", 360);
-        //Microsoft LifeCam HD-3000 standard resolution: 1280x720
-        usbCamera0.setResolution(height*1280/720, height);
+//    	cameraserver = CameraServer.getInstance();
+//    	//default constructor uses USB camera 0
+//        usbCamera0 = cameraserver.startAutomaticCapture();
+//        int height = prefs.getInt("Video Height", 360);
+//        //Microsoft LifeCam HD-3000 standard resolution: 1280x720
+//        usbCamera0.setResolution(height*1280/720, height);
     	
 //       chooser = new SendableChooser();
 //       chooser.addDefault("Default Auto", new ExampleCommand());
