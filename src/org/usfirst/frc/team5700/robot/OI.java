@@ -3,6 +3,7 @@ package org.usfirst.frc.team5700.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
+import org.usfirst.frc.team5700.robot.commands.AngleTurn;
 import org.usfirst.frc.team5700.robot.commands.AntiClimb;
 import org.usfirst.frc.team5700.robot.commands.ClimbUp;
 import org.usfirst.frc.team5700.robot.commands.GearDrop;
@@ -40,6 +41,9 @@ public class OI {
 		
 		JoystickButton gearDropTrigger = new JoystickButton(rightStick, 1);
 		
+		//Creating button that calls the command AngleTurn while it is held 
+	    JoystickButton turnAngle = new JoystickButton(rightStick, 2);
+	    turnAngle.whileHeld(new AngleTurn());
 	    
 	    // There are a few additional built in buttons you can use. Additionally,
 	    // by subclassing Button you can create custom triggers and bind those to
