@@ -120,7 +120,10 @@ public class Robot extends IterativeRobot {
         Scheduler.getInstance().run();
         
         
-        
+        if (gearsystem.gearSwitchCount() > 0) {
+        	gearDropAutomatic = new GearDropAutomatic();
+        	gearsystem.resetSwitchCount();
+        }
         //SmartDashboard.putNumber("gyro angle", drivetrain.getGyroAngle());
         //SmartDashboard.putData("reset gyro angle", new ResetGyroAngle());
     }
