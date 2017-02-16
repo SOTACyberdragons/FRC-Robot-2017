@@ -1,12 +1,15 @@
 
 package org.usfirst.frc.team5700.robot;
 
+//import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+
+//import org.usfirst.frc.team5700.robot.commands.GearDropAutomatic;
 import org.usfirst.frc.team5700.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team5700.robot.subsystems.GearSystem;
 import org.usfirst.frc.team5700.robot.subsystems.RopeClimber;
@@ -27,6 +30,8 @@ public class Robot extends IterativeRobot {
 	public static CameraServer cameraserver;
 	//public static UsbCamera usbCamera0, usbCamera1; //will eventually have 2 cameras
 	public static Preferences prefs;
+	
+	//public static GearDropAutomatic gearDropAutomatic;
 
     Command autonomousCommand;
     //SendableChooser chooser;
@@ -41,12 +46,12 @@ public class Robot extends IterativeRobot {
         gearsystem = new GearSystem();
     	oi = new OI();
     	
-//    	cameraserver = CameraServer.getInstance();
-//    	//default constructor uses USB camera 0
-//        usbCamera0 = cameraserver.startAutomaticCapture();
-//        int height = prefs.getInt("Video Height", 360);
-//        //Microsoft LifeCam HD-3000 standard resolution: 1280x720
-//        usbCamera0.setResolution(height*1280/720, height);
+    	cameraserver = CameraServer.getInstance();
+    	//default constructor uses USB camera 0
+        //usbCamera0 = cameraserver.startAutomaticCapture();
+        int height = prefs.getInt("Video Height", 360);
+        //Microsoft LifeCam HD-3000 standard resolution: 1280x720
+        //usbCamera0.setResolution(height*1280/720, height);
     	
 //       chooser = new SendableChooser();
 //       chooser.addDefault("Default Auto", new ExampleCommand());
@@ -114,6 +119,11 @@ public class Robot extends IterativeRobot {
     public void teleopPeriodic() {
         Scheduler.getInstance().run();
         
+        
+//        if (gearsystem.gearSwitchCount() > 0) {
+//        	gearDropAutomatic = new GearDropAutomatic();
+//        	gearsystem.resetSwitchCount();
+        }
         //SmartDashboard.putNumber("gyro angle", drivetrain.getGyroAngle());
         //SmartDashboard.putData("reset gyro angle", new ResetGyroAngle());
     }

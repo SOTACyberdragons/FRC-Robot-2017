@@ -24,7 +24,7 @@ public class DriveTrain extends Subsystem {
 	
 	private ADXRS450_Gyro gyro;
 	
-	private Encoder encoder;
+	private Encoder leftEncoder, rightEncoder;
 	
 //	private PIDController gyroControl;
 //	private PIDOutput turnValue;
@@ -50,9 +50,13 @@ public class DriveTrain extends Subsystem {
 //		PIDCbsoluteTolerance = 3;
 //		GyroControl.setAbsoluteTolerance(PIDAbsoluteTolerance);
 		
-		encoder = new Encoder(0,1);
-		encoder.reset();
-		encoder.setDistancePerPulse((Math.PI*4)/360);
+		leftEncoder = new Encoder(1,2);
+		rightEncoder = new Encoder(3, 4);
+		leftEncoder.reset();
+		leftEncoder.setDistancePerPulse((Math.PI*6)/360);
+		rightEncoder.reset();
+		rightEncoder.setDistancePerPulse((Math.PI*6)/360);
+		
 	}
 	
 //	public void PIDGyroTurn(double turnAngle) {
@@ -66,12 +70,13 @@ public class DriveTrain extends Subsystem {
 	
 	public void DriveDistance(double setpoint) {
 		double linearCoefficient = 0.1;
-		double output = linearCoefficient*(setpoint - encoder.getDistance());
+		double output = linearCoefficient*(setpoint - (rightEncoder.getDistance() + leftEncoder.getDistance()) / 2);
 		drive(output,output);
 	}
 	
-	public void resetEncoder() {
-		encoder.reset();
+	public void resetEncoders() {
+		rightEncoder.reset();
+		leftEncoder.reset();
 	}
 	
 	public void resetGyroAngle() {

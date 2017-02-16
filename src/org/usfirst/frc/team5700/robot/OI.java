@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
 import org.usfirst.frc.team5700.robot.commands.AntiClimb;
 import org.usfirst.frc.team5700.robot.commands.ClimbUp;
+import org.usfirst.frc.team5700.robot.commands.DriveInches;
 import org.usfirst.frc.team5700.robot.commands.GearDrop;
 
 /**
@@ -40,6 +41,7 @@ public class OI {
 		
 		JoystickButton gearDropTrigger = new JoystickButton(rightStick, 1);
 		
+		JoystickButton driveInchesButton = new JoystickButton(rightStick, 2);
 	    
 	    // There are a few additional built in buttons you can use. Additionally,
 	    // by subclassing Button you can create custom triggers and bind those to
@@ -57,6 +59,8 @@ public class OI {
 		antiClimbButton.whileHeld(new AntiClimb());
 		
 		gearDropTrigger.whileHeld(new GearDrop());
+		
+		driveInchesButton.whileHeld(new DriveInches(50));
 	    // Run the command while the button is being held down and interrupt it once
 	    // the button is released.
 	    // button.whileHeld(new ExampleCommand());
