@@ -3,8 +3,8 @@ package org.usfirst.frc.team5700.robot.subsystems;
 import org.usfirst.frc.team5700.robot.commands.GearDropReset;
 
 import edu.wpi.first.wpilibj.Counter;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.buttons.Trigger;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
@@ -13,17 +13,14 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class GearSystem extends Subsystem {
     
 	private DoubleSolenoid gearDropPiston;
-	private DigitalInput gearDropSwitch;
-	private Counter gearSwitchCounter;
+	private Trigger gearDropSwitch;
     
     public GearSystem() {
     	super();
     	gearDropPiston = new DoubleSolenoid(0, 1);
     	gearDropPiston.set(DoubleSolenoid.Value.kReverse);
     	
-    	gearDropSwitch = new DigitalInput(0);
-    	
-    	gearSwitchCounter = new Counter(gearDropSwitch);
+    	gearDropSwitch = new Trigger(0);
     }
 	
 	public void gearHolderDown() {

@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+
+import org.usfirst.frc.team5700.robot.commands.GearDropAutomatic;
 import org.usfirst.frc.team5700.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team5700.robot.subsystems.GearSystem;
 import org.usfirst.frc.team5700.robot.subsystems.RopeClimber;
@@ -28,6 +30,8 @@ public class Robot extends IterativeRobot {
 	public static CameraServer cameraserver;
 	public static UsbCamera usbCamera0, usbCamera1; //will eventually have 2 cameras
 	public static Preferences prefs;
+	
+	public static GearDropAutomatic gearDropAutomatic;
 
     Command autonomousCommand;
     //SendableChooser chooser;
@@ -114,6 +118,8 @@ public class Robot extends IterativeRobot {
      */
     public void teleopPeriodic() {
         Scheduler.getInstance().run();
+        
+        
         
         //SmartDashboard.putNumber("gyro angle", drivetrain.getGyroAngle());
         //SmartDashboard.putData("reset gyro angle", new ResetGyroAngle());
