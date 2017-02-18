@@ -30,6 +30,8 @@ public class GearHolderUp extends Command {
     // Called once after isFinished returns true
     protected void end(){
     	Robot.gearsystem.gearHolderUp();
+    	Robot.gearsystem.resetSwitchCount();
+    	Robot.wasPressed = false;
     }
 
     // Called when another command which requires one or more of the same

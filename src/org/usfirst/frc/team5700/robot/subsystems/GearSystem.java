@@ -47,12 +47,16 @@ public class GearSystem extends Subsystem {
     	return gearDropSwitch.get();
     }
     
-    public int gearSwitchCount() {
-    	return gearSwitchCounter.get();
+    public boolean gearSwitchPushed() {
+    	return gearSwitchCounter.get() > 0;
     }
     
     public void resetSwitchCount() {
     	gearSwitchCounter.reset();
+    }
+    
+    public Counter getGearSwitchCounter() {
+    	return gearSwitchCounter;
     }
 }
 

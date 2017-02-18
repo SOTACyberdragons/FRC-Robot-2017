@@ -1,15 +1,18 @@
 
 package org.usfirst.frc.team5700.robot;
 
-import edu.wpi.cscore.UsbCamera;
+//import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.usfirst.frc.team5700.robot.commands.GearDropAutomatic;
+import org.usfirst.frc.team5700.robot.commands.ResetCounter;
+import org.usfirst.frc.team5700.robot.commands.ResetGyroAngle;
 import org.usfirst.frc.team5700.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team5700.robot.subsystems.GearSystem;
 import org.usfirst.frc.team5700.robot.subsystems.RopeClimber;
@@ -28,13 +31,15 @@ public class Robot extends IterativeRobot {
 	public static OI oi;
 	public static RopeClimber ropeclimber;
 	public static CameraServer cameraserver;
-	public static UsbCamera usbCamera0, usbCamera1; //will eventually have 2 cameras
+	//public static Camera usbCamera0, usbCamera1; //will eventually have 2 cameras
 	public static Preferences prefs;
 	
 	public static GearDropAutomatic gearDropAutomatic;
 
     Command autonomousCommand;
     //SendableChooser chooser;
+    
+    public static boolean wasPressed = false;
 
     /**
      * This function is run when the robot is first started up and should be
@@ -48,10 +53,10 @@ public class Robot extends IterativeRobot {
     	
     	cameraserver = CameraServer.getInstance();
     	//default constructor uses USB camera 0
-        usbCamera0 = cameraserver.startAutomaticCapture();
-        int height = prefs.getInt("Video Height", 360);
+        //usbCamera0 = cameraserver.startAutomaticCapture();
+        //int height = prefs.getInt("Video Height", 360);
         //Microsoft LifeCam HD-3000 standard resolution: 1280x720
-        usbCamera0.setResolution(height*1280/720, height);
+        //usbCamera0.setResolution(height*1280/720, height);
     	
 //       chooser = new SendableChooser();
 //       chooser.addDefault("Default Auto", new ExampleCommand());
@@ -106,6 +111,8 @@ public class Robot extends IterativeRobot {
     }
 
     public void teleopInit() {
+    	
+    	drivetrain.resetBothEncoders();
 		// This makes sure that the autonomous stops running when
         // teleop starts running. If you want the autonomous to 
         // continue until interrupted by another command, remove
@@ -119,13 +126,33 @@ public class Robot extends IterativeRobot {
     public void teleopPeriodic() {
         Scheduler.getInstance().run();
         
-        
+        /*
         if (gearsystem.gearSwitchCount() > 0) {
         	gearDropAutomatic = new GearDropAutomatic();
         	gearsystem.resetSwitchCount();
+        }*/
+//        if (gearsystem.gearSwitchPushed()) {
+//        	gearDropAutomatic = new GearDropAutomatic();
+//        	gearsystem.resetSwitchCount();
+//        }
+        
+        if (gearsystem.gearSwitchPushed() && !wasPressed) {
+        	SmartDashboard.putBoolean("Run Drop Command", true);
+        	wasPressed = true;
+        	gearDropAutomatic = new GearDropAutomatic();
+        	gearDropAutomatic.start();			
         }
-        //SmartDashboard.putNumber("gyro angle", drivetrain.getGyroAngle());
-        //SmartDashboard.putData("reset gyro angle", new ResetGyroAngle());
+        
+        SmartDashboard.putNumber("gyro angle", drivetrain.getGyroAngle());
+        SmartDashboard.putData("reset gyro angle", new ResetGyroAngle());
+        
+        SmartDashboard.putNumber("left Encoder", drivetrain.getLeftEncoderDistance());
+        SmartDashboard.putNumber("right Encoder", drivetrain.getRightEncoderDistance());
+        
+        SmartDashboard.putBoolean("Gear Trigger", gearsystem.dropSwitchTriggered());
+        SmartDashboard.putBoolean("Trigger Counter Increased", gearsystem.gearSwitchPushed());
+        SmartDashboard.putNumber("Trigger Count", gearsystem.getGearSwitchCounter().get());
+        SmartDashboard.putData("Reset Counter", new ResetCounter());
     }
     
     

@@ -1,32 +1,43 @@
 package org.usfirst.frc.team5700.robot.commands;
 
-import edu.wpi.first.wpilibj.command.CommandGroup;
+import org.usfirst.frc.team5700.robot.Robot;
+
+import edu.wpi.first.wpilibj.command.Command;
 
 /**
  *
  */
-public class GearDropAutomatic extends CommandGroup {
-    
-    public  GearDropAutomatic() {
-    	
-    	addSequential(new GearHolderDown());
-    	addSequential(new GearHolderUp(), 3);
-    	
-        // Add Commands here:
-        // e.g. addSequential(new Command1());
-        //      addSequential(new Command2());
-        // these will run in order.
+public class GearDropAutomatic extends Command {
 
-        // To run multiple commands at the same time,
-        // use addParallel()
-        // e.g. addParallel(new Command1());
-        //      addSequential(new Command2());
-        // Command1 and Command2 will run in parallel.
+    public GearDropAutomatic() {
+        // Use requires() here to declare subsystem dependencies
+        requires(Robot.gearsystem);
+    }
 
-        // A command group will require all of the subsystems that each member
-        // would require.
-        // e.g. if Command1 requires chassis, and Command2 requires arm,
-        // a CommandGroup containing them would require both the chassis and the
-        // arm.
+    // Called just before this Command runs the first time
+    protected void initialize() {
+    	Robot.gearsystem.gearHolderDown();
+    }
+
+    // Called repeatedly when this Command is scheduled to run
+    protected void execute() {
+    }
+
+    // Make this return true when this Command no longer needs to run execute()
+    protected boolean isFinished() {
+        return timeSinceInitialized() > 1.5;
+    }
+
+    // Called once after isFinished returns true
+    protected void end() {
+    	Robot.gearsystem.gearHolderUp();
+    	Robot.wasPressed = false;
+    	Robot.gearsystem.resetSwitchCount();
+    }
+
+    // Called when another command which requires one or more of the same
+    // subsystems is scheduled to run
+    protected void interrupted() {
+    	end();
     }
 }

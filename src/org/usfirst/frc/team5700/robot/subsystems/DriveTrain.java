@@ -3,8 +3,10 @@ package org.usfirst.frc.team5700.robot.subsystems;
 
 
 import org.usfirst.frc.team5700.robot.RobotMap;
+import org.usfirst.frc.team5700.robot.commands.ArcadeDriveWithJoysticks;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Spark;
@@ -22,6 +24,9 @@ public class DriveTrain extends Subsystem {
 	
 	private ADXRS450_Gyro gyro;
 	
+	private Encoder rightEncoder;
+	private Encoder leftEncoder;
+	
 //	private PIDController gyroControl;
 //	private PIDOutput turnValue;
 //	private double PIDAbsoluteTolerance;
@@ -34,6 +39,16 @@ public class DriveTrain extends Subsystem {
 		back_right_motor = new Spark(RobotMap.BACK_RIGHT_DRIVE_MOTOR);
 		drive = new RobotDrive(front_left_motor, back_left_motor,
 							   front_right_motor, back_right_motor);
+		
+		
+		//TODO RobotMap encoders
+		double distancePerPulse = 6*Math.PI/360;
+		leftEncoder = new Encoder(1, 2, false);
+		rightEncoder = new Encoder(3, 4, true);
+		leftEncoder.setDistancePerPulse(distancePerPulse);
+		rightEncoder.setDistancePerPulse(distancePerPulse);
+		leftEncoder.reset();
+		rightEncoder.reset();
 		
 		gyro = new ADXRS450_Gyro();
 		gyro.calibrate();
@@ -56,9 +71,15 @@ public class DriveTrain extends Subsystem {
 //		return gyroControl.onTarget();
 //	}
 	
+	public void resetBothEncoders() {
+		leftEncoder.reset();
+		rightEncoder.reset();
+	}
+	
 	public void resetGyroAngle() {
 		gyro.reset();
 	}
+	
 	/**
 	 * gets gyro's angle
 	 * @return
@@ -96,6 +117,14 @@ public class DriveTrain extends Subsystem {
 	
 	public void drive(double left, double right) {
 		drive.tankDrive(left, right);
+	}
+	
+	public double getLeftEncoderDistance() {
+		return leftEncoder.getDistance();
+	}
+	
+	public double getRightEncoderDistance() {
+		return rightEncoder.getDistance();
 	}
 	
 	public void stop() {

@@ -7,39 +7,33 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class ClimbUp extends Command {
-	
-	private double speed;
+public class ResetCounter extends Command {
 
-    public ClimbUp(double climbSpeed) {
+    public ResetCounter() {
         // Use requires() here to declare subsystem dependencies
-        requires(Robot.ropeclimber);
-        
-        speed = climbSpeed;
+        requires(Robot.gearsystem);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
+    	Robot.gearsystem.resetSwitchCount();
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.ropeclimber.climb(speed);
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    	return false;
+        return true;
     }
 
     // Called once after isFinished returns true
     protected void end() {
-    	Robot.ropeclimber.climb(0);
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
-    	Robot.ropeclimber.climb(0);
     }
 }
