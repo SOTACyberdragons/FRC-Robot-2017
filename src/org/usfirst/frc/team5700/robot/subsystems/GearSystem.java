@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  *
@@ -58,5 +59,9 @@ public class GearSystem extends Subsystem {
     public Counter getGearSwitchCounter() {
     	return gearSwitchCounter;
     }
+    
+	public void log() {
+		SmartDashboard.putNumber("Counter", gearSwitchCounter.get());
+	}
 }
 

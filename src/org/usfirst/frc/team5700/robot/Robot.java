@@ -1,7 +1,12 @@
-
 package org.usfirst.frc.team5700.robot;
 
-//import edu.wpi.cscore.UsbCamera;
+import org.usfirst.frc.team5700.robot.commands.DriveStraight;
+import org.usfirst.frc.team5700.robot.commands.GearDropAutomatic;
+import org.usfirst.frc.team5700.robot.subsystems.DriveTrain;
+import org.usfirst.frc.team5700.robot.subsystems.GearSystem;
+import org.usfirst.frc.team5700.robot.subsystems.RopeClimber;
+
+import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Preferences;
@@ -10,12 +15,6 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import org.usfirst.frc.team5700.robot.commands.GearDropAutomatic;
-import org.usfirst.frc.team5700.robot.commands.ResetCounter;
-import org.usfirst.frc.team5700.robot.commands.ResetGyroAngle;
-import org.usfirst.frc.team5700.robot.subsystems.DriveTrain;
-import org.usfirst.frc.team5700.robot.subsystems.GearSystem;
-import org.usfirst.frc.team5700.robot.subsystems.RopeClimber;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -25,141 +24,101 @@ import org.usfirst.frc.team5700.robot.subsystems.RopeClimber;
  * directory.
  */
 public class Robot extends IterativeRobot {
-	
+	Command autonomousCommand;
+	Preferences prefs;
+
 	public static DriveTrain drivetrain;
-	public static GearSystem gearsystem;
+	//public static PidDriveTrain pidDrivetrain;
+	public static RopeClimber ropeClimber;
+	public static GearSystem gearSystem;
 	public static OI oi;
-	public static RopeClimber ropeclimber;
 	public static CameraServer cameraserver;
-	//public static Camera usbCamera0, usbCamera1; //will eventually have 2 cameras
-	public static Preferences prefs;
+	UsbCamera usbCamera0;
 	
+    public static boolean wasPressed = false;
 	public static GearDropAutomatic gearDropAutomatic;
 
-    Command autonomousCommand;
-    //SendableChooser chooser;
-    
-    public static boolean wasPressed = false;
-
-    /**
-     * This function is run when the robot is first started up and should be
-     * used for any initialization code.
-     */
-    public void robotInit() {
-        drivetrain = new DriveTrain();
-        ropeclimber = new RopeClimber();
-        gearsystem = new GearSystem();
-    	oi = new OI();
-    	
-    	cameraserver = CameraServer.getInstance();
-    	//default constructor uses USB camera 0
-        //usbCamera0 = cameraserver.startAutomaticCapture();
-        //int height = prefs.getInt("Video Height", 360);
-        //Microsoft LifeCam HD-3000 standard resolution: 1280x720
-        //usbCamera0.setResolution(height*1280/720, height);
-    	
-//       chooser = new SendableChooser();
-//       chooser.addDefault("Default Auto", new ExampleCommand());
-//       chooser.addObject("My Auto", new MyAutoCommand());
-//       SmartDashboard.putData("Auto mode", chooser);
-    }
-	
 	/**
-     * This function is called once each time the robot enters Disabled mode.
-     * You can use it to reset any subsystem information you want to clear when
-	 * the robot is disabled.
-     */
-    public void disabledInit(){
-    }
-	
-	public void disabledPeriodic() {
-		Scheduler.getInstance().run();
+	 * This function is run when the robot is first started up and should be
+	 * used for any initialization code.
+	 */
+	@Override
+	public void robotInit() {
+		CameraServer.getInstance().startAutomaticCapture();
+		prefs = Preferences.getInstance();
+		double distance = prefs.getDouble("Auto Distance", 24.0);
+		// Initialize all subsystems
+		drivetrain = new DriveTrain();
+        //pidDrivetrain = new PidDriveTrain();
+		ropeClimber = new RopeClimber();
+		gearSystem = new GearSystem();
+		oi = new OI();
+    	//cameraserver = CameraServer.getInstance();
+        //usbCamera0 = cameraserver.startAutomaticCapture();
+
+		// instantiate the command used for the autonomous period
+		autonomousCommand = new DriveStraight(distance);
+
+		// Show what command your subsystem is running on the SmartDashboard
+		SmartDashboard.putData(drivetrain);
+		SmartDashboard.putData(gearSystem);
+		SmartDashboard.putData(ropeClimber);
+		
+		SmartDashboard.putData("DriveStraight", new DriveStraight(distance));
+	}
+
+	@Override
+	public void autonomousInit() {
+		autonomousCommand.start(); // schedule the autonomous command (example)
 	}
 
 	/**
-	 * This autonomous (along with the chooser code above) shows how to select between different autonomous modes
-	 * using the dashboard. The sendable chooser code works with the Java SmartDashboard. If you prefer the LabVIEW
-	 * Dashboard, remove all of the chooser code and uncomment the getString code to get the auto name from the text box
-	 * below the Gyro
-	 *
-	 * You can add additional auto modes by adding additional commands to the chooser code above (like the commented example)
-	 * or additional comparisons to the switch structure below with additional strings & commands.
+	 * This function is called periodically during autonomous
 	 */
-    public void autonomousInit() {
-        //autonomousCommand = (Command) chooser.getSelected();
-        
-		/* String autoSelected = SmartDashboard.getString("Auto Selector", "Default");
-		switch(autoSelected) {
-		case "My Auto":
-			autonomousCommand = new MyAutoCommand();
-			break;
-		case "Default Auto":
-		default:
-			autonomousCommand = new ExampleCommand();
-			break;
-		} */
-    	
-    	// schedule the autonomous command (example)
-        if (autonomousCommand != null) autonomousCommand.start();
-    }
+	@Override
+	public void autonomousPeriodic() {
+		Scheduler.getInstance().run();
+		log();
+	}
 
-    /**
-     * This function is called periodically during autonomous
-     */
-    public void autonomousPeriodic() {
-        Scheduler.getInstance().run();
-    }
-
-    public void teleopInit() {
-    	
-    	drivetrain.resetBothEncoders();
+	@Override
+	public void teleopInit() {
 		// This makes sure that the autonomous stops running when
-        // teleop starts running. If you want the autonomous to 
-        // continue until interrupted by another command, remove
-        // this line or comment it out.
-        if (autonomousCommand != null) autonomousCommand.cancel();
-    }
+		// teleop starts running. If you want the autonomous to
+		// continue until interrupted by another command, remove
+		// this line or comment it out.
+		autonomousCommand.cancel();
+	}
 
-    /**
-     * This function is called periodically during operator control
-     */
-    public void teleopPeriodic() {
-        Scheduler.getInstance().run();
-        
-        /*
-        if (gearsystem.gearSwitchCount() > 0) {
-        	gearDropAutomatic = new GearDropAutomatic();
-        	gearsystem.resetSwitchCount();
-        }*/
-//        if (gearsystem.gearSwitchPushed()) {
-//        	gearDropAutomatic = new GearDropAutomatic();
-//        	gearsystem.resetSwitchCount();
-//        }
-        
-        if (gearsystem.gearSwitchPushed() && !wasPressed) {
+	/**
+	 * This function is called periodically during operator control
+	 */
+	@Override
+	public void teleopPeriodic() {
+		Scheduler.getInstance().run();
+		log();
+        if (gearSystem.gearSwitchPushed() && !wasPressed) {
         	SmartDashboard.putBoolean("Run Drop Command", true);
         	wasPressed = true;
         	gearDropAutomatic = new GearDropAutomatic();
         	gearDropAutomatic.start();			
         }
-        
-        SmartDashboard.putNumber("gyro angle", drivetrain.getGyroAngle());
-        SmartDashboard.putData("reset gyro angle", new ResetGyroAngle());
-        
-        SmartDashboard.putNumber("left Encoder", drivetrain.getLeftEncoderDistance());
-        SmartDashboard.putNumber("right Encoder", drivetrain.getRightEncoderDistance());
-        
-        SmartDashboard.putBoolean("Gear Trigger", gearsystem.dropSwitchTriggered());
-        SmartDashboard.putBoolean("Trigger Counter Increased", gearsystem.gearSwitchPushed());
-        SmartDashboard.putNumber("Trigger Count", gearsystem.getGearSwitchCounter().get());
-        SmartDashboard.putData("Reset Counter", new ResetCounter());
-    }
-    
-    
-    /**
-     * This function is called periodically during test mode
-     */
-    public void testPeriodic() {
-        LiveWindow.run();
-    }
+	}
+
+	/**
+	 * This function is called periodically during test mode
+	 */
+	@Override
+	public void testPeriodic() {
+		LiveWindow.run();
+	}
+
+	/**
+	 * The log method puts interesting information to the SmartDashboard.
+	 */
+	private void log() {
+		drivetrain.log();
+		gearSystem.log();
+		ropeClimber.log();
+	}
 }

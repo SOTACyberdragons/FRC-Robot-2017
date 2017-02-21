@@ -11,12 +11,12 @@ public class GearDrop extends Command {
 
     public GearDrop() {
         // Use requires() here to declare subsystem dependencies
-        requires(Robot.gearsystem);
+        requires(Robot.gearSystem);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.gearsystem.gearHolderDown();
+    	Robot.gearSystem.gearHolderDown();
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -30,7 +30,7 @@ public class GearDrop extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
-    	Robot.gearsystem.gearHolderUp();
+    	Robot.gearSystem.gearHolderUp();
     }
 
     // Called when another command which requires one or more of the same

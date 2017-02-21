@@ -11,12 +11,12 @@ public class GearDropReset extends Command {
 
     public GearDropReset() {
         // Use requires() here to declare subsystem dependencies
-        requires(Robot.gearsystem);
+        requires(Robot.gearSystem);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.gearsystem.gearHolderUp();
+    	Robot.gearSystem.gearHolderUp();
     }
 
     // Called repeatedly when this Command is scheduled to run

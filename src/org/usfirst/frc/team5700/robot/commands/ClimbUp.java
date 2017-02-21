@@ -13,7 +13,7 @@ public class ClimbUp extends Command {
 
     public ClimbUp(double climbSpeed) {
         // Use requires() here to declare subsystem dependencies
-        requires(Robot.ropeclimber);
+        requires(Robot.ropeClimber);
         
         speed = climbSpeed;
     }
@@ -24,7 +24,7 @@ public class ClimbUp extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.ropeclimber.climb(speed);
+    	Robot.ropeClimber.climb(speed);
     }
 
     // Make this return true when this Command no longer needs to run execute()
@@ -34,12 +34,12 @@ public class ClimbUp extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
-    	Robot.ropeclimber.climb(0);
+    	Robot.ropeClimber.climb(0);
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
-    	Robot.ropeclimber.climb(0);
+    	Robot.ropeClimber.climb(0);
     }
 }

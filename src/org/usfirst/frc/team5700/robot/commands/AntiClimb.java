@@ -11,7 +11,7 @@ public class AntiClimb extends Command {
 
     public AntiClimb() {
         // Use requires() here to declare subsystem dependencies
-        requires(Robot.ropeclimber);
+        requires(Robot.ropeClimber);
     }
 
     // Called just before this Command runs the first time
@@ -20,7 +20,7 @@ public class AntiClimb extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.ropeclimber.climb(-0.5);
+    	Robot.ropeClimber.climb(-0.5);
     }
 
     // Make this return true when this Command no longer needs to run execute()
@@ -35,6 +35,6 @@ public class AntiClimb extends Command {
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
-    	Robot.ropeclimber.climb(0);
+    	Robot.ropeClimber.climb(0);
     }
 }
