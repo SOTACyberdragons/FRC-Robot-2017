@@ -7,16 +7,15 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class GearDrop extends Command {
+public class GearHolderUp extends Command {
 
-    public GearDrop() {
+    public GearHolderUp() {
         // Use requires() here to declare subsystem dependencies
-        requires(Robot.gearSystem);
+        // eg. requires(chassis);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.gearSystem.gearHolderDown();
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -25,12 +24,14 @@ public class GearDrop extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return false;
+        return true;
     }
 
     // Called once after isFinished returns true
-    protected void end() {
+    protected void end(){
     	Robot.gearSystem.gearHolderUp();
+    	Robot.gearSystem.resetSwitchCount();
+    	Robot.wasPressed = false;
     }
 
     // Called when another command which requires one or more of the same

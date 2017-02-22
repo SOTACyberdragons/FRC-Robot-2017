@@ -14,11 +14,6 @@ import org.usfirst.frc.team5700.robot.commands.GearDrop;
 
 //random edit
 
-/**
- * I'm making a rondom comment
- * @author dmitrydimov
- *
- */
 public class OI {
 	
 	//create Joysticks and squared inputs for driving tankDrive
@@ -36,6 +31,7 @@ public class OI {
     // Button button = new JoystickButton(stick, buttonNumber);
 	public OI() {
 		JoystickButton climbTrigger = new JoystickButton(leftStick, 1);
+		JoystickButton slowClimbButton = new JoystickButton(leftStick, 3);
 		JoystickButton antiClimbButton = new JoystickButton(leftStick, 2);
 		
 		JoystickButton gearDropTrigger = new JoystickButton(rightStick, 1);
@@ -53,10 +49,12 @@ public class OI {
 	    // until it is finished as determined by it's isFinished method.
 	    // button.whenPressed(new ExampleCommand());
 	    
-		climbTrigger.whileHeld(new ClimbUp());
+		climbTrigger.whileHeld(new ClimbUp(1));
+		slowClimbButton.whileHeld(new ClimbUp(0.4));
 		antiClimbButton.whileHeld(new AntiClimb());
 		
 		gearDropTrigger.whileHeld(new GearDrop());
+		
 	    // Run the command while the button is being held down and interrupt it once
 	    // the button is released.
 	    // button.whileHeld(new ExampleCommand());
