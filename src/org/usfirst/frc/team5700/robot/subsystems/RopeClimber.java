@@ -12,17 +12,25 @@ import org.usfirst.frc.team5700.robot.RobotMap;
  */
 public class RopeClimber extends Subsystem {
 
+	public enum Direction {UP, DOWN};
 	private double speed;
 	
-	private SpeedController climb1;
+	private SpeedController climber;
 	
 	public RopeClimber() {
-		climb1 = new Spark(RobotMap.CLIMB_MOTORS);
+		climber = new Spark(RobotMap.CLIMB_MOTORS);
 	}
 	
 	public void climb(double speed) {
 		this.speed = speed;
-		climb1.set(speed);
+		climber.set(speed);
+	}
+	
+	public void climb(double speed, Direction direction) {
+		this.speed = speed;
+		int sign = (direction == Direction.UP) ? 1 : -1;
+		
+		climber.set(sign * speed);
 	}
 	
     public void initDefaultCommand() {
