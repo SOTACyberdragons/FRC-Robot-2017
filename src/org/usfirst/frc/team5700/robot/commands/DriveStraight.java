@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import org.usfirst.frc.team5700.robot.utils.LinearAccelerationFilter;
 
 import org.usfirst.frc.team5700.robot.Robot;
 
@@ -32,6 +33,8 @@ public class DriveStraight extends Command {
 	private double angleKp = 0.01;
 	private double angleKi = 0.001;
 	private double angleKd = 0;
+	
+	private LinearAccelerationFilter filter;
 
 
 	public DriveStraight(double distance) {
@@ -73,9 +76,12 @@ public class DriveStraight extends Command {
 				driveCurve = c;
 			}
 		});
-
+		
+		pidDistance.setOutputRange(-1.0, 1.0);
 		pidDistance.setAbsoluteTolerance(0.5);
 		pidDistance.setSetpoint(distance);
+		
+		pidAngle.setOutputRange(-1.0, 1.0);
 		pidAngle.setAbsoluteTolerance(0.5);
 		pidAngle.setSetpoint(0);
 		
@@ -92,12 +98,14 @@ public class DriveStraight extends Command {
 		pidAngle.reset();
 		pidDistance.enable();
 		pidAngle.enable();
+		
+		filter = new LinearAccelerationFilter(0.5);
 	}
 
 	// Called repeatedly when this Command is scheduled to run
 	@Override
 	protected void execute() {
-		Robot.drivetrain.drive(driveOutput, driveCurve);
+		Robot.drivetrain.drive(driveOutput * filter.output(), driveCurve);
 	}
 
 	// Make this return true when this Command no longer needs to run execute()
