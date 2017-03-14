@@ -7,20 +7,16 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class AntiClimb extends Command {
+public class ArcadeDriveWithJoysticks extends Command {
 
-    public AntiClimb() {
-        // Use requires() here to declare subsystem dependencies
-        requires(Robot.ropeClimber);
-    }
-
-    // Called just before this Command runs the first time
-    protected void initialize() {
+    public ArcadeDriveWithJoysticks() {
+    	requires(Robot.drivetrain);
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.ropeClimber.climb(-0.5);
+    	Robot.drivetrain.arcadeDrive(Robot.oi.getLeftStick(), Robot.oi.getRightStick(),
+    			Robot.oi.getSquaredInput());
     }
 
     // Make this return true when this Command no longer needs to run execute()
@@ -30,11 +26,6 @@ public class AntiClimb extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
-    }
-
-    // Called when another command which requires one or more of the same
-    // subsystems is scheduled to run
-    protected void interrupted() {
-    	Robot.ropeClimber.climb(0);
+    	Robot.drivetrain.drive(0, 0);
     }
 }
