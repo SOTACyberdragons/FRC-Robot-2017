@@ -3,6 +3,7 @@ package org.usfirst.frc.team5700.robot.commands;
 import org.usfirst.frc.team5700.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  *
@@ -17,6 +18,7 @@ public class GearDropAutomatic extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
     	Robot.gearSystem.gearHolderDown();
+    	SmartDashboard.putBoolean("Gear Placed", true);
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -33,6 +35,7 @@ public class GearDropAutomatic extends Command {
     	Robot.gearSystem.gearHolderUp();
     	Robot.wasPressed = false;
     	Robot.gearSystem.resetSwitchCount();
+    	SmartDashboard.putBoolean("Gear Placed", false);
     }
 
     // Called when another command which requires one or more of the same

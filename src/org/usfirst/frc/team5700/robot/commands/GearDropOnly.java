@@ -19,6 +19,7 @@ public class GearDropOnly extends Command {
     protected void initialize() {
     	System.out.println("GearDropOnly initialize");
     	Robot.gearSystem.gearHolderDown();
+    	SmartDashboard.putBoolean("Gear Placed", true);
     }
 
     // Called repeatedly when this Command is scheduled to run

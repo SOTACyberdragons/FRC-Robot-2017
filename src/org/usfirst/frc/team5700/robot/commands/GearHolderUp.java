@@ -19,6 +19,7 @@ public class GearHolderUp extends Command {
     protected void initialize() {
     	System.out.println("GearHolderUp initialize");
     	Robot.gearSystem.gearHolderUp();
+    	SmartDashboard.putBoolean("Gear Placed", false);
     }
 
     // Called repeatedly when this Command is scheduled to run

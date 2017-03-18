@@ -105,7 +105,7 @@ public class DriveStraightWithStop extends Command {
 		
 		
     	Preferences prefs = Preferences.getInstance();
-		double filterSlopeTime = prefs.getDouble("FilterSlopeTime", 0.5);
+		double filterSlopeTime = prefs.getDouble("Filter Slope Time", 0.5);
 		autoPower = prefs.getDouble("Auto Power", 1.0);
 				
 		filter = new LinearAccelerationFilter(filterSlopeTime);

@@ -3,6 +3,7 @@ package org.usfirst.frc.team5700.robot;
 import org.usfirst.frc.team5700.robot.commands.DriveAndPlaceGear;
 import org.usfirst.frc.team5700.robot.commands.DriveStraight;
 import org.usfirst.frc.team5700.robot.commands.GearDropAutomatic;
+import org.usfirst.frc.team5700.robot.commands.Turn;
 import org.usfirst.frc.team5700.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team5700.robot.subsystems.GearSystem;
 import org.usfirst.frc.team5700.robot.subsystems.RopeClimber;
@@ -53,12 +54,9 @@ public class Robot extends IterativeRobot {
 		double distance = prefs.getDouble("Auto Distance", 24.0);
 		// Initialize all subsystems
 		drivetrain = new DriveTrain();
-        //pidDrivetrain = new PidDriveTrain();
 		ropeClimber = new RopeClimber();
 		gearSystem = new GearSystem();
 		oi = new OI();
-    	//cameraserver = CameraServer.getInstance();
-        //usbCamera0 = cameraserver.startAutomaticCapture();
 
 		// instantiate the command used for the autonomous period
 		
@@ -74,7 +72,10 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putData(gearSystem);
 		SmartDashboard.putData(ropeClimber);
 		
-		SmartDashboard.putData("DriveStraight", new DriveStraight(distance));
+		double angle = prefs.getDouble("Test Turn Angle", 60.0);
+		SmartDashboard.putData("Drive Straight", new DriveStraight(distance));
+		SmartDashboard.putData("Turn", new Turn(angle));
+    	SmartDashboard.putBoolean("Gear Placed", false);
 	}
 
 	@Override
