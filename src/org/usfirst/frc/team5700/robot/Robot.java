@@ -1,5 +1,6 @@
 package org.usfirst.frc.team5700.robot;
 
+import org.usfirst.frc.team5700.robot.commands.DriveAndPlaceGear;
 import org.usfirst.frc.team5700.robot.commands.DriveStraight;
 import org.usfirst.frc.team5700.robot.commands.GearDropAutomatic;
 import org.usfirst.frc.team5700.robot.subsystems.DriveTrain;
@@ -13,6 +14,7 @@ import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
@@ -26,6 +28,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends IterativeRobot {
 	Command autonomousCommand;
 	Preferences prefs;
+	
+	SendableChooser<Command> chooser;
 
 	public static DriveTrain drivetrain;
 	//public static PidDriveTrain pidDrivetrain;
@@ -57,7 +61,13 @@ public class Robot extends IterativeRobot {
         //usbCamera0 = cameraserver.startAutomaticCapture();
 
 		// instantiate the command used for the autonomous period
-		autonomousCommand = new DriveStraight(distance);
+		
+		chooser = new SendableChooser<Command>();
+		chooser.addDefault("Cross Baseline", new DriveStraight(distance));
+		chooser.addObject("Place Middle Gear", new DriveAndPlaceGear());
+		SmartDashboard.putData("Autonomous Chooser", chooser);
+		SmartDashboard.putString("Selected Autonomous", chooser.getSelected().getName());
+		autonomousCommand = chooser.getSelected();
 
 		// Show what command your subsystem is running on the SmartDashboard
 		SmartDashboard.putData(drivetrain);
@@ -69,7 +79,10 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void autonomousInit() {
-		autonomousCommand.start(); // schedule the autonomous command (example)
+		
+		SmartDashboard.putString("Selected Autonomous", chooser.getSelected().getName());
+		autonomousCommand = chooser.getSelected();
+		autonomousCommand.start(); // schedule the autonomous command
 	}
 
 	/**

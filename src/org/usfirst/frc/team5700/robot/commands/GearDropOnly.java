@@ -8,17 +8,17 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**
  *
  */
-public class GearHolderUp extends Command {
+public class GearDropOnly extends Command {
 
-    public GearHolderUp() {
+    public GearDropOnly() {
         // Use requires() here to declare subsystem dependencies
         requires(Robot.gearSystem);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	System.out.println("GearHolderUp initialize");
-    	Robot.gearSystem.gearHolderUp();
+    	System.out.println("GearDropOnly initialize");
+    	Robot.gearSystem.gearHolderDown();
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -27,16 +27,15 @@ public class GearHolderUp extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return true;
+    	return true;
     }
 
     // Called once after isFinished returns true
-    protected void end(){
-    	Robot.gearSystem.resetSwitchCount();
-    	Robot.wasPressed = false;
-    	System.out.println("GearHolderUp ended");
-    	SmartDashboard.putBoolean("Gear Down", false);
-    	
+    protected void end() {
+
+    	System.out.println("GearDropOnly ended");
+    	SmartDashboard.putBoolean("Gear Down", true);
+    
     }
 
     // Called when another command which requires one or more of the same

@@ -21,7 +21,7 @@ import org.usfirst.frc.team5700.utils.LinearAccelerationFilter;
  * command is running. The input is the averaged values of the left and right
  * encoders.
  */
-public class DriveStraight extends Command {
+public class DriveStraightWithStop extends Command {
 	private PIDController pidDistance;
 	private PIDController pidAngle;
 	private double driveOutput = 0;
@@ -34,11 +34,12 @@ public class DriveStraight extends Command {
 	private double angleKp = 0.01;
 	private double angleKi = 0.001;
 	private double angleKd = 0;
+	private double autoPower = 1.0;
 	
 	private LinearAccelerationFilter filter;
 
 
-	public DriveStraight(double distance) {
+	public DriveStraightWithStop(double distance) {
 		requires(Robot.drivetrain);
 		pidDistance = new PIDController(distanceKp, 
 				distanceKi, 
@@ -94,29 +95,32 @@ public class DriveStraight extends Command {
 	@Override
 	protected void initialize() {
 		// Get everything in a safe starting state.
+
 		Robot.drivetrain.reset();
 		pidDistance.reset();
 		pidAngle.reset();
 		pidDistance.enable();
 		pidAngle.enable();
-		System.out.println("DriveStraight initialize");
+		System.out.println("DriveStraightWithStop initialize");
 		
 		
     	Preferences prefs = Preferences.getInstance();
 		double filterSlopeTime = prefs.getDouble("FilterSlopeTime", 0.5);
+		autoPower = prefs.getDouble("Auto Power", 1.0);
+				
 		filter = new LinearAccelerationFilter(filterSlopeTime);
 	}
 
 	// Called repeatedly when this Command is scheduled to run
 	@Override
 	protected void execute() {
-		Robot.drivetrain.drive(driveOutput * filter.output(), driveCurve);
+		Robot.drivetrain.drive(driveOutput * filter.output() * autoPower, driveCurve);
 	}
 
 	// Make this return true when this Command no longer needs to run execute()
 	@Override
 	protected boolean isFinished() {
-		return pidDistance.onTarget();
+		return (Robot.gearSystem.gearSwitchPushed() || pidDistance.onTarget());
 	}
 
 	// Called once after isFinished returns true
@@ -124,7 +128,6 @@ public class DriveStraight extends Command {
 	protected void end() {
 
 		// Stop PID and the wheels
-
 		pidDistance.disable();
 		pidAngle.disable();
 		Robot.drivetrain.drive(0, 0);
@@ -133,6 +136,6 @@ public class DriveStraight extends Command {
 		pidDistance.reset();
 		pidAngle.reset();
 		
-		System.out.println("DriveStraight ended");
+		System.out.println("DriveStraightWithStop ended");
 	}
 }
