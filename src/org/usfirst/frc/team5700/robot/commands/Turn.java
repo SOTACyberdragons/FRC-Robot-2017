@@ -60,7 +60,7 @@ public class Turn extends Command {
 		
 		
     	Preferences prefs = Preferences.getInstance();
-		double filterSlopeTime = prefs.getDouble("TurnFilterSlopeTime", 0.2);
+		double filterSlopeTime = prefs.getDouble("Turn Filter Slope Time", 0.2);
 		filter = new LinearAccelerationFilter(filterSlopeTime);
 	}
 
