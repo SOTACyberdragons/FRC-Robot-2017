@@ -20,6 +20,7 @@ public class OI {
 
 		private Joystick rightStick = new Joystick(0);
 		private Joystick leftStick = new Joystick(1);
+		private JoystickButton gearDropBlock;
 	    
 	// Setting squaredInput to true decreases the sensitivity for tankdrive at lower speeds
 	private boolean squaredInput = true;
@@ -35,6 +36,8 @@ public class OI {
 		JoystickButton antiClimbButton = new JoystickButton(leftStick, 2);
 		
 		JoystickButton gearDropTrigger = new JoystickButton(rightStick, 1);
+		
+		JoystickButton gearDropBlock = new JoystickButton(rightStick, 2);
 		
 	    
 	    // There are a few additional built in buttons you can use. Additionally,
@@ -70,6 +73,11 @@ public class OI {
 	    public Joystick getRightStick() {
 	    	return rightStick;
 	    }
+	    
+	    public JoystickButton getGearDropBlock() {
+	    	return gearDropBlock;
+	    }
+	    
 	    public boolean getSquaredInput() {
 	    	return squaredInput;
 	    }

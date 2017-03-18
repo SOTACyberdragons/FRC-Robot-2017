@@ -117,10 +117,11 @@ public class DriveStraightWithStop extends Command {
 		Robot.drivetrain.drive(driveOutput * filter.output() * autoPower, driveCurve);
 	}
 
-	// Make this return true when this Command no longer needs to run execute()
+	//Finish when peg pushes the gear button; if it doesn't, the command will never end
+	//and the subsequent commands won't run
 	@Override
 	protected boolean isFinished() {
-		return (Robot.gearSystem.gearSwitchPushed() || pidDistance.onTarget());
+		return Robot.gearSystem.gearSwitchPushed();
 	}
 
 	// Called once after isFinished returns true

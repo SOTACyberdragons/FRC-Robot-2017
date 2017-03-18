@@ -110,7 +110,7 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
 		log();
-        if (gearSystem.gearSwitchPushed() && !wasPressed) {
+        if (!Robot.oi.getGearDropBlock().get() && gearSystem.gearSwitchPushed() && !wasPressed) {
         	SmartDashboard.putBoolean("Run Drop Command", true);
         	wasPressed = true;
         	gearDropAutomatic = new GearDropAutomatic();
