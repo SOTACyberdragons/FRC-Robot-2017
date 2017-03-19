@@ -34,6 +34,7 @@ public class DriveStraight extends Command {
 	private double angleKp = 0.01;
 	private double angleKi = 0.001;
 	private double angleKd = 0;
+	private double autoPower;
 	
 	private LinearAccelerationFilter filter;
 
@@ -104,13 +105,14 @@ public class DriveStraight extends Command {
 		
     	Preferences prefs = Preferences.getInstance();
 		double filterSlopeTime = prefs.getDouble("Filter Slope Time", 0.5);
+		autoPower = prefs.getDouble("Auto Power", 1.0);
 		filter = new LinearAccelerationFilter(filterSlopeTime);
 	}
 
 	// Called repeatedly when this Command is scheduled to run
 	@Override
 	protected void execute() {
-		Robot.drivetrain.drive(driveOutput * filter.output(), driveCurve);
+		Robot.drivetrain.drive(driveOutput * filter.output() * autoPower, driveCurve);
 	}
 
 	// Make this return true when this Command no longer needs to run execute()

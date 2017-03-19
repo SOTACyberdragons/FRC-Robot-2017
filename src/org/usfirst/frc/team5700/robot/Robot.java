@@ -1,17 +1,20 @@
 package org.usfirst.frc.team5700.robot;
 
 import org.usfirst.frc.team5700.robot.commands.DriveAndPlaceGear;
+import org.usfirst.frc.team5700.robot.commands.DriveAndPlaceGearSide;
 import org.usfirst.frc.team5700.robot.commands.DriveStraight;
 import org.usfirst.frc.team5700.robot.commands.GearDropAutomatic;
 import org.usfirst.frc.team5700.robot.commands.Turn;
 import org.usfirst.frc.team5700.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team5700.robot.subsystems.GearSystem;
 import org.usfirst.frc.team5700.robot.subsystems.RopeClimber;
+import org.usfirst.frc.team5700.utils.Side;
 
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -39,6 +42,7 @@ public class Robot extends IterativeRobot {
 	public static OI oi;
 	public static CameraServer cameraserver;
 	UsbCamera usbCamera0;
+	private Timer timer;
 	
     public static boolean wasPressed = false;
 	public static GearDropAutomatic gearDropAutomatic;
@@ -49,6 +53,9 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
+		
+		System.out.println("In robotInit");
+		timer = new Timer();
 		CameraServer.getInstance().startAutomaticCapture();
 		prefs = Preferences.getInstance();
 		double distance = prefs.getDouble("Auto Distance", 24.0);
@@ -62,7 +69,9 @@ public class Robot extends IterativeRobot {
 		
 		chooser = new SendableChooser<Command>();
 		chooser.addDefault("Cross Baseline", new DriveStraight(distance));
-		chooser.addObject("Place Middle Gear", new DriveAndPlaceGear());
+		chooser.addObject("Place Gear Middle", new DriveAndPlaceGear());
+		chooser.addObject("Place Gear Right ", new DriveAndPlaceGearSide(Side.RIGHT));
+		chooser.addObject("Place Gear Left", new DriveAndPlaceGearSide(Side.LEFT));
 		SmartDashboard.putData("Autonomous Chooser", chooser);
 		SmartDashboard.putString("Selected Autonomous", chooser.getSelected().getName());
 		autonomousCommand = chooser.getSelected();
@@ -80,7 +89,7 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void autonomousInit() {
-		
+		System.out.println("In autonomousInit");
 		SmartDashboard.putString("Selected Autonomous", chooser.getSelected().getName());
 		autonomousCommand = chooser.getSelected();
 		autonomousCommand.start(); // schedule the autonomous command
@@ -113,11 +122,21 @@ public class Robot extends IterativeRobot {
 		log();
 		if (Robot.oi.getGearDropBlock().get())
 			gearSystem.resetSwitchCount();
-        if (!Robot.oi.getGearDropBlock().get() && gearSystem.gearSwitchPushed() && !wasPressed) {
-        	SmartDashboard.putBoolean("Run Drop Command", true);
+//        if (!Robot.oi.getGearDropBlock().get() && gearSystem.gearSwitchPushed() && !wasPressed) {
+		if (gearSystem.gearSwitchPushed() && !wasPressed) {
+        	//SmartDashboard.putBoolean("Run Drop Command", true);
         	wasPressed = true;
-        	gearDropAutomatic = new GearDropAutomatic();
-        	gearDropAutomatic.start();			
+        	timer.start();
+        	SmartDashboard.putBoolean("Gear Trigger Pushed", true);
+//        	gearDropAutomatic = new GearDropAutomatic();
+//        	gearDropAutomatic.start();			
+        } else {
+        	if (timer.get() > 1.0) {
+        		SmartDashboard.putBoolean("Gear Trigger Pushed", false);
+        		timer.reset();
+        		wasPressed = false;
+        		gearSystem.resetSwitchCount();
+        	}
         }
 	}
 
