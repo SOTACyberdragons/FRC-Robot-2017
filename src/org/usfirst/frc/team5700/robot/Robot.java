@@ -120,8 +120,8 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
 		log();
-		if (Robot.oi.getGearDropBlock().get())
-			gearSystem.resetSwitchCount();
+		//if (Robot.oi.getGearDropBlock().get())
+		//	gearSystem.resetSwitchCount();
 //        if (!Robot.oi.getGearDropBlock().get() && gearSystem.gearSwitchPushed() && !wasPressed) {
 		if (gearSystem.gearSwitchPushed() && !wasPressed) {
         	//SmartDashboard.putBoolean("Run Drop Command", true);
@@ -132,10 +132,10 @@ public class Robot extends IterativeRobot {
 //        	gearDropAutomatic.start();			
         } else {
         	if (timer.get() > 1.0) {
-        		SmartDashboard.putBoolean("Gear Trigger Pushed", false);
         		timer.reset();
         		wasPressed = false;
         		gearSystem.resetSwitchCount();
+        		SmartDashboard.putBoolean("Gear Trigger Pushed", false);
         	}
         }
 	}
