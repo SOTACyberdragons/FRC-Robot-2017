@@ -4,10 +4,12 @@ import org.usfirst.frc.team5700.robot.commands.DriveAndPlaceGear;
 import org.usfirst.frc.team5700.robot.commands.DriveAndPlaceGearSide;
 import org.usfirst.frc.team5700.robot.commands.DriveStraight;
 import org.usfirst.frc.team5700.robot.commands.GearDropAutomatic;
+import org.usfirst.frc.team5700.robot.commands.NetworkTableTest;
 import org.usfirst.frc.team5700.robot.commands.Turn;
 import org.usfirst.frc.team5700.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team5700.robot.subsystems.GearSystem;
 import org.usfirst.frc.team5700.robot.subsystems.RopeClimber;
+import org.usfirst.frc.team5700.utils.NetworkTableSensor;
 import org.usfirst.frc.team5700.utils.Side;
 
 import edu.wpi.cscore.UsbCamera;
@@ -18,6 +20,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -31,6 +34,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends IterativeRobot {
 	Command autonomousCommand;
+	Command networkTableTest;
 	Preferences prefs;
 	
 	SendableChooser<Command> chooser;
@@ -42,7 +46,11 @@ public class Robot extends IterativeRobot {
 	public static OI oi;
 	public static CameraServer cameraserver;
 	UsbCamera usbCamera0;
-	private Timer timer;
+	
+	private Timer gearDropTimer;
+	
+	public static NetworkTable networkTable;
+	public static NetworkTableSensor networkTableSensor;
 	
     public static boolean wasPressed = false;
 	public static GearDropAutomatic gearDropAutomatic;
@@ -54,11 +62,18 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		
+		networkTable = NetworkTable.getTable("RomaFollowImage");
+		networkTableTest = new NetworkTableTest();
+		
 		System.out.println("In robotInit");
-		timer = new Timer();
+		
 		CameraServer.getInstance().startAutomaticCapture();
+		
+		gearDropTimer = new Timer();
+		
 		prefs = Preferences.getInstance();
 		double distance = prefs.getDouble("Auto Distance", 24.0);
+		
 		// Initialize all subsystems
 		drivetrain = new DriveTrain();
 		ropeClimber = new RopeClimber();
@@ -111,6 +126,7 @@ public class Robot extends IterativeRobot {
 		// continue until interrupted by another command, remove
 		// this line or comment it out.
 		autonomousCommand.cancel();
+		networkTableTest.start();
 	}
 
 	/**
@@ -119,6 +135,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
+		
 		log();
 		//if (Robot.oi.getGearDropBlock().get())
 		//	gearSystem.resetSwitchCount();
@@ -126,13 +143,13 @@ public class Robot extends IterativeRobot {
 		if (gearSystem.gearSwitchPushed() && !wasPressed) {
         	//SmartDashboard.putBoolean("Run Drop Command", true);
         	wasPressed = true;
-        	timer.start();
+        	gearDropTimer.start();
         	SmartDashboard.putBoolean("Gear Trigger Pushed", true);
 //        	gearDropAutomatic = new GearDropAutomatic();
 //        	gearDropAutomatic.start();			
         } else {
-        	if (timer.get() > 1.0) {
-        		timer.reset();
+        	if (gearDropTimer.get() > 1.0) {
+        		gearDropTimer.reset();
         		wasPressed = false;
         		gearSystem.resetSwitchCount();
         		SmartDashboard.putBoolean("Gear Trigger Pushed", false);

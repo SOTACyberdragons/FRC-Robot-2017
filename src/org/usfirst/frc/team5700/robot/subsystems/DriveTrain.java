@@ -79,6 +79,15 @@ public class DriveTrain extends Subsystem {
 	}	
 	
 	/**
+	 * Arcade Drive
+	 * @param rightStick joystick is for moving forwards and backwards
+	 * @param leftStick joystick is for turning
+	 */
+	public void arcadeDrive(Joystick leftStick, Joystick rightStick, boolean squaredInputs, double power) {
+		drive.arcadeDrive(-rightStick.getY()*power, -leftStick.getX()*power, squaredInputs);
+	}
+	
+	/**
 	 * Tank Drive
 	 * @param leftStick left set of wheels
 	 * @param rightStick right set of wheels
