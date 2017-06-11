@@ -1,4 +1,8 @@
 package org.usfirst.frc.team5700.robot;
+
+import static java.lang.Math.pow;
+import static java.lang.Math.sqrt;
+
 /**
  * The RobotMap is a mapping from the ports sensors and actuators are wired into
  * to a variable name. This provides flexibility changing wiring, makes checking
@@ -25,4 +29,13 @@ public class RobotMap {
 	public static final int CLIMB_MOTORS = 0;
 	
 	public static final int GEAR_TRIGGER = 0;
+	
+	
+	//Microsoft Lifecam3000
+	public static final int CAMERA_WIDTH = 160;
+	public static final int CAMERA_HEIGHT = 90;
+	//diagonal field of view in degrees
+	public static final double CAMERA_DIAGONAL_FOV = 68.5;
+	//vertical field of view
+	public static final double ANGLE_PER_PIXEL = CAMERA_DIAGONAL_FOV/sqrt(pow(CAMERA_WIDTH,2) + pow(CAMERA_HEIGHT,2));
 }

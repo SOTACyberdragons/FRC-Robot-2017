@@ -2,9 +2,11 @@ package org.usfirst.frc.team5700.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.usfirst.frc.team5700.robot.commands.AntiClimb;
 import org.usfirst.frc.team5700.robot.commands.ClimbUp;
+import org.usfirst.frc.team5700.robot.commands.FollowImage;
 import org.usfirst.frc.team5700.robot.commands.GearDrop;
 import org.usfirst.frc.team5700.robot.commands.ResetCounter;
 
@@ -38,6 +40,9 @@ public class OI {
 		
 		JoystickButton gearDropTrigger = new JoystickButton(rightStick, 1);
 		
+		JoystickButton followImage = new JoystickButton(leftStick, 5);
+		SmartDashboard.putString("FollowImage button", "Left Stick Button 5");
+		
 	    
 	    // There are a few additional built in buttons you can use. Additionally,
 	    // by subclassing Button you can create custom triggers and bind those to
@@ -57,6 +62,7 @@ public class OI {
 		
 		gearDropTrigger.whileHeld(new GearDrop());
 		gearDropBlock.whenReleased(new ResetCounter());
+		followImage.whileHeld(new FollowImage());
 		
 	    // Run the command while the button is being held down and interrupt it once
 	    // the button is released.

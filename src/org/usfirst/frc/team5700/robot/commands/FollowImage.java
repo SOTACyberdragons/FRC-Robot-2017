@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 import org.usfirst.frc.team5700.robot.Robot;
+import org.usfirst.frc.team5700.robot.RobotMap;
 import org.usfirst.frc.team5700.utils.LinearAccelerationFilter;
 
 /**
@@ -23,15 +24,15 @@ public class FollowImage extends Command {
 	private PIDController pidAngle;
 	private double driveOutput = 0;
 
-	private double angleKp = 0.01;
-	private double angleKi = 0.001;
-	private double angleKd = 0;
+	private double angleKp = 0.015;
+	private double angleKi = 0.00;
+	private double angleKd = 0.01;
 	private double autoPower;
 	
-	private LinearAccelerationFilter filter;
-
-
-	public FollowImage(double distance) {
+	//private LinearAccelerationFilter filter;
+	
+	public FollowImage() {
+		System.out.println("In FollowImage constructor");
 		pidAngle = new PIDController(angleKp,
 				angleKi,
 				angleKd, 
@@ -44,10 +45,10 @@ public class FollowImage extends Command {
 		});
 		
 		pidAngle.setOutputRange(-1.0, 1.0);
-		pidAngle.setAbsoluteTolerance(0.5);//TODO determine units
+		pidAngle.setAbsoluteTolerance(RobotMap.ANGLE_PER_PIXEL * RobotMap.CAMERA_WIDTH * 0.02); //10% of full angle
 		pidAngle.setSetpoint(0);
 		
-		LiveWindow.addActuator("Drive", "Angle controller", pidAngle);
+		LiveWindow.addActuator("FollowImage", "Angle controller", pidAngle);
 	}
 
 	// Called just before this Command runs the first time
@@ -61,21 +62,22 @@ public class FollowImage extends Command {
 		
 		
     	Preferences prefs = Preferences.getInstance();
-		double filterSlopeTime = prefs.getDouble("Filter Slope Time", 0.5);
+		//double filterSlopeTime = prefs.getDouble("Filter Slope Time", 0.5);
 		autoPower = prefs.getDouble("Auto Power", 1.0);
-		filter = new LinearAccelerationFilter(filterSlopeTime);
+		//filter = new LinearAccelerationFilter(filterSlopeTime);
 	}
 
 	// Called repeatedly when this Command is scheduled to run
 	@Override
 	protected void execute() {
-		Robot.drivetrain.drive(driveOutput * filter.output() * autoPower, 1);
+		Robot.drivetrain.drive(0.4, driveOutput * autoPower);
 	}
 
 	// Make this return true when this Command no longer needs to run execute()
 	@Override
 	protected boolean isFinished() {
-		return pidAngle.onTarget();
+		//return pidAngle.onTarget();
+		return false;
 	}
 
 	// Called once after isFinished returns true
@@ -91,5 +93,9 @@ public class FollowImage extends Command {
 		pidAngle.reset();
 		
 		System.out.println("FollowImage ended");
+	}
+	
+	protected void interrupted() {
+		end();
 	}
 }

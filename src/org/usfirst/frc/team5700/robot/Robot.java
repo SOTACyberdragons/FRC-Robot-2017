@@ -34,7 +34,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends IterativeRobot {
 	Command autonomousCommand;
-	Command networkTableTest;
+	//Command networkTableTest;
 	Preferences prefs;
 	
 	SendableChooser<Command> chooser;
@@ -45,7 +45,7 @@ public class Robot extends IterativeRobot {
 	public static GearSystem gearSystem;
 	public static OI oi;
 	public static CameraServer cameraserver;
-	UsbCamera usbCamera0;
+	UsbCamera camera;
 	
 	private Timer gearDropTimer;
 	
@@ -54,6 +54,7 @@ public class Robot extends IterativeRobot {
 	
     public static boolean wasPressed = false;
 	public static GearDropAutomatic gearDropAutomatic;
+	int exposure;
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -62,16 +63,27 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		
-		networkTable = NetworkTable.getTable("RomaFollowImage");
-		networkTableTest = new NetworkTableTest();
+		prefs = Preferences.getInstance();
+		
+		networkTable = NetworkTable.getTable("GRIP/grip");
+		//networkTableTest = new NetworkTableTest();
+		networkTableSensor = new NetworkTableSensor();
 		
 		System.out.println("In robotInit");
 		
-		CameraServer.getInstance().startAutomaticCapture();
+		exposure = prefs.getInt("Exposure", 20);
+
+		camera = CameraServer.getInstance().startAutomaticCapture();
+		camera.setFPS(prefs.getInt("FPS", 8));
+		camera.setResolution(RobotMap.CAMERA_WIDTH, RobotMap.CAMERA_HEIGHT);
+		camera.setExposureManual(exposure);
+		SmartDashboard.putNumber("Exposure value", exposure);
+		SmartDashboard.putString("Resolution", RobotMap.CAMERA_WIDTH + "x" + RobotMap.CAMERA_HEIGHT);
+		SmartDashboard.putNumber("Angle per Pixel", RobotMap.ANGLE_PER_PIXEL);
+		SmartDashboard.putNumber("X Angle", RobotMap.ANGLE_PER_PIXEL * 160);
 		
 		gearDropTimer = new Timer();
 		
-		prefs = Preferences.getInstance();
 		double distance = prefs.getDouble("Auto Distance", 24.0);
 		
 		// Initialize all subsystems
@@ -126,7 +138,12 @@ public class Robot extends IterativeRobot {
 		// continue until interrupted by another command, remove
 		// this line or comment it out.
 		autonomousCommand.cancel();
-		networkTableTest.start();
+		//networkTableTest.start();
+		
+		
+		camera.setExposureManual(exposure);
+		SmartDashboard.putNumber("Exposure value", exposure);
+		camera.setFPS(prefs.getInt("FPS", 8));
 	}
 
 	/**
@@ -135,6 +152,19 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
+		
+		//throttle range: -1.0..1.0
+		//usb camera manual exposure range: 0..100
+		//int exposure = (int) (100 * (oi.getLeftStick().getZ() + 1.0) / 2.0); //throttle ranges -1.0..1.0
+		//camera.setExposureManual(exposure);
+		//SmartDashboard.putNumber("Exposure", exposure);
+		
+		double[] defaultValue = new double[0];
+		double[] centerXarray = networkTable.getNumberArray("centerX", defaultValue);
+		double centerX = centerXarray.length < 1 ? 0 : (centerXarray[0]);
+		SmartDashboard.putNumber("Center X pixels", centerX);
+		SmartDashboard.putNumber("Center X angle", centerX * RobotMap.ANGLE_PER_PIXEL);
+		SmartDashboard.putNumber("Angle from Center", - (centerX - RobotMap.CAMERA_WIDTH / 2.0) * RobotMap.ANGLE_PER_PIXEL);
 		
 		log();
 		//if (Robot.oi.getGearDropBlock().get())
