@@ -3,20 +3,22 @@ package org.usfirst.frc.team5700.robot.commands;
 import org.usfirst.frc.team5700.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  *
  */
-public class GearDrop extends Command {
+public class GearHolderUp extends Command {
 
-    public GearDrop() {
+    public GearHolderUp() {
         // Use requires() here to declare subsystem dependencies
         requires(Robot.gearSystem);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.gearSystem.gearHolderDown();
+    	System.out.println("GearHolderUp initialize");
+    	Robot.gearSystem.gearHolderUp();
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -25,12 +27,16 @@ public class GearDrop extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return false;
+        return true;
     }
 
     // Called once after isFinished returns true
-    protected void end() {
-    	Robot.gearSystem.gearHolderUp();
+    protected void end(){
+    	Robot.gearSystem.resetSwitchCount();
+    	Robot.wasPressed = false;
+    	System.out.println("GearHolderUp ended");
+    	SmartDashboard.putBoolean("Gear Down", false);
+    	
     }
 
     // Called when another command which requires one or more of the same
