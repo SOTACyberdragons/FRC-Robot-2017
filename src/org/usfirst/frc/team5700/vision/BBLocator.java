@@ -7,18 +7,19 @@ public class BBLocator {
 	NetworkTable networkTable;
 	
 	double[] defaultValue = new double[0];
-	double[] coordinates = new double[4];
+	static double[] coordinates = new double[4];
 	double width, height, distanceFromBottom;
 	
-	double frameHeight = 786,
+	static double frameHeight = 786,
 			frameWidth = 1280,
 			angleOfView = 120;
-	double aspectRatio = frameWidth/frameHeight;
 	
-	int xTopLeft = 0, 
-		yTopLeft = 1, 
-		xBottomRight = 2, 
-		yBottomRight = 3;
+	static double aspectRatio = frameWidth/frameHeight;
+	
+	static int xTopLeft = 0,
+			yTopLeft = 1,
+			xBottomRight = 2,
+			yBottomRight = 3;
 	
 	public BBLocator() {
 		super();
@@ -31,7 +32,7 @@ public class BBLocator {
 	 * @param Number of pixels from the center of the frame
 	 * @return Angle between center of the object found and center of camera
 	 */
-	public double getAngleFromHeading() {
+	public static double getAngleFromHeading() {
 		double pixelsFromCenter = getBBPixelsFromCenter();
 		double angle;
 		angle = Math.atan((2 * pixelsFromCenter * Math.tan(angleOfView/2))/frameWidth);
@@ -41,14 +42,14 @@ public class BBLocator {
 	/**
 	 * @return is the vision program sees an object
 	 */
-	public boolean seesObject() {
+	public static boolean seesObject() {
 		return coordinates.length != 6;
 	}
 	
 	/**
 	 * @return center X pixel
 	 */
-	public double getBBCenterXPixel() {
+	public static double getBBCenterXPixel() {
 		double centerX;
 		centerX = (coordinates[xTopLeft] - coordinates[xBottomRight])/2;
 		return centerX;
@@ -92,7 +93,7 @@ public class BBLocator {
 	/**
 	 * @return number of pixels from the center of the frame
 	 */
-	public double getBBPixelsFromCenter() {
+	public static double getBBPixelsFromCenter() {
 		double distance;
 		distance = getBBCenterXPixel() - frameWidth/2;
 		return distance;
