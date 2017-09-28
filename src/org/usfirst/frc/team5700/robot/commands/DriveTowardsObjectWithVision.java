@@ -31,10 +31,12 @@ public class DriveTowardsObjectWithVision extends Command {
 	
 	private double angleSetpoint = 0;
 
-    public DriveTowardsObjectWithVision(double speed) {
+    public DriveTowardsObjectWithVision() {
        requires(Robot.drivetrain);
        
-       driveOutput = speed;
+       Preferences prefs;
+       prefs = Preferences.getInstance();
+       driveOutput = prefs.getDouble("Drive with Vision Speed", 0.3);
        
        pidAngle = new PIDController(angleKp,
 				angleKi,
