@@ -1,8 +1,6 @@
 package org.usfirst.frc.team5700.robot;
 
-import org.usfirst.frc.team5700.robot.commands.DriveAndPlaceGear;
 import org.usfirst.frc.team5700.robot.commands.DriveStraight;
-import org.usfirst.frc.team5700.robot.commands.GearDropAutomatic;
 import org.usfirst.frc.team5700.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team5700.robot.subsystems.GearSystem;
 import org.usfirst.frc.team5700.robot.subsystems.RopeClimber;
@@ -38,9 +36,6 @@ public class Robot extends IterativeRobot {
 	public static OI oi;
 	public static CameraServer cameraserver;
 	UsbCamera usbCamera0;
-	
-    public static boolean wasPressed = false;
-	public static GearDropAutomatic gearDropAutomatic;
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -64,7 +59,6 @@ public class Robot extends IterativeRobot {
 		
 		chooser = new SendableChooser<Command>();
 		chooser.addDefault("Cross Baseline", new DriveStraight(distance));
-		chooser.addObject("Place Middle Gear", new DriveAndPlaceGear());
 		SmartDashboard.putData("Autonomous Chooser", chooser);
 		SmartDashboard.putString("Selected Autonomous", chooser.getSelected().getName());
 		autonomousCommand = chooser.getSelected();
@@ -110,12 +104,6 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
 		log();
-        if (gearSystem.gearSwitchPushed() && !wasPressed) {
-        	SmartDashboard.putBoolean("Run Drop Command", true);
-        	wasPressed = true;
-        	gearDropAutomatic = new GearDropAutomatic();
-        	gearDropAutomatic.start();			
-        }
 	}
 
 	/**

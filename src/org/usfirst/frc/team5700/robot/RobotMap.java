@@ -23,6 +23,4 @@ public class RobotMap {
 	public static final int FRONT_RIGHT_DRIVE_MOTOR = 2;
 	
 	public static final int CLIMB_MOTORS = 0;
-	
-	public static final int GEAR_TRIGGER = 0;
 }
