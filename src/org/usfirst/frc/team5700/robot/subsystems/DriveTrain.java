@@ -21,6 +21,8 @@ import org.usfirst.frc.team5700.robot.commands.ArcadeDriveWithJoysticks;
  * and a gyro.
  */
 public class DriveTrain extends Subsystem {
+	private double driveSpeed = 1;
+	
 	private SpeedController frontLeftMotor = new Spark(RobotMap.FRONT_LEFT_DRIVE_MOTOR);
 	private SpeedController rearLeftMotor = new Spark(RobotMap.BACK_LEFT_DRIVE_MOTOR);
 	private SpeedController frontRightMotor = new Spark(RobotMap.FRONT_RIGHT_DRIVE_MOTOR);
@@ -75,7 +77,7 @@ public class DriveTrain extends Subsystem {
 	 * @param leftStick joystick is for turning
 	 */
 	public void arcadeDrive(Joystick leftStick, Joystick rightStick, boolean squaredInputs) {
-		drive.arcadeDrive(-rightStick.getY(), -leftStick.getX(), squaredInputs);
+		drive.arcadeDrive(-rightStick.getY() * driveSpeed, -leftStick.getX() , squaredInputs);
 	}	
 	
 	/**
@@ -135,5 +137,13 @@ public class DriveTrain extends Subsystem {
 	
 	public PIDSource getGyro() {
 		return gyro;
+	}
+	
+	public void setDriveSpeed(double speed) {
+		driveSpeed *= speed;
+	}
+	
+	public void resetDriveSpeed() {
+		driveSpeed = 1;
 	}
 }

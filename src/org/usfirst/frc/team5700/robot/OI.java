@@ -5,7 +5,13 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
 import org.usfirst.frc.team5700.robot.commands.AntiClimb;
 import org.usfirst.frc.team5700.robot.commands.ClimbUp;
-import org.usfirst.frc.team5700.robot.commands.DriveTowardsObjectWithVision;
+import org.usfirst.frc.team5700.robot.commands.IntakeGear;
+import org.usfirst.frc.team5700.robot.commands.ReverseDrive;
+import org.usfirst.frc.team5700.robot.commands.SlowDrive;
+import org.usfirst.frc.team5700.robot.commands.HangGear;
+import org.usfirst.frc.team5700.robot.commands.IntakeDown;
+//import org.usfirst.frc.team5700.robot.commands.DriveTowardsObjectWithVision;
+import org.usfirst.frc.team5700.robot.commands.SpitOut;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -30,35 +36,39 @@ public class OI {
     // Joystick stick = new Joystick(port);
     // Button button = new JoystickButton(stick, buttonNumber);
 	public OI() {
-		JoystickButton climbTrigger = new JoystickButton(leftStick, 1);
-		JoystickButton slowClimbButton = new JoystickButton(leftStick, 3);
-		JoystickButton antiClimbButton = new JoystickButton(leftStick, 2);
-		JoystickButton driveTowardObjectTrigger = new JoystickButton(rightStick, 1);
+		////set buttons
+		//drivetrain
+		JoystickButton reverseDrive = new JoystickButton(rightStick, ButtonMap.REVERSE_DRIVE);
+		JoystickButton slowDrive = new JoystickButton(rightStick, ButtonMap.SLOW_DRIVE);
 		
-	    
-	    // There are a few additional built in buttons you can use. Additionally,
-	    // by subclassing Button you can create custom triggers and bind those to
-	    // commands the same as any other Button.
-	    
-	    //// TRIGGERING COMMANDS WITH BUTTONS
-	    // Once you have a button, it's trivial to bind it to a button in one of
-	    // three ways:
-	    // Start the command when the button is pressed and let it run the command
-	    // until it is finished as determined by it's isFinished method.
-	    // button.whenPressed(new ExampleCommand());
-	    
-		climbTrigger.whileHeld(new ClimbUp(1));
-		slowClimbButton.whileHeld(new ClimbUp(0.4));
-		antiClimbButton.whileHeld(new AntiClimb());
-		driveTowardObjectTrigger.whileHeld(new DriveTowardsObjectWithVision());
+		//gear intake
+		JoystickButton intakeGear = new JoystickButton(rightStick, ButtonMap.INTAKE_GEAR);
+		JoystickButton hangGear = new JoystickButton(leftStick, ButtonMap.HANG_GEAR);
+		JoystickButton spitOut = new JoystickButton(leftStick, ButtonMap.SPIT_OUT);
+		JoystickButton intakeDown = new JoystickButton(leftStick, ButtonMap.INTAKE_DOWN);
+		JoystickButton switchSafetyOff = new JoystickButton(leftStick, ButtonMap.SWITCH_SAFETY_OFF);
 		
-	    // Run the command while the button is being held down and interrupt it once
-	    // the button is released.
-	    // button.whileHeld(new ExampleCommand());
+		//climber
+		JoystickButton fastClimb = new JoystickButton(rightStick, ButtonMap.FAST_CLIMB);
+		JoystickButton slowClimb = new JoystickButton(rightStick, ButtonMap.SLOW_CLIMB);
+		JoystickButton anticlimb = new JoystickButton(rightStick, ButtonMap.ANTICLIMB);
 	    
-	    // Start the command when the button is released  and let it run the command
-	    // until it is finished as determined by it's isFinished method.
-	    // button.whenReleased(new ExampleCommand());
+		////run commands
+		//drivetrain
+		reverseDrive.whileHeld(new ReverseDrive());
+		slowDrive.whileHeld(new SlowDrive());
+		
+		//gear intake
+		intakeGear.whileHeld(new IntakeGear(0.6, 0.2));
+		hangGear.whileHeld(new HangGear(0.5));
+		spitOut.whileHeld(new SpitOut(0.5));
+		intakeDown.whileHeld(new IntakeDown());
+		//switchSafetyOff.whileHeld(new SwitchSafetyOff);
+		
+		//climber
+		fastClimb.whileHeld(new ClimbUp(1));
+		slowClimb.whileHeld(new ClimbUp(0.4));
+		anticlimb.whileHeld(new AntiClimb());
 	}
 	    public Joystick getLeftStick() {
 	    	return leftStick;	

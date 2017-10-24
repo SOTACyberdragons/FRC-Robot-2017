@@ -2,7 +2,7 @@ package org.usfirst.frc.team5700.robot;
 
 import org.usfirst.frc.team5700.robot.commands.DriveStraight;
 import org.usfirst.frc.team5700.robot.subsystems.DriveTrain;
-import org.usfirst.frc.team5700.robot.subsystems.GearSystem;
+import org.usfirst.frc.team5700.robot.subsystems.GearIntake;
 import org.usfirst.frc.team5700.robot.subsystems.RopeClimber;
 
 import edu.wpi.cscore.UsbCamera;
@@ -32,7 +32,7 @@ public class Robot extends IterativeRobot {
 	public static DriveTrain drivetrain;
 	//public static PidDriveTrain pidDrivetrain;
 	public static RopeClimber ropeClimber;
-	public static GearSystem gearSystem;
+	public static GearIntake gearIntake;
 	public static OI oi;
 	public static CameraServer cameraserver;
 	UsbCamera usbCamera0;
@@ -50,7 +50,7 @@ public class Robot extends IterativeRobot {
 		drivetrain = new DriveTrain();
         //pidDrivetrain = new PidDriveTrain();
 		ropeClimber = new RopeClimber();
-		gearSystem = new GearSystem();
+		gearIntake = new GearIntake(0.8);
 		oi = new OI();
     	//cameraserver = CameraServer.getInstance();
         //usbCamera0 = cameraserver.startAutomaticCapture();
@@ -65,7 +65,7 @@ public class Robot extends IterativeRobot {
 
 		// Show what command your subsystem is running on the SmartDashboard
 		SmartDashboard.putData(drivetrain);
-		SmartDashboard.putData(gearSystem);
+		SmartDashboard.putData(gearIntake);
 		SmartDashboard.putData(ropeClimber);
 		
 		SmartDashboard.putData("DriveStraight", new DriveStraight(distance));
@@ -119,7 +119,7 @@ public class Robot extends IterativeRobot {
 	 */
 	private void log() {
 		drivetrain.log();
-		gearSystem.log();
+		//gearSystem.log();
 		ropeClimber.log();
 	}
 }

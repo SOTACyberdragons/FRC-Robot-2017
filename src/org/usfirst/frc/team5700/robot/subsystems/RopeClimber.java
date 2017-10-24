@@ -21,9 +21,10 @@ public class RopeClimber extends Subsystem {
 		climber = new Spark(RobotMap.CLIMB_MOTORS);
 	}
 	
+	
 	public void climb(double speed) {
-		this.speed = speed;
-		climber.set(speed);
+		this.speed = -speed;
+		climber.set(-speed);
 	}
 	
 	public void climb(double speed, Direction direction) {
