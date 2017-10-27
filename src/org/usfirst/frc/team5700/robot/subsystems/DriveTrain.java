@@ -22,6 +22,7 @@ import org.usfirst.frc.team5700.robot.commands.ArcadeDriveWithJoysticks;
  */
 public class DriveTrain extends Subsystem {
 	private double driveSpeed = 1;
+	private double direction = 1; 
 	
 	private SpeedController frontLeftMotor = new Spark(RobotMap.FRONT_LEFT_DRIVE_MOTOR);
 	private SpeedController rearLeftMotor = new Spark(RobotMap.BACK_LEFT_DRIVE_MOTOR);
@@ -77,7 +78,7 @@ public class DriveTrain extends Subsystem {
 	 * @param leftStick joystick is for turning
 	 */
 	public void arcadeDrive(Joystick leftStick, Joystick rightStick, boolean squaredInputs) {
-		drive.arcadeDrive(-rightStick.getY() * driveSpeed, -leftStick.getX() , squaredInputs);
+		drive.arcadeDrive(-rightStick.getY() * driveSpeed * direction, -leftStick.getX() * driveSpeed, squaredInputs);
 	}	
 	
 	/**
@@ -143,7 +144,15 @@ public class DriveTrain extends Subsystem {
 		driveSpeed *= speed;
 	}
 	
+	public void setDirection(double direction) {
+		this.direction = direction;
+	}
+	
 	public void resetDriveSpeed() {
 		driveSpeed = 1;
+	}
+	
+	public void resetDirection() {
+		direction = 1;
 	}
 }

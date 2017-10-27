@@ -2,13 +2,15 @@ package org.usfirst.frc.team5700.robot.commands;
 
 import org.usfirst.frc.team5700.robot.Robot;
 import org.usfirst.frc.team5700.utils.LinearAccelerationFilter;
-import org.usfirst.frc.team5700.vision.BBLocator;
+import org.usfirst.frc.team5700.vision.BBoxLocator;
+import org.usfirst.frc.team5700.vision.BBoxLocator.Angle;
 
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * 
@@ -20,23 +22,23 @@ public class DriveTowardsObjectWithVision extends Command {
 	
 	private PIDController pidAngle;
 	
-	private double angleKp = 0.01;
+	private double angleKp = 0.015;
 	private double angleKi = 0.001;
-	private double angleKd = 0;
+	private double angleKd = 0.001;
 	
 	private double driveCurve = 0;
 	private double driveOutput;
 	
 	private LinearAccelerationFilter filter;
 	
-	private double angleSetpoint = 0;
+	private BBoxLocator bBoxLocator = new BBoxLocator();
 
     public DriveTowardsObjectWithVision() {
        requires(Robot.drivetrain);
        
        Preferences prefs;
        prefs = Preferences.getInstance();
-       driveOutput = prefs.getDouble("Drive with Vision Speed", 0.3);
+       driveOutput = prefs.getDouble("Drive with Vision Speed", 0.5);
        
        pidAngle = new PIDController(angleKp,
 				angleKi,
@@ -50,8 +52,7 @@ public class DriveTowardsObjectWithVision extends Command {
 		});
        
 		pidAngle.setOutputRange(-1.0, 1.0);
-		pidAngle.setAbsoluteTolerance(0.5);
-		pidAngle.setSetpoint(angleSetpoint);
+		//pidAngle.setAbsoluteTolerance(0.0);
 		
 		LiveWindow.addActuator("Drive", "Angle controller", pidAngle);
     }
@@ -72,8 +73,14 @@ public class DriveTowardsObjectWithVision extends Command {
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
     	//updates setpoint only if vision sees object
-        if (BBLocator.seesObject()) {
-        	angleSetpoint = BBLocator.getAngleFromHeading();
+        Angle angle = bBoxLocator.getAngleFromHeading();
+
+    	SmartDashboard.putNumber("PID Vision Setpoint Angle", pidAngle.getSetpoint());
+    	
+        if (angle != null) {
+        	double m_angle = angle.angle;
+    		pidAngle.setSetpoint(m_angle);
+    		SmartDashboard.putNumber("Vision Angle", m_angle);
         }
         
     	Robot.drivetrain.drive(driveOutput * filter.output(), driveCurve);

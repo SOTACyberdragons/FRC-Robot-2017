@@ -16,8 +16,11 @@ public class ButtonMap {
 	
 	//Climbing
 	public static final int FAST_CLIMB = 6; //rightstick
-	public static final int SLOW_CLIMB = 7; //rightstick
+	public static final int SLOW_CLIMB = 2; //leftstick
 	public static final int ANTICLIMB = 11; //rightstick
+	
+	//Vision Test
+	public static final int TEST_VISION = 10; //leftstick
 	
 
 }

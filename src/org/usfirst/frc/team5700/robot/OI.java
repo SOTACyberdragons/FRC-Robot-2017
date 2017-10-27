@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
 import org.usfirst.frc.team5700.robot.commands.AntiClimb;
 import org.usfirst.frc.team5700.robot.commands.ClimbUp;
+import org.usfirst.frc.team5700.robot.commands.DriveTowardsObjectWithVision;
 import org.usfirst.frc.team5700.robot.commands.IntakeGear;
 import org.usfirst.frc.team5700.robot.commands.ReverseDrive;
 import org.usfirst.frc.team5700.robot.commands.SlowDrive;
@@ -46,22 +47,25 @@ public class OI {
 		JoystickButton hangGear = new JoystickButton(leftStick, ButtonMap.HANG_GEAR);
 		JoystickButton spitOut = new JoystickButton(leftStick, ButtonMap.SPIT_OUT);
 		JoystickButton intakeDown = new JoystickButton(leftStick, ButtonMap.INTAKE_DOWN);
-		JoystickButton switchSafetyOff = new JoystickButton(leftStick, ButtonMap.SWITCH_SAFETY_OFF);
+		//JoystickButton switchSafetyOff = new JoystickButton(leftStick, ButtonMap.SWITCH_SAFETY_OFF);
 		
 		//climber
 		JoystickButton fastClimb = new JoystickButton(rightStick, ButtonMap.FAST_CLIMB);
-		JoystickButton slowClimb = new JoystickButton(rightStick, ButtonMap.SLOW_CLIMB);
+		JoystickButton slowClimb = new JoystickButton(leftStick, ButtonMap.SLOW_CLIMB);
 		JoystickButton anticlimb = new JoystickButton(rightStick, ButtonMap.ANTICLIMB);
+		
+		//vision test
+		JoystickButton testVision = new JoystickButton(leftStick, 10);
 	    
 		////run commands
 		//drivetrain
-		reverseDrive.whileHeld(new ReverseDrive());
-		slowDrive.whileHeld(new SlowDrive());
+		//reverseDrive.whenActive(new ReverseDrive());
+		//slowDrive.whenActive(new SlowDrive());
 		
 		//gear intake
-		intakeGear.whileHeld(new IntakeGear(0.6, 0.2));
-		hangGear.whileHeld(new HangGear(0.5));
-		spitOut.whileHeld(new SpitOut(0.5));
+		intakeGear.whileHeld(new IntakeGear(-0.6, -0.2));
+		hangGear.whileHeld(new HangGear(0.7));
+		spitOut.whileHeld(new SpitOut(0.7));
 		intakeDown.whileHeld(new IntakeDown());
 		//switchSafetyOff.whileHeld(new SwitchSafetyOff);
 		
@@ -69,16 +73,21 @@ public class OI {
 		fastClimb.whileHeld(new ClimbUp(1));
 		slowClimb.whileHeld(new ClimbUp(0.4));
 		anticlimb.whileHeld(new AntiClimb());
+		
+		//test vision
+		testVision.whileHeld(new DriveTowardsObjectWithVision());
 	}
-	    public Joystick getLeftStick() {
+	    
+	public Joystick getLeftStick() {
 	    	return leftStick;	
 	    }
 	    
-	    public Joystick getRightStick() {
+	public Joystick getRightStick() {
 	    	return rightStick;
-	    }
-	    public boolean getSquaredInput() {
+	}
+	    
+	public boolean getSquaredInput() {
 	    	return squaredInput;
-	    }
+	}
 }
 
