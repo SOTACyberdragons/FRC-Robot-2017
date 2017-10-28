@@ -38,6 +38,7 @@ public class DriveTrain extends Subsystem {
 	public DriveTrain() {
 		super();
 
+		//What is this distance??? 0.042?
 		leftEncoder.setDistancePerPulse(0.042);
 		rightEncoder.setDistancePerPulse(0.042);
 

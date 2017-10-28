@@ -7,9 +7,9 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class GearRelease extends Command {
+public class ManualIntakeDown extends Command {
 
-    public GearRelease() {
+    public ManualIntakeDown() {
         // Use requires() here to declare subsystem dependencies
         requires(Robot.gearIntake);
     }
@@ -21,7 +21,6 @@ public class GearRelease extends Command {
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
     	Robot.gearIntake.gearIntakeDown();
-    	Robot.gearIntake.setMotorSpeed(0.3);
     }
 
     // Make this return true when this Command no longer needs to run execute()
@@ -31,11 +30,12 @@ public class GearRelease extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
+    	Robot.gearIntake.gearIntakeUp();
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
-    		end();
+    	end();
     }
 }

@@ -6,11 +6,11 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import org.usfirst.frc.team5700.robot.commands.AntiClimb;
 import org.usfirst.frc.team5700.robot.commands.ClimbUp;
 import org.usfirst.frc.team5700.robot.commands.DriveTowardsObjectWithVision;
-import org.usfirst.frc.team5700.robot.commands.IntakeGear;
+import org.usfirst.frc.team5700.robot.commands.ManualIntakeGear;
 import org.usfirst.frc.team5700.robot.commands.ReverseDrive;
 import org.usfirst.frc.team5700.robot.commands.SlowDrive;
-import org.usfirst.frc.team5700.robot.commands.HangGear;
-import org.usfirst.frc.team5700.robot.commands.IntakeDown;
+import org.usfirst.frc.team5700.robot.commands.ManualHangGear;
+import org.usfirst.frc.team5700.robot.commands.ManualIntakeDown;
 //import org.usfirst.frc.team5700.robot.commands.DriveTowardsObjectWithVision;
 import org.usfirst.frc.team5700.robot.commands.SpitOut;
 
@@ -36,26 +36,47 @@ public class OI {
     // number it is.
     // Joystick stick = new Joystick(port);
     // Button button = new JoystickButton(stick, buttonNumber);
+	
+	JoystickButton reverseDrive;
+	JoystickButton slowDrive;
+	
+	//gear intake
+	JoystickButton intakeGear;
+	JoystickButton hangGear;
+	JoystickButton spitOut;
+	JoystickButton intakeDown;
+	JoystickButton PegButtonSafetyOff;
+	//JoystickButton switchSafetyOff = new JoystickButton(leftStick, ButtonMap.SWITCH_SAFETY_OFF);
+	
+	//climber
+	JoystickButton fastClimb;
+	JoystickButton slowClimb;
+	JoystickButton anticlimb;
+	
+	//vision test
+	JoystickButton testVision;
+	
 	public OI() {
 		////set buttons
 		//drivetrain
-		JoystickButton reverseDrive = new JoystickButton(rightStick, ButtonMap.REVERSE_DRIVE);
-		JoystickButton slowDrive = new JoystickButton(rightStick, ButtonMap.SLOW_DRIVE);
+		reverseDrive = new JoystickButton(rightStick, ButtonMap.REVERSE_DRIVE);
+		slowDrive = new JoystickButton(rightStick, ButtonMap.SLOW_DRIVE);
 		
 		//gear intake
-		JoystickButton intakeGear = new JoystickButton(rightStick, ButtonMap.INTAKE_GEAR);
-		JoystickButton hangGear = new JoystickButton(leftStick, ButtonMap.HANG_GEAR);
-		JoystickButton spitOut = new JoystickButton(leftStick, ButtonMap.SPIT_OUT);
-		JoystickButton intakeDown = new JoystickButton(leftStick, ButtonMap.INTAKE_DOWN);
+		intakeGear = new JoystickButton(rightStick, ButtonMap.INTAKE_GEAR);
+		hangGear = new JoystickButton(leftStick, ButtonMap.HANG_GEAR);
+		spitOut = new JoystickButton(leftStick, ButtonMap.SPIT_OUT);
+		intakeDown = new JoystickButton(leftStick, ButtonMap.INTAKE_DOWN);
+		PegButtonSafetyOff = new JoystickButton(leftStick, ButtonMap.PEG_BUTTON_SAFETY_OFF);
 		//JoystickButton switchSafetyOff = new JoystickButton(leftStick, ButtonMap.SWITCH_SAFETY_OFF);
 		
 		//climber
-		JoystickButton fastClimb = new JoystickButton(rightStick, ButtonMap.FAST_CLIMB);
-		JoystickButton slowClimb = new JoystickButton(leftStick, ButtonMap.SLOW_CLIMB);
-		JoystickButton anticlimb = new JoystickButton(rightStick, ButtonMap.ANTICLIMB);
+		fastClimb = new JoystickButton(rightStick, ButtonMap.FAST_CLIMB);
+		slowClimb = new JoystickButton(rightStick, ButtonMap.SLOW_CLIMB);
+		anticlimb = new JoystickButton(rightStick, ButtonMap.ANTICLIMB);
 		
 		//vision test
-		JoystickButton testVision = new JoystickButton(leftStick, 10);
+		testVision = new JoystickButton(leftStick, 10);
 	    
 		////run commands
 		//drivetrain
@@ -63,10 +84,10 @@ public class OI {
 		//slowDrive.whenActive(new SlowDrive());
 		
 		//gear intake
-		intakeGear.whileHeld(new IntakeGear(-0.6, -0.2));
-		hangGear.whileHeld(new HangGear(0.7));
+		intakeGear.whileHeld(new ManualIntakeGear(-0.6, -0.3));
+		hangGear.whileHeld(new ManualHangGear(0.7));
 		spitOut.whileHeld(new SpitOut(0.7));
-		intakeDown.whileHeld(new IntakeDown());
+		intakeDown.whileHeld(new ManualIntakeDown());
 		//switchSafetyOff.whileHeld(new SwitchSafetyOff);
 		
 		//climber
@@ -88,6 +109,10 @@ public class OI {
 	    
 	public boolean getSquaredInput() {
 	    	return squaredInput;
+	}
+
+	public Object isPegButtonSafetyOff() {
+		return PegButtonSafetyOff.get();
 	}
 }
 

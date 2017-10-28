@@ -1,17 +1,20 @@
 package org.usfirst.frc.team5700.robot.commands;
 
-import org.usfirst.frc.team5700.robot.Robot;
-
 import edu.wpi.first.wpilibj.command.Command;
+import org.usfirst.frc.team5700.robot.Robot;
 
 /**
  *
  */
-public class GearRelease extends Command {
+public class ManualIntakeGear extends Command {
 
-    public GearRelease() {
+	double intakeSpeed, compressionSpeed;
+	
+    public ManualIntakeGear(double intakeSpeed, double compressionSpeed) {
         // Use requires() here to declare subsystem dependencies
         requires(Robot.gearIntake);
+        this.intakeSpeed = intakeSpeed;
+        this.compressionSpeed = compressionSpeed;
     }
 
     // Called just before this Command runs the first time
@@ -21,7 +24,7 @@ public class GearRelease extends Command {
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
     	Robot.gearIntake.gearIntakeDown();
-    	Robot.gearIntake.setMotorSpeed(0.3);
+    	Robot.gearIntake.setMotorSpeed(intakeSpeed);
     }
 
     // Make this return true when this Command no longer needs to run execute()
@@ -31,11 +34,13 @@ public class GearRelease extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
+    	Robot.gearIntake.gearIntakeUp();
+    	Robot.gearIntake.setMotorSpeed(compressionSpeed);
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
-    		end();
+    	end();
     }
 }

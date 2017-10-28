@@ -12,9 +12,10 @@ public class BBoxLocator {
 	
 	static final double frameHeight = 480,
 			frameWidth = 640,
-			angleOfView = 60; //degrees
+			ANGLE_OF_VIEW_DEG = 60, //degrees
+			ANGLE_OF_VIEW = ANGLE_OF_VIEW_DEG * Math.PI/180;
 	
-	static final double aspectRatio = frameWidth/frameHeight;
+	static final double aspectRatio = frameWidth / frameHeight;
 	
 	static final int xTopLeftIndex = 0,
 			yTopLeftIndex = 1,
@@ -22,12 +23,18 @@ public class BBoxLocator {
 			yBottomRightIndex = 3;
 
 	private static final double MAX_BBOX_SIZE = 180;
+
+	private static final double BOX_WIDTH_IN = 10.25;
+
+	private static final double ROBOT_CENTER = 8.0;
 	
-	public class Angle {
-		public double angle;
+	public class AngleDistance {
+		public double angleDeg;
+		public double distanceIn;
 		
-		public Angle(double angle) {
-			this.angle = angle;
+		public AngleDistance(double angleDeg, double distanceIn) {
+			this.angleDeg = angleDeg;
+			this.distanceIn = distanceIn;
 		}
 	}
 	
@@ -40,7 +47,7 @@ public class BBoxLocator {
 	 * @param Number of pixels from the center of the frame
 	 * @return Angle between center of the object found and center of camera, in degrees
 	 */
-	public Angle getAngleFromHeading() {
+	public AngleDistance getAngleFromHeading() {
 		double[] coordinates = networkTable.getNumberArray("BBoxCoordinates", defaultValue);
 		SmartDashboard.putString("coordinate array", coordinates.toString());
 		
@@ -50,13 +57,32 @@ public class BBoxLocator {
 		double centerX = (coordinates[xBottomRightIndex] + coordinates[xTopLeftIndex])/2;
 		SmartDashboard.putNumber("centerX", centerX);
 		
-		if (Math.abs(coordinates[xBottomRightIndex] - coordinates[xTopLeftIndex]) > MAX_BBOX_SIZE)
+		double boxWidth = Math.abs(coordinates[xBottomRightIndex] - coordinates[xTopLeftIndex]);
+		if (boxWidth > MAX_BBOX_SIZE)
 			return null;
 		
 		double pixelsFromCenter = centerX - frameWidth/2;
 		SmartDashboard.putNumber("pixelsFromCenter", pixelsFromCenter);
 		
-		double angle = (180/Math.PI) * Math.atan((pixelsFromCenter * Math.tan((angleOfView * Math.PI/180)/2))/(frameWidth/2));
-		return new Angle(angle);
+		double cameraAngle = Math.atan((pixelsFromCenter * 
+						Math.tan(ANGLE_OF_VIEW/2))
+						/(frameWidth/2));
+		
+		double distanceIn = frameWidth / boxWidth / 2 / 
+				Math.tan(ANGLE_OF_VIEW) * BOX_WIDTH_IN;
+		
+		//fudge: 0.05 * d^2
+		distanceIn = 0.05 * distanceIn * distanceIn;
+		
+		double angle = Math.atan(Math.sin(cameraAngle) / (ROBOT_CENTER / distanceIn + 
+				Math.cos(cameraAngle)));
+		
+		double angleDeg = angle * 180 / Math.PI;
+		double cameraAngleDeg = cameraAngle * 180 / Math.PI;
+		SmartDashboard.putNumber("Vision Robot Angle Deg", angleDeg);
+		SmartDashboard.putNumber("Vision Camera Angle Deg", cameraAngleDeg);
+		SmartDashboard.putNumber("Vision Distance In", distanceIn);
+		
+		return new AngleDistance(angleDeg, distanceIn);
 	}
 }

@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.usfirst.frc.team5700.robot.commands;
+package org.usfirst.frc.team5700.robot.auto;
 
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
@@ -120,7 +120,7 @@ public class DriveStraightWithStop extends Command {
 	// Make this return true when this Command no longer needs to run execute()
 	@Override
 	protected boolean isFinished() {
-		return (Robot.gearSystem.gearSwitchPushed() || pidDistance.onTarget());
+		return pidDistance.onTarget();
 	}
 
 	// Called once after isFinished returns true

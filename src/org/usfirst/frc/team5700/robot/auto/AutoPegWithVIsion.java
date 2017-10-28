@@ -1,4 +1,4 @@
-package org.usfirst.frc.team5700.robot.commands;
+package org.usfirst.frc.team5700.robot.auto;
 
 import org.usfirst.frc.team5700.robot.Robot;
 import org.usfirst.frc.team5700.utils.LinearAccelerationFilter;
@@ -19,7 +19,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  *
  */
 
-public class DriveTowardsObjectWithVision extends Command {
+public class AutoPegWithVIsion extends Command {
+	
+	private boolean pegButtonWasPressed;
 	
 	private PIDController pidAngle;
 	
@@ -34,7 +36,7 @@ public class DriveTowardsObjectWithVision extends Command {
 	
 	private BBoxLocator bBoxLocator = new BBoxLocator();
 
-    public DriveTowardsObjectWithVision() {
+    public AutoPegWithVIsion() {
        requires(Robot.drivetrain);
        
        //Preferences prefs;
@@ -76,21 +78,23 @@ public class DriveTowardsObjectWithVision extends Command {
     	//updates setpoint only if vision sees object
         AngleDistance angle = bBoxLocator.getAngleFromHeading();
 
-    	SmartDashboard.putNumber("PID Vision Setpoint Angle", pidAngle.getSetpoint());
+        SmartDashboard.putNumber("PID Vision Setpoint Angle", pidAngle.getSetpoint());
     	
         if (angle != null) {
-        	double m_angle = angle.angleDeg;
-        	double m_distanceIn = angle.distanceIn;
-        	Robot.drivetrain.reset();
-    		pidAngle.setSetpoint(m_angle);
+	        	double m_angle = angle.angleDeg;
+	        	double m_distanceIn = angle.distanceIn;
+	        	Robot.drivetrain.reset();
+	    		pidAngle.setSetpoint(m_angle);
         }
+        
+        if () 
         
     	Robot.drivetrain.drive(driveOutput * filter.output(), driveCurve);
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-		return false;
+		return Robot.oi.isPegButtonSafetyOff();
     }
 
     // Called once after isFinished returns true
@@ -108,6 +112,6 @@ public class DriveTowardsObjectWithVision extends Command {
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
-    	end();
+    		end();
     }
 }
