@@ -7,8 +7,6 @@ import org.usfirst.frc.team5700.robot.commands.AntiClimb;
 import org.usfirst.frc.team5700.robot.commands.ClimbUp;
 import org.usfirst.frc.team5700.robot.commands.DriveTowardsObjectWithVision;
 import org.usfirst.frc.team5700.robot.commands.ManualIntakeGear;
-import org.usfirst.frc.team5700.robot.commands.ReverseDrive;
-import org.usfirst.frc.team5700.robot.commands.SlowDrive;
 import org.usfirst.frc.team5700.robot.commands.ManualHangGear;
 import org.usfirst.frc.team5700.robot.commands.ManualIntakeDown;
 //import org.usfirst.frc.team5700.robot.commands.DriveTowardsObjectWithVision;

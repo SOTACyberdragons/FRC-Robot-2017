@@ -30,10 +30,25 @@ public class DriveTrain extends Subsystem {
 	private SpeedController rearRightMotor = new Spark(RobotMap.BACK_RIGHT_DRIVE_MOTOR);		
 
 	private RobotDrive drive = new RobotDrive(frontLeftMotor, rearLeftMotor, frontRightMotor, rearRightMotor);
+	
+	private ADXRS450_Gyro gyro = new ADXRS450_Gyro();
 
 	private Encoder leftEncoder = new Encoder(1, 2, false);
 	private Encoder rightEncoder = new Encoder(3, 4, true);
-	private ADXRS450_Gyro gyro = new ADXRS450_Gyro();
+
+	//Encoder specs: S4T-360-250-S-D (usdigital.com)
+	//S4T Shaft Encoder, 360 CPR, 1/4" Dia Shaft, Single-Ended, Default Torque
+	//Encoder Distance Constants
+    public static final double WHEEL_DIAMETER = 6; //Inches
+    public static final double PULSE_PER_REVOLUTION = 360;
+    public static final double ENCODER_GEAR_RATIO = 1;
+    public static final double GEAR_RATIO = 64.0/20.0; //TODO: need our ratio
+    public static final double FUDGE_FACTOR = 1.0;
+
+
+    final double distancePerPulse = Math.PI * WHEEL_DIAMETER / PULSE_PER_REVOLUTION /
+        		ENCODER_GEAR_RATIO / GEAR_RATIO * FUDGE_FACTOR;
+
 
 	public DriveTrain() {
 		super();

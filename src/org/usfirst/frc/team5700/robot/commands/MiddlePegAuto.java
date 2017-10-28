@@ -1,13 +1,14 @@
-package org.usfirst.frc.team5700.robot.auto;
+package org.usfirst.frc.team5700.robot.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 /**
  *
  */
-public class CenterPegAuto extends CommandGroup {
+public class MiddlePegAuto extends CommandGroup {
 
-    public CenterPegAuto() {
+    public MiddlePegAuto() {
+        // Add Commands here:
         // e.g. addSequential(new Command1());
         //      addSequential(new Command2());
         // these will run in order.
@@ -23,13 +24,5 @@ public class CenterPegAuto extends CommandGroup {
         // e.g. if Command1 requires chassis, and Command2 requires arm,
         // a CommandGroup containing them would require both the chassis and the
         // arm.
-    	
-    		
-    		addSequential(new AutoPegWithVIsion());
-    		
-    		//drive back and hang gear
-    		addSequential(new HangGear(), 0.5);
-    		addParallel(new DriveStraightWithStop(-48));
-    		
     }
 }

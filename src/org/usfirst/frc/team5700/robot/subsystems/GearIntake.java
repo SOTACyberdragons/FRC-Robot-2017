@@ -2,6 +2,7 @@ package org.usfirst.frc.team5700.robot.subsystems;
 
 import org.usfirst.frc.team5700.robot.RobotMap;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -12,21 +13,28 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class GearIntake extends Subsystem {
     
 	private DoubleSolenoid leftPiston, rightPiston;
-	Spark intakeMotor;
-	double intakeSpeed;
-	double holdSpeed = 0.2;
+	Spark rollerMotor;
+	double intakeRollerSpeed = 0.8;
+	double holdRollerSpeed = 0.3;
+	double rollerHangSpeed = -0.6;
+	
+	DigitalInput pegSwitch;
     
-    public GearIntake(double speed) {
-    	super();
-    	leftPiston = new DoubleSolenoid(0, 1);
-    	leftPiston.set(DoubleSolenoid.Value.kForward);
-    	
-    	rightPiston = new DoubleSolenoid(2, 3);
-    	rightPiston.set(DoubleSolenoid.Value.kForward);
-    	
-    	intakeMotor = new Spark(RobotMap.GEAR_INTAKE);
-    	this.intakeSpeed = speed;
+    public GearIntake() {
+    		super();
+	    	leftPiston = new DoubleSolenoid(0, 1);
+	    	leftPiston.set(DoubleSolenoid.Value.kForward);
+	    	
+	    	rightPiston = new DoubleSolenoid(2, 3);
+	    	rightPiston.set(DoubleSolenoid.Value.kForward);
+	    	
+	    	rollerMotor = new Spark(RobotMap.GEAR_INTAKE);
+	    	
+	    pegSwitch = new DigitalInput(RobotMap.PEG_SWITCH);
     }
+	public boolean getPegSwitch() {
+		return pegSwitch.get();
+	}
 	
 	public void gearIntakeDown() {
 		leftPiston.set(DoubleSolenoid.Value.kReverse);
@@ -38,8 +46,24 @@ public class GearIntake extends Subsystem {
 		rightPiston.set(DoubleSolenoid.Value.kForward);
 	}
 	
-	public void setMotorSpeed(double speed) {
-		intakeMotor.set(speed);
+	public void setRollerSpeed(double speed) {
+		rollerMotor.set(speed);
+	}
+	
+	public void intakeGear() {
+		rollerMotor.set(intakeRollerSpeed);
+	}
+
+	public void rollerHoldGear() {
+		rollerMotor.set(holdRollerSpeed);
+	}
+	
+	public void rollerHangGear() {
+		rollerMotor.set(rollerHangSpeed);
+	}
+
+	public void stopRoller() {
+		rollerMotor.set(0.0);
 	}
 
 	@Override

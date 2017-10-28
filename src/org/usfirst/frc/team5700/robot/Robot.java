@@ -1,12 +1,12 @@
 package org.usfirst.frc.team5700.robot;
 
-import org.usfirst.frc.team5700.robot.commands.DriveStraight;
+import org.usfirst.frc.team5700.robot.auto.AutoCrossBaseline;
+import org.usfirst.frc.team5700.robot.auto.AutoMiddlePeg;
+import org.usfirst.frc.team5700.robot.auto.AutoSidePeg;
 import org.usfirst.frc.team5700.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team5700.robot.subsystems.GearIntake;
 import org.usfirst.frc.team5700.robot.subsystems.RopeClimber;
 
-import edu.wpi.cscore.UsbCamera;
-import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Command;
@@ -24,18 +24,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * directory.
  */
 public class Robot extends IterativeRobot {
-	Command autonomousCommand;
-	Preferences prefs;
+	private Command autonomousCommand;
+	public static Preferences prefs;
 	
 	SendableChooser<Command> chooser;
 
 	public static DriveTrain drivetrain;
-	//public static PidDriveTrain pidDrivetrain;
 	public static RopeClimber ropeClimber;
 	public static GearIntake gearIntake;
 	public static OI oi;
-	public static CameraServer cameraserver;
-	UsbCamera usbCamera0;
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -43,22 +40,20 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-		CameraServer.getInstance().startAutomaticCapture();
 		prefs = Preferences.getInstance();
-		double distance = prefs.getDouble("Auto Distance", 24.0);
+		
 		// Initialize all subsystems
 		drivetrain = new DriveTrain();
-        //pidDrivetrain = new PidDriveTrain();
 		ropeClimber = new RopeClimber();
-		gearIntake = new GearIntake(0.8);
+		gearIntake = new GearIntake();
 		oi = new OI();
-    	//cameraserver = CameraServer.getInstance();
-        //usbCamera0 = cameraserver.startAutomaticCapture();
 
 		// instantiate the command used for the autonomous period
-		
 		chooser = new SendableChooser<Command>();
-		chooser.addDefault("Cross Baseline", new DriveStraight(distance));
+		chooser.addDefault("Cross Baseline", new AutoCrossBaseline());
+		chooser.addObject("Middle Peg Auto", new AutoMiddlePeg());
+		chooser.addObject("Right Peg Auto", new AutoSidePeg("right"));
+		chooser.addObject("Left Peg Auto", new AutoSidePeg("left"));
 		SmartDashboard.putData("Autonomous Chooser", chooser);
 		SmartDashboard.putString("Selected Autonomous", chooser.getSelected().getName());
 		autonomousCommand = chooser.getSelected();
@@ -67,14 +62,12 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putData(drivetrain);
 		SmartDashboard.putData(gearIntake);
 		SmartDashboard.putData(ropeClimber);
-		
-		SmartDashboard.putData("DriveStraight", new DriveStraight(distance));
 	}
 
 	@Override
 	public void autonomousInit() {
 		
-		SmartDashboard.putString("Selected Autonomous", chooser.getSelected().getName());
+		SmartDashboard.putString("Middle Peg", chooser.getSelected().getName());
 		autonomousCommand = chooser.getSelected();
 		autonomousCommand.start(); // schedule the autonomous command
 	}
@@ -107,7 +100,7 @@ public class Robot extends IterativeRobot {
 	}
 	
 	/**
-	 * This function is called periodically during test mode
+	 * This function is called periodically dulring test mode
 	 */
 	@Override
 	public void testPeriodic() {

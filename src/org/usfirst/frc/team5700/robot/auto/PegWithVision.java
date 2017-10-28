@@ -4,11 +4,8 @@ import org.usfirst.frc.team5700.robot.Robot;
 import org.usfirst.frc.team5700.utils.LinearAccelerationFilter;
 import org.usfirst.frc.team5700.vision.BBoxLocator;
 import org.usfirst.frc.team5700.vision.BBoxLocator.AngleDistance;
-import org.usfirst.frc.team5700.vision.BBoxLocator.AngleDistance;
-
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
-import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -19,9 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  *
  */
 
-public class AutoPegWithVIsion extends Command {
-	
-	private boolean pegButtonWasPressed;
+public class PegWithVision extends Command {
 	
 	private PIDController pidAngle;
 	
@@ -34,14 +29,14 @@ public class AutoPegWithVIsion extends Command {
 	
 	private LinearAccelerationFilter filter;
 	
+	private boolean useAccelerationFiler;
+	
 	private BBoxLocator bBoxLocator = new BBoxLocator();
 
-    public AutoPegWithVIsion() {
+    public PegWithVision(boolean useAccelerationFiler) {
        requires(Robot.drivetrain);
        
-       //Preferences prefs;
-       //prefs = Preferences.getInstance();
-       driveOutput = 0.8; //prefs.getDouble("Drive with Vision Speed", 0.8);
+       driveOutput = Robot.prefs.getDouble("Drive with Vision Speed", 0.8);
        
        pidAngle = new PIDController(angleKp,
 				angleKi,
@@ -55,9 +50,8 @@ public class AutoPegWithVIsion extends Command {
 		});
        
 		pidAngle.setOutputRange(-1.0, 1.0);
-		//pidAngle.setAbsoluteTolerance(0.0);
 		
-		LiveWindow.addActuator("Drive", "Angle Controller", pidAngle);
+		LiveWindow.addActuator("drivetrain", "Peg Vision Angle Controller", pidAngle);
     }
 
     // Called just before this Command runs the first time
@@ -65,11 +59,9 @@ public class AutoPegWithVIsion extends Command {
     	Robot.drivetrain.reset();
 		pidAngle.reset();
 		pidAngle.enable();
-		System.out.println("DriveStraight initialize");
 		
+		double filterSlopeTime = Robot.prefs.getDouble("FilterSlopeTime", 0.2);
 		
-    	Preferences prefs = Preferences.getInstance();
-		double filterSlopeTime = prefs.getDouble("FilterSlopeTime", 0.5);
 		filter = new LinearAccelerationFilter(filterSlopeTime);
 	}
 
@@ -81,20 +73,18 @@ public class AutoPegWithVIsion extends Command {
         SmartDashboard.putNumber("PID Vision Setpoint Angle", pidAngle.getSetpoint());
     	
         if (angle != null) {
-	        	double m_angle = angle.angleDeg;
-	        	double m_distanceIn = angle.distanceIn;
+        		//TODO why does reseting gyro work
 	        	Robot.drivetrain.reset();
-	    		pidAngle.setSetpoint(m_angle);
+	    		pidAngle.setSetpoint(angle.angleDeg);
         }
         
-        if () 
-        
-    	Robot.drivetrain.drive(driveOutput * filter.output(), driveCurve);
+    	Robot.drivetrain.drive(driveOutput * (useAccelerationFiler ? filter.output() : 1), driveCurve);
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-		return Robot.oi.isPegButtonSafetyOff();
+        //switch off when peg pushes flap
+    	return !Robot.gearIntake.getPegSwitch();
     }
 
     // Called once after isFinished returns true
@@ -102,11 +92,9 @@ public class AutoPegWithVIsion extends Command {
     	// Stop PID and the wheels
 
 		pidAngle.disable();
+		pidAngle.reset();
 		Robot.drivetrain.drive(0, 0);
 		Robot.drivetrain.reset();
-		pidAngle.reset();
-		
-		System.out.println("DriveStraight ended");
     }
 
     // Called when another command which requires one or more of the same

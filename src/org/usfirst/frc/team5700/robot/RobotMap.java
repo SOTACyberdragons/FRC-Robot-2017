@@ -17,6 +17,7 @@ public class RobotMap {
     // public static int rangefinderModule = 1;
 	 //Climbing motors
 
+	//PWM
 	public static final int BACK_LEFT_DRIVE_MOTOR = 0;
 	public static final int BACK_RIGHT_DRIVE_MOTOR = 2;
 	public static final int FRONT_LEFT_DRIVE_MOTOR = 1;
@@ -25,4 +26,7 @@ public class RobotMap {
 	public static final int CLIMB_MOTORS = 5;
 	
 	public static final int GEAR_INTAKE = 4;
+	
+	//DIO
+	public static final int PEG_SWITCH = 4;
 }

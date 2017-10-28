@@ -4,8 +4,6 @@ import org.usfirst.frc.team5700.robot.Robot;
 import org.usfirst.frc.team5700.utils.LinearAccelerationFilter;
 import org.usfirst.frc.team5700.vision.BBoxLocator;
 import org.usfirst.frc.team5700.vision.BBoxLocator.AngleDistance;
-import org.usfirst.frc.team5700.vision.BBoxLocator.AngleDistance;
-
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.Preferences;
@@ -80,7 +78,6 @@ public class DriveTowardsObjectWithVision extends Command {
     	
         if (angle != null) {
         	double m_angle = angle.angleDeg;
-        	double m_distanceIn = angle.distanceIn;
         	Robot.drivetrain.reset();
     		pidAngle.setSetpoint(m_angle);
         }
