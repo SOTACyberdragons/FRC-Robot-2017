@@ -3,13 +3,12 @@ package org.usfirst.frc.team5700.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
+import org.usfirst.frc.team5700.robot.auto.PegWithVision;
 import org.usfirst.frc.team5700.robot.commands.AntiClimb;
 import org.usfirst.frc.team5700.robot.commands.ClimbUp;
-import org.usfirst.frc.team5700.robot.commands.DriveTowardsObjectWithVision;
 import org.usfirst.frc.team5700.robot.commands.ManualIntakeGear;
 import org.usfirst.frc.team5700.robot.commands.ManualHangGear;
 import org.usfirst.frc.team5700.robot.commands.ManualIntakeDown;
-//import org.usfirst.frc.team5700.robot.commands.DriveTowardsObjectWithVision;
 import org.usfirst.frc.team5700.robot.commands.SpitOut;
 
 /**
@@ -94,7 +93,7 @@ public class OI {
 		anticlimb.whileHeld(new AntiClimb());
 		
 		//test vision
-		testVision.whileHeld(new DriveTowardsObjectWithVision());
+		testVision.whileHeld(new PegWithVision(true));
 	}
 	    
 	public Joystick getLeftStick() {
@@ -109,7 +108,7 @@ public class OI {
 	    	return squaredInput;
 	}
 
-	public Object isPegButtonSafetyOff() {
+	public boolean isPegButtonSafetyOff() {
 		return PegButtonSafetyOff.get();
 	}
 }
