@@ -60,6 +60,8 @@ public class PegWithVision extends Command {
 		pidAngle.reset();
 		pidAngle.enable();
 		
+		Robot.gearIntake.lightOn();
+		
 		double filterSlopeTime = Robot.prefs.getDouble("FilterSlopeTime", 0.2);
 		
 		filter = new LinearAccelerationFilter(filterSlopeTime);
@@ -95,6 +97,8 @@ public class PegWithVision extends Command {
 		pidAngle.reset();
 		Robot.drivetrain.drive(0, 0);
 		Robot.drivetrain.reset();
+		
+		Robot.gearIntake.lightOff();
     }
 
     // Called when another command which requires one or more of the same
