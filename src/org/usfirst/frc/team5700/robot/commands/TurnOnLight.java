@@ -1,44 +1,36 @@
-package org.usfirst.frc.team5700.robot.auto;
+package org.usfirst.frc.team5700.robot.commands;
 
 import org.usfirst.frc.team5700.robot.Robot;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
  *
  */
-public class HangGear extends Command {
-	
-	Timer timer = new Timer();
+public class TurnOnLight extends Command {
 
-	double gearIntakeDownTime = 0.5;
-	
-    public HangGear() {
+    public TurnOnLight() {
         // Use requires() here to declare subsystem dependencies
         requires(Robot.gearIntake);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	timer.start();
+    	Robot.gearIntake.lightOn();
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.gearIntake.gearIntakeDown();
-    	Robot.gearIntake.intakeGear();
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return timer.get() > gearIntakeDownTime;
+        return false;
     }
 
     // Called once after isFinished returns true
     protected void end() {
-		Robot.gearIntake.gearIntakeUp();
-		Robot.gearIntake.stopRoller();
+    	Robot.gearIntake.lightOff();
     }
 
     // Called when another command which requires one or more of the same

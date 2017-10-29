@@ -28,5 +28,5 @@ public class RobotMap {
 	public static final int GEAR_INTAKE = 4;
 	
 	//DIO
-	public static final int PEG_SWITCH = 4;
+	public static final int PEG_SWITCH = 5;
 }

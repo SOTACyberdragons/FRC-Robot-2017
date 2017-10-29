@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
-import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
@@ -21,7 +20,7 @@ import org.usfirst.frc.team5700.utils.LinearAccelerationFilter;
  * command is running. The input is the averaged values of the left and right
  * encoders.
  */
-public class DriveStraightWithStop extends Command {
+public class AutoDriveStraightWithStop extends Command {
 	private PIDController pidDistance;
 	private PIDController pidAngle;
 	private double driveOutput = 0;
@@ -39,7 +38,7 @@ public class DriveStraightWithStop extends Command {
 	private LinearAccelerationFilter filter;
 
 
-	public DriveStraightWithStop(double distance) {
+	public AutoDriveStraightWithStop(double distance) {
 		requires(Robot.drivetrain);
 		pidDistance = new PIDController(distanceKp, 
 				distanceKi, 
@@ -85,7 +84,7 @@ public class DriveStraightWithStop extends Command {
 		
 		pidAngle.setOutputRange(-1.0, 1.0);
 		pidAngle.setAbsoluteTolerance(0.5);
-		pidAngle.setSetpoint(0);
+		pidAngle.setSetpoint(0.0);
 		
 		LiveWindow.addActuator("Drive", "Distance Controller", pidDistance);
 		LiveWindow.addActuator("Drive", "Angle controller", pidAngle);
@@ -103,10 +102,8 @@ public class DriveStraightWithStop extends Command {
 		pidAngle.enable();
 		System.out.println("DriveStraightWithStop initialize");
 		
-		
-    	Preferences prefs = Preferences.getInstance();
-		double filterSlopeTime = prefs.getDouble("FilterSlopeTime", 0.5);
-		autoPower = prefs.getDouble("Auto Power", 1.0);
+		double filterSlopeTime = Robot.prefs.getDouble("FilterSlopeTime", 0.5);
+		autoPower = Robot.prefs.getDouble("Auto Power", 1.0);
 				
 		filter = new LinearAccelerationFilter(filterSlopeTime);
 	}
@@ -120,7 +117,7 @@ public class DriveStraightWithStop extends Command {
 	// Make this return true when this Command no longer needs to run execute()
 	@Override
 	protected boolean isFinished() {
-		return (Robot.gearIntake.getPegSwitch() || pidDistance.onTarget());
+		return pidDistance.onTarget();
 	}
 
 	// Called once after isFinished returns true

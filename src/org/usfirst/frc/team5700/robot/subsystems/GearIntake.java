@@ -16,9 +16,9 @@ public class GearIntake extends Subsystem {
 	private DoubleSolenoid leftPiston, rightPiston;
 	private Solenoid ringLight;
 	Spark rollerMotor;
-	double intakeRollerSpeed = 0.8;
-	double holdRollerSpeed = 0.3;
-	double rollerHangSpeed = -0.6;
+	double intakeRollerSpeed = -0.8;
+	double holdRollerSpeed = -0.3;
+	double rollerHangSpeed = 0.4;
 	
 	DigitalInput pegSwitch;
     

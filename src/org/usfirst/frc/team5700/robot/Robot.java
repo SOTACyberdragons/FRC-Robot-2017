@@ -1,8 +1,8 @@
 package org.usfirst.frc.team5700.robot;
 
-import org.usfirst.frc.team5700.robot.auto.AutoCrossBaseline;
-import org.usfirst.frc.team5700.robot.auto.AutoMiddlePeg;
-import org.usfirst.frc.team5700.robot.auto.AutoSidePeg;
+import org.usfirst.frc.team5700.robot.commands.AutoCrossBaseline;
+import org.usfirst.frc.team5700.robot.commands.AutoMiddlePeg;
+import org.usfirst.frc.team5700.robot.commands.AutoSidePeg;
 import org.usfirst.frc.team5700.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team5700.robot.subsystems.GearIntake;
 import org.usfirst.frc.team5700.robot.subsystems.RopeClimber;
@@ -55,7 +55,6 @@ public class Robot extends IterativeRobot {
 		chooser.addObject("Right Peg Auto", new AutoSidePeg("right"));
 		chooser.addObject("Left Peg Auto", new AutoSidePeg("left"));
 		SmartDashboard.putData("Autonomous Chooser", chooser);
-		SmartDashboard.putString("Selected Autonomous", chooser.getSelected().getName());
 		autonomousCommand = chooser.getSelected();
 
 		// Show what command your subsystem is running on the SmartDashboard
@@ -67,7 +66,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousInit() {
 		
-		SmartDashboard.putString("Middle Peg", chooser.getSelected().getName());
+		SmartDashboard.putString("Autonomous Mode: ", chooser.getSelected().getName());
 		autonomousCommand = chooser.getSelected();
 		autonomousCommand.start(); // schedule the autonomous command
 	}

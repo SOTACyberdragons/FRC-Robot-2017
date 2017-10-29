@@ -1,4 +1,4 @@
-package org.usfirst.frc.team5700.robot.auto;
+package org.usfirst.frc.team5700.robot.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
@@ -11,6 +11,6 @@ public class AutoCrossBaseline extends CommandGroup {
 	double distance = 100;
 	
     public AutoCrossBaseline() {
-    	addSequential(new DriveStraightWithStop(distance));
+    	addSequential(new DrivePastDistance(distance, 0.7, true), 3);
     }
 }

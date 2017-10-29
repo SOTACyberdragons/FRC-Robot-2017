@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import org.usfirst.frc.team5700.robot.Robot;
 import org.usfirst.frc.team5700.robot.RobotMap;
 import org.usfirst.frc.team5700.robot.commands.ArcadeDriveWithJoysticks;
 
@@ -21,8 +22,6 @@ import org.usfirst.frc.team5700.robot.commands.ArcadeDriveWithJoysticks;
  * and a gyro.
  */
 public class DriveTrain extends Subsystem {
-	private double driveSpeed = 1;
-	private double direction = 1; 
 	
 	private SpeedController frontLeftMotor = new Spark(RobotMap.FRONT_LEFT_DRIVE_MOTOR);
 	private SpeedController rearLeftMotor = new Spark(RobotMap.BACK_LEFT_DRIVE_MOTOR);
@@ -33,8 +32,8 @@ public class DriveTrain extends Subsystem {
 	
 	private ADXRS450_Gyro gyro = new ADXRS450_Gyro();
 
-	private Encoder leftEncoder = new Encoder(1, 2, false);
-	private Encoder rightEncoder = new Encoder(3, 4, true);
+	private Encoder leftEncoder = new Encoder(1, 2, true);
+	private Encoder rightEncoder = new Encoder(3, 4, false);
 
 	//Encoder specs: S4T-360-250-S-D (usdigital.com)
 	//S4T Shaft Encoder, 360 CPR, 1/4" Dia Shaft, Single-Ended, Default Torque
@@ -42,20 +41,22 @@ public class DriveTrain extends Subsystem {
     public static final double WHEEL_DIAMETER = 6; //Inches
     public static final double PULSE_PER_REVOLUTION = 360;
     public static final double ENCODER_GEAR_RATIO = 1;
-    public static final double GEAR_RATIO = 64.0/20.0; //TODO: need our ratio
-    public static final double FUDGE_FACTOR = 1.0;
+    public static final double GEAR_RATIO = 10.71;
+    public static final double FUDGE_FACTOR = 0.88235; //340/300
 
 
-    final double distancePerPulse = Math.PI * WHEEL_DIAMETER / PULSE_PER_REVOLUTION /
+    final double distancePerPulse = 12 * Math.PI * WHEEL_DIAMETER / PULSE_PER_REVOLUTION /
         		ENCODER_GEAR_RATIO / GEAR_RATIO * FUDGE_FACTOR;
-
+    
+	private double angleRecord;
+	private double distanceRecord;
 
 	public DriveTrain() {
 		super();
 
 		//What is this distance??? 0.042?
-		leftEncoder.setDistancePerPulse(0.042);
-		rightEncoder.setDistancePerPulse(0.042);
+		leftEncoder.setDistancePerPulse(distancePerPulse);
+		rightEncoder.setDistancePerPulse(distancePerPulse);
 
 
 		// Let's show everything on the LiveWindow
@@ -94,7 +95,9 @@ public class DriveTrain extends Subsystem {
 	 * @param leftStick joystick is for turning
 	 */
 	public void arcadeDrive(Joystick leftStick, Joystick rightStick, boolean squaredInputs) {
-		drive.arcadeDrive(-rightStick.getY() * driveSpeed * direction, -leftStick.getX() * driveSpeed, squaredInputs);
+		double speed = Robot.oi.driveSlow() ? 0.6 : 1;
+		double direction = Robot.oi.directionToggle() ? -1 : 1;
+		drive.arcadeDrive(-rightStick.getY() * direction * speed, -leftStick.getX() * speed, squaredInputs);
 	}	
 	
 	/**
@@ -156,19 +159,23 @@ public class DriveTrain extends Subsystem {
 		return gyro;
 	}
 	
-	public void setDriveSpeed(double speed) {
-		driveSpeed *= speed;
+	public void stop() {
+		drive.drive(0.0, 0.0);
 	}
 	
-	public void setDirection(double direction) {
-		this.direction = direction;
+	public void recordDrivenDistanceIn() {
+		distanceRecord = this.getDistance();
 	}
 	
-	public void resetDriveSpeed() {
-		driveSpeed = 1;
+	public double getRecordedDistance() {
+		return distanceRecord;
+	}
+
+	public void recordAngle() {
+		angleRecord = this.getHeading();
 	}
 	
-	public void resetDirection() {
-		direction = 1;
+	public double getRecordedAngle() {
+		return angleRecord;
 	}
 }
