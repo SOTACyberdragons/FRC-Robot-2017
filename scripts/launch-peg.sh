@@ -17,7 +17,7 @@ unbuffer $VISION_HOME/jetson-inference/build/aarch64/bin/detectnet-camera \
 --prototxt=$VISION_HOME/models/$MODEL/deploy.prototxt \
 --model=$VISION_HOME/models/$MODEL/snapshot.caffemodel \
 --input_blob=data --output_cvg=coverage --output_bbox=bboxes --threshold=$THRESHOLD \
-| python3 $VISION_SCRIPTS/bb2nt_switcher.py &
+> /tmp/pypipe &
 
 #bring down the camera exposure
 v4l2-ctl -c exposure_auto=1

@@ -6,8 +6,11 @@ NetworkTables.initialize(server='10.57.0.2')
 
 table = NetworkTables.getTable('vision')
 
-current_model = 'peg'
-table.putString('switch model', current_model)
+#initialize the first time or get existing model name
+current_model = table.getString("switch model")
+if not current_model:
+	current_model = 'peg'
+	table.putString('switch model', current_model)
 
 #Example detectnet string
 #bounding box 0   (423.782074, 383.807373)  (569.935913, 452.460938)  w=146.153839  h=68.653564
