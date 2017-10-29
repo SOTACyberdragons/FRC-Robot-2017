@@ -45,7 +45,7 @@ public class AutoSidePeg extends CommandGroup {
     	addSequential(new TurnRadiusToAngle(turnRadiusIn, turnAngleDeg, driveSpeed, turnLeft));
     	
     	//ram into peg, timeout after 3 seconds
-    	addSequential(new GetPegWithVision(false), 3);
+    	addSequential(new GetPegWithVision(false, false), 3);
     	
     	//hang gear while driving back, lift gear intake at end of HangGear command
     	addParallel(new HangGear());

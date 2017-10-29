@@ -38,8 +38,14 @@ public class GetPegWithVision extends Command {
 
     Preferences prefs = Preferences.getInstance();
 
-    public GetPegWithVision(boolean useAccelerationFiler) {
+	private boolean waitForVision;
+
+	private boolean wasDetected;
+
+    public GetPegWithVision(boolean useAccelerationFiler, boolean waitForVision) {
        requires(Robot.drivetrain);
+       
+       this.waitForVision = waitForVision;
        
        //driveOutput = Robot.prefs.getDouble("Drive with Vision Speed", 0.6);
        driveOutput = prefs.getDouble("Drive with Vision Speed", 0.5);
@@ -77,14 +83,17 @@ public class GetPegWithVision extends Command {
     protected void execute() {
     	//updates setpoint only if vision sees object
         BBox bBox = bBoxLocator.getBBox();
-
-        SmartDashboard.putNumber("PID Vision Setpoint Angle", pidAngle.getSetpoint());
-    	
+        SmartDashboard.putBoolean("Can See With Vision", wasDetected);
+        
         if (bBox != null) {
-        	pidAngle.setSetpoint(Robot.drivetrain.getHeading() + bBox.angleDeg);
+        		wasDetected = true;
+        		pidAngle.setSetpoint(Robot.drivetrain.getHeading() + bBox.angleDeg);
+            SmartDashboard.putNumber("PID Vision Setpoint Angle", pidAngle.getSetpoint());
         }
         
-    	Robot.drivetrain.drive(driveOutput * (useAccelerationFiler ? filter.output() : 1), driveCurve);
+    		if (wasDetected && waitForVision) {
+    			Robot.drivetrain.drive(driveOutput * (useAccelerationFiler ? filter.output() : 1), driveCurve);
+    		}
     }
 
     // Make this return true when this Command no longer needs to run execute()

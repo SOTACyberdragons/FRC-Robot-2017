@@ -6,6 +6,9 @@ NetworkTables.initialize(server='10.57.0.2')
 
 table = NetworkTables.getTable('vision')
 
+current_model = 'peg'
+table.putString('switch model', current_model)
+
 #Example detectnet string
 #bounding box 0   (423.782074, 383.807373)  (569.935913, 452.460938)  w=146.153839  h=68.653564
 
@@ -16,9 +19,18 @@ def parse_detect_string(detect_string):
 
 try:
 	for line in iter(sys.stdin.readline, ''):
-		print(time.time())
 		if line.startswith('bounding box ') or \
 			line.startswith('0 bounding'):
 			table.putNumberArray('BBoxCoordinates', parse_detect_string(line))
+		
+		model = table.getString("switch model")
+		if model != current_model:
+			current_model = model
+			if current_model == 'gear':
+				os.system('/5700/vision/scripts/launch-gear.sh')
+			elif current_model == 'peg':
+				os.system('/5700/vision/scripts/launch-peg.sh')
+				
+		
 except KeyboardInterrupt:
   	pass

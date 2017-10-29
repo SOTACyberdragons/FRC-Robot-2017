@@ -21,8 +21,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class TurnToGearWithVision extends Command {
 	
-	private Timer timer = new Timer();
-	
 	private PIDController pidAngle;
 	
 	//TODO tune
@@ -35,6 +33,8 @@ public class TurnToGearWithVision extends Command {
 	private BBoxLocator bBoxLocator = new BBoxLocator(Dimensions.GEAR_WIDTH_IN);
 
     Preferences prefs = Preferences.getInstance();
+
+	private boolean wasDetected = false;
 
 	//TODO find spec
     private static final double MAX_WIDTH = 640;
@@ -71,20 +71,23 @@ public class TurnToGearWithVision extends Command {
     protected void execute() {
     	//updates setpoint only if vision sees object
         BBox bBox = bBoxLocator.getBBox();
-
-        SmartDashboard.putNumber("PID Vision Setpoint Angle", pidAngle.getSetpoint());
+        SmartDashboard.putBoolean("Can See With Vision", wasDetected);
     	
         if (bBox != null) {
+        		wasDetected = true;
 	    		pidAngle.setSetpoint(Robot.drivetrain.getHeading() + bBox.angleDeg);
+        		SmartDashboard.putNumber("PID Vision Setpoint Angle", pidAngle.getSetpoint());
         }
         //Turn in place
-    	Robot.drivetrain.drive(driveOutput, 1);
+    		if (wasDetected) {
+    			Robot.drivetrain.drive(driveOutput, 1);
+    		}
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
         //switch off when peg pushes flap
-    	return pidAngle.onTarget();
+    		return pidAngle.onTarget();
     }
 
     // Called once after isFinished returns true

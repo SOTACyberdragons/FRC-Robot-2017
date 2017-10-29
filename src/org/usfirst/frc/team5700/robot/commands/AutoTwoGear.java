@@ -31,7 +31,7 @@ public class AutoTwoGear extends CommandGroup {
     	
     	//PART 1
     	//ram into peg, timeout after 3 seconds
-    	addSequential(new GetPegWithVision(true), 3);
+    	addSequential(new GetPegWithVision(true, false), 3);
     	
     	//hang gear while driving back 4 ft, lift gear intake at end of HangGear command
     	addParallel(new HangGear());
@@ -55,7 +55,7 @@ public class AutoTwoGear extends CommandGroup {
     	addSequential(new TurnRadiusToAngle(0, Robot.drivetrain.getRecordedAngle(), 0.5, !turnLeft));
     	
     	//PART 7
-    	addSequential(new GetPegWithVision(true));
+    	addSequential(new GetPegWithVision(true, true));
     	
     }
 }
