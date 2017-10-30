@@ -2,6 +2,7 @@ package org.usfirst.frc.team5700.robot.subsystems;
 
 import org.usfirst.frc.team5700.robot.RobotMap;
 
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -13,6 +14,8 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  */
 public class GearIntake extends Subsystem {
     
+	public Compressor compressor = new Compressor();
+	
 	private DoubleSolenoid leftPiston, rightPiston;
 	private Solenoid ringLight;
 	Spark rollerMotor;
@@ -24,16 +27,16 @@ public class GearIntake extends Subsystem {
     
     public GearIntake() {
 		super();
-    	leftPiston = new DoubleSolenoid(0, 1);
-    	leftPiston.set(DoubleSolenoid.Value.kForward);
-    	
-    	rightPiston = new DoubleSolenoid(2, 3);
-    	rightPiston.set(DoubleSolenoid.Value.kForward);
-    	
-    	ringLight = new Solenoid(4);
-    	ringLight.set(false);
-    	
-    	rollerMotor = new Spark(RobotMap.GEAR_INTAKE);
+	    	leftPiston = new DoubleSolenoid(0, 1);
+	    	leftPiston.set(DoubleSolenoid.Value.kForward);
+	    	
+	    	rightPiston = new DoubleSolenoid(2, 3);
+	    	rightPiston.set(DoubleSolenoid.Value.kForward);
+	    	
+	    	ringLight = new Solenoid(4);
+	    	ringLight.set(false);
+	    	
+	    	rollerMotor = new Spark(RobotMap.GEAR_INTAKE);
 	    	
 	    pegSwitch = new DigitalInput(RobotMap.PEG_SWITCH);
     }

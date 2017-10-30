@@ -3,6 +3,7 @@ package org.usfirst.frc.team5700.robot;
 import org.usfirst.frc.team5700.robot.commands.AutoCrossBaseline;
 import org.usfirst.frc.team5700.robot.commands.AutoMiddlePeg;
 import org.usfirst.frc.team5700.robot.commands.AutoSidePeg;
+import org.usfirst.frc.team5700.robot.commands.AutoTwoGear;
 import org.usfirst.frc.team5700.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team5700.robot.subsystems.GearIntake;
 import org.usfirst.frc.team5700.robot.subsystems.RopeClimber;
@@ -12,6 +13,7 @@ import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -40,6 +42,10 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
+		
+		//always make sure we set vision to peg
+		NetworkTable.getTable("vision").putString("model", "peg");
+				
 		prefs = Preferences.getInstance();
 		
 		// Initialize all subsystems
@@ -54,6 +60,8 @@ public class Robot extends IterativeRobot {
 		chooser.addObject("Middle Peg Auto", new AutoMiddlePeg());
 		chooser.addObject("Right Peg Auto", new AutoSidePeg("right"));
 		chooser.addObject("Left Peg Auto", new AutoSidePeg("left"));
+		chooser.addObject("Two Gear to Right", new AutoTwoGear("right"));
+		chooser.addObject("Two Gear to Left", new AutoTwoGear("left"));
 		SmartDashboard.putData("Autonomous Chooser", chooser);
 		autonomousCommand = chooser.getSelected();
 
@@ -87,6 +95,8 @@ public class Robot extends IterativeRobot {
 		// continue until interrupted by another command, remove
 		// this line or comment it out.
 		autonomousCommand.cancel();
+		//always make sure we set vision to peg
+		NetworkTable.getTable("vision").putString("model", "peg");
 	}
 
 	/**

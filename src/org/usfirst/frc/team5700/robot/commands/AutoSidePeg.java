@@ -29,8 +29,8 @@ public class AutoSidePeg extends CommandGroup {
 	//TODO make side enum
     public AutoSidePeg(String side) {
     	
-    	firstDistanceIn = Robot.prefs.getDouble("First Distance Inches", 60);
-    	turnAngleDeg = Robot.prefs.getDouble("Turn Angle Degrees", 60);
+    	firstDistanceIn = Robot.prefs.getDouble("First Distance Inches", 55);
+    	turnAngleDeg = Robot.prefs.getDouble("Turn Angle Degrees", 44);
     	turnRadiusIn = Robot.prefs.getDouble("Turn Radius Inches", 20);
     	driveSpeed = Robot.prefs.getDouble("driveSpeed", 0.5);
     	driveDistanceIn = Robot.prefs.getDouble("Drive Back Distance Inches", 4 * 12);

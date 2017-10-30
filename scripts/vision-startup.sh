@@ -8,9 +8,18 @@ VISION_SCRIPTS=$VISION_HOME/scripts
 MODEL=peg
 THRESHOLD=0.7
 
+#kill previous model
+pkill -9 detect
+pkill -9 gst
+
+#change VNC port to 5800 so it works on the field
+gsettings set org.gnome.Vino alternative-port 5800
+gsettings set org.gnome.Vino use-alternative-port true
+
 #max out performance
 sudo $VISION_SCRIPTS/jetson_clocks.sh
 
+rm /tmp/pypipe
 mkfifo /tmp/pypipe
 python3 $VISION_SCRIPTS/bb2nt_switcher.py < /tmp/pypipe &
 
@@ -22,5 +31,6 @@ unbuffer $VISION_HOME/jetson-inference/build/aarch64/bin/detectnet-camera \
 > /tmp/pypipe &
 
 #bring down the camera exposure
+sleep 5
 v4l2-ctl -c exposure_auto=1
 v4l2-ctl -c exposure_absolute=10

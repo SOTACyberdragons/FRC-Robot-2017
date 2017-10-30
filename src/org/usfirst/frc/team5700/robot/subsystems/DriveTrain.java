@@ -175,6 +175,10 @@ public class DriveTrain extends Subsystem {
 		angleRecord = this.getHeading();
 	}
 	
+	public void addToRecordedAngle() {
+		angleRecord += this.getHeading();
+	}
+	
 	public double getRecordedAngle() {
 		return angleRecord;
 	}

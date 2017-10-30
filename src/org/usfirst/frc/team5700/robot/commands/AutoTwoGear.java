@@ -35,12 +35,12 @@ public class AutoTwoGear extends CommandGroup {
     	
     	//hang gear while driving back 4 ft, lift gear intake at end of HangGear command
     	addParallel(new HangGear());
-    	addSequential(new DrivePastDistance(56, -0.6, true), 2);
+    	addSequential(new DrivePastDistance(44, -0.6, true), 2);
     	
     	
     	//PART 2
     	//No PID turn angle, make sure to record
-    	addSequential(new TurnRadiusToAngle(0, 90, 0.5, turnLeft));
+    	addSequential(new TurnRadiusToAngle(0, 90, 0.32, !turnLeft));
     	
     	//PART 3
     	addSequential(new TurnToGearWithVision());
@@ -49,10 +49,10 @@ public class AutoTwoGear extends CommandGroup {
     	addSequential(new GetGearWithVision(true));
     	
     	//PART 5
-    	addSequential(new DrivePastDistance(Robot.drivetrain.getRecordedDistance(), -0.6, true));
+    	addSequential(new DrivePastDistance(-0.6, true));
     	
     	//PART 6
-    	addSequential(new TurnRadiusToAngle(0, Robot.drivetrain.getRecordedAngle(), 0.5, !turnLeft));
+    	addSequential(new TurnRadiusToAngle(0, 0.4, turnLeft));
     	
     	//PART 7
     	addSequential(new GetPegWithVision(true, true));

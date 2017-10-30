@@ -20,6 +20,7 @@ public class ClimbUp extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
+    		Robot.gearIntake.compressor.setClosedLoopControl(false);
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -34,12 +35,13 @@ public class ClimbUp extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
-    	Robot.ropeClimber.climb(0);
+    		Robot.ropeClimber.climb(0);
+    		Robot.gearIntake.compressor.setClosedLoopControl(true);
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
-    	Robot.ropeClimber.climb(0);
+    		end();
     }
 }

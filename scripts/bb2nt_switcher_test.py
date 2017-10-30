@@ -31,10 +31,8 @@ try:
 		if model != current_model:
 			current_model = model
 			if current_model == 'gear':
-				print('switching to gear')
 				os.system('/5700/vision/scripts/launch-gear.sh')
 			elif current_model == 'peg':
-				print('switching to peg')
 				os.system('/5700/vision/scripts/launch-peg.sh')
 				
 		

@@ -21,35 +21,35 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 
 public class GetGearWithVision extends Command {
-	
+
 	private PIDController pidAngle;
-	
+
 	private double angleKp = 0.003;
 	private double angleKi = 0.000001;
 	private double angleKd = 0.001;
-	
+
 	private double driveCurve = 0;
 	private double driveOutput;
-	
+
 	private LinearAccelerationFilter filter;
-	
+
 	private boolean useAccelerationFiler;
-	
+
 	private BBoxLocator bBoxLocator = new BBoxLocator(Dimensions.GEAR_WIDTH_IN);
 
-    Preferences prefs = Preferences.getInstance();
+	Preferences prefs = Preferences.getInstance();
 
-	private double MAX_WIDTH = 640; //TODO find value
+	private double MAX_WIDTH = 200; //measured off the screen
 
 	private Timer timer = new Timer();
 
-    public GetGearWithVision(boolean useAccelerationFiler) {
-       requires(Robot.drivetrain);
-       
-       //driveOutput = Robot.prefs.getDouble("Drive with Vision Speed", 0.6);
-       driveOutput = prefs.getDouble("Gear with Vision Speed", 0.5);
-       
-       pidAngle = new PIDController(angleKp,
+	public GetGearWithVision(boolean useAccelerationFiler) {
+		requires(Robot.drivetrain);
+
+		//driveOutput = Robot.prefs.getDouble("Drive with Vision Speed", 0.6);
+		driveOutput = prefs.getDouble("Gear with Vision Speed", 0.5);
+
+		pidAngle = new PIDController(angleKp,
 				angleKi,
 				angleKd, 
 				Robot.drivetrain.getGyro(), 
@@ -59,64 +59,78 @@ public class GetGearWithVision extends Command {
 				driveCurve = c;
 			}
 		});
-       
-		pidAngle.setOutputRange(-1.0, 1.0);
-		
-		LiveWindow.addActuator("drivetrain", "Gear Vision Angle Controller", pidAngle);
-    }
 
-    // Called just before this Command runs the first time
-    protected void initialize() {
-    	Robot.drivetrain.reset();
+		pidAngle.setOutputRange(-1.0, 1.0);
+
+		LiveWindow.addActuator("drivetrain", "Gear Vision Angle Controller", pidAngle);
+	}
+
+	// Called just before this Command runs the first time
+	protected void initialize() {
+
+		System.out.println("Recorded blind + vision angle" + Robot.drivetrain.getRecordedAngle());
+		
+		Robot.drivetrain.reset();
 		pidAngle.reset();
 		pidAngle.enable();
-		
+
 		double filterSlopeTime = prefs.getDouble("FilterSlopeTime", 0.2);
-		
+
 		filter = new LinearAccelerationFilter(filterSlopeTime);
 	}
 
-    // Called repeatedly when this Command is scheduled to run
-    protected void execute() {
-    	//updates setpoint only if vision sees object
-        BBox bBox = bBoxLocator.getBBox();
+	// Called repeatedly when this Command is scheduled to run
+	protected void execute() {
+		//updates setpoint only if vision sees object
+		Robot.gearIntake.gearIntakeDown();
+		Robot.gearIntake.intakeGear();
+		
+		BBox bBox = bBoxLocator.getBBox();
 
-        SmartDashboard.putNumber("PID Vision Setpoint Angle", pidAngle.getSetpoint());
-    	
-        if (bBox != null) {
-        	pidAngle.setSetpoint(Robot.drivetrain.getHeading() + bBox.angleDeg);
+		SmartDashboard.putNumber("PID Vision Setpoint Angle", pidAngle.getSetpoint());
 
-    		if (bBoxLocator.getBBox().widthPx > MAX_WIDTH && timer .get() == 0) {
-        		NetworkTable.getTable("vision").putString("switch model", "peg");
-        		timer.start();
-        	}
-        }
-        
-    	Robot.drivetrain.drive(driveOutput * (useAccelerationFiler ? filter.output() : 1), driveCurve);
-    }
+		if (bBox != null) {
+			pidAngle.setSetpoint(Robot.drivetrain.getHeading() + bBox.angleDeg);
 
-    // Make this return true when this Command no longer needs to run execute()
-    protected boolean isFinished() {
-        //switch off when peg pushes flap
-    	return timer.get() > 0.2; //TODO prefs
-    }
+//			if (bBoxLocator.getBBox().widthPx > MAX_WIDTH && timer.get() == 0) {
+//				NetworkTable.getTable("vision").putString("model", "peg");
+//				timer.start();
+//			}
+		}
 
-    // Called once after isFinished returns true
-    protected void end() {
-    	//record driven distance
-    	Robot.drivetrain.recordDrivenDistanceIn();
-    	System.out.println("Driven Distance; " + Robot.drivetrain.getRecordedDistance());
-    	
-    	// Stop PID and the wheels
+		Robot.drivetrain.drive(driveOutput * (useAccelerationFiler ? filter.output() : 1), driveCurve);
+	}
+
+	// Make this return true when this Command no longer needs to run execute()
+	protected boolean isFinished() {
+		//switch off when peg pushes flap
+		return Robot.drivetrain.getDistance() > 50; //TODO prefs
+	}
+
+	// Called once after isFinished returns true
+	protected void end() {
+		//Swtich models
+		NetworkTable.getTable("vision").putString("model", "peg");
+		
+		//Lift intake
+		Robot.gearIntake.gearIntakeUp();
+		Robot.gearIntake.rollerHoldGear();
+
+		//record driven distance
+		Robot.drivetrain.recordDrivenDistanceIn();
+		System.out.println();
+		System.out.println("Drive to Gear Recorded Distance: " + Robot.drivetrain.getRecordedDistance());
+
+		// Stop PID and the wheels
 		pidAngle.disable();
 		pidAngle.reset();
 		Robot.drivetrain.drive(0, 0);
 		Robot.drivetrain.reset();
-    }
+	}
 
-    // Called when another command which requires one or more of the same
-    // subsystems is scheduled to run
-    protected void interrupted() {
-    		end();
-    }
+	// Called when another command which requires one or more of the same
+	// subsystems is scheduled to run
+	protected void interrupted() {
+		end();
+	}
 }

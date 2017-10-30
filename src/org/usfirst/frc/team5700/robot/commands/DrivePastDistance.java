@@ -14,6 +14,7 @@ public class DrivePastDistance extends Command {
 	private double speed;
 	private boolean stop;
 	private LinearAccelerationFilter filter;
+	private boolean useRecordedDistance;
 
 	public DrivePastDistance(double distance, double speed, boolean stop) {
         requires(Robot.drivetrain);
@@ -22,14 +23,28 @@ public class DrivePastDistance extends Command {
         this.speed = speed;
         this.stop = stop;
     }
+	
+	public DrivePastDistance(double speed, boolean stop) {
+        requires(Robot.drivetrain);
+        
+        this.useRecordedDistance = true;
+        this.speed = speed;
+        this.stop = stop;
+    }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	System.out.println("First Distance: " + distanceIn);
-    	System.out.println("driveSpeed: " + speed);
-    	Robot.drivetrain.reset();
-    	double filterSlopeTime = Robot.prefs.getDouble("FilterSlopeTime", 0.2);
+	    	System.out.println("First Distance: " + distanceIn);
+	    	System.out.println("driveSpeed: " + speed);
+	    	Robot.drivetrain.reset();
+	    	double filterSlopeTime = Robot.prefs.getDouble("FilterSlopeTime", 0.2);
 		filter = new LinearAccelerationFilter(filterSlopeTime);
+
+		if (useRecordedDistance)
+			this.distanceIn = Robot.drivetrain.getRecordedDistance();
+		
+		System.out.println("Using recorded distance: " + this.useRecordedDistance + 
+				", distance: " + Robot.drivetrain.getRecordedDistance());
     }
 
     // Called repeatedly when this Command is scheduled to run
