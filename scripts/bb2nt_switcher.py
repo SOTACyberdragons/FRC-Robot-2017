@@ -18,12 +18,24 @@ table.putString('model', current_model)
 
 p = re.compile(r"\d+\.\d+")
 
+#brightness (int)    : min=30 max=255 step=1 default=133 value=100
+#exposure_absolute (int)    : min=5 max=20000 step=1 default=156 value=20
+gear_brightness = '100'
+peg_brightess = '30'
+
 def parse_detect_string(detect_string):
 		return [float(i) for i in iter(p.findall(detect_string))]
 
 try:
 	for line in iter(sys.stdin.readline, ''):
-		if line.startswith('bounding box ') or \
+		if 'camera open for streaming' in line:
+			print('camera open: set exposure for ' + current_model)
+			os.system('v4l2-ctl -c exposure_auto=1\n'\
+					'v4l2-ctl -c exposure_absolute=20\n' + \
+					'v4l2-ctl -c brightness=' + \
+					(peg_brightess if current_model == 'peg' else gear_brightness) + \
+					'\nv4l2-ctl -l')
+		elif line.startswith('bounding box 0') or \
 			line.startswith('0 bounding'):
 			table.putNumberArray('BBoxCoordinates', parse_detect_string(line))
 		

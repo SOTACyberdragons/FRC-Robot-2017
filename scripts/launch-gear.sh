@@ -18,12 +18,3 @@ unbuffer $VISION_HOME/jetson-inference/build/aarch64/bin/detectnet-camera \
 --model=$VISION_HOME/models/$MODEL/snapshot.caffemodel \
 --input_blob=data --output_cvg=coverage --output_bbox=bboxes --threshold=$THRESHOLD \
 > /tmp/pypipe &
-
-#bring down the camera exposure
-sleep 4
-v4l2-ctl -c exposure_auto=1
-v4l2-ctl -c exposure_absolute=20
-v4l2-ctl -c brightness=1
-v4l2-ctl -c brightness=100
-v4l2-ctl -c brightness=78
-v4l2-ctl -c brightness=130
