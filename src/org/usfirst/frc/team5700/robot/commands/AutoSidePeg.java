@@ -1,7 +1,6 @@
 package org.usfirst.frc.team5700.robot.commands;
 
 import org.usfirst.frc.team5700.robot.Robot;
-import org.usfirst.frc.team5700.robot.Dimensions;
 import org.usfirst.frc.team5700.robot.commands.DrivePastDistance;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
