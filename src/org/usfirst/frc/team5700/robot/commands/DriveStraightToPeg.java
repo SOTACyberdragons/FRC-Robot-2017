@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-
 import org.usfirst.frc.team5700.robot.Robot;
 import org.usfirst.frc.team5700.utils.LinearAccelerationFilter;
 
@@ -21,7 +20,7 @@ import org.usfirst.frc.team5700.utils.LinearAccelerationFilter;
  * command is running. The input is the averaged values of the left and right
  * encoders.
  */
-public class DriveStraight extends Command {
+public class DriveStraightToPeg extends Command {
 	private PIDController pidDistance;
 	private PIDController pidAngle;
 	private double driveOutput = 0;
@@ -37,7 +36,7 @@ public class DriveStraight extends Command {
 	
 	private LinearAccelerationFilter filter;
 
-	public DriveStraight(double distance) {
+	public DriveStraightToPeg(double distance) {
 		requires(Robot.drivetrain);
 		pidDistance = new PIDController(distanceKp, 
 				distanceKi, 
@@ -66,6 +65,7 @@ public class DriveStraight extends Command {
 				driveOutput = d;
 			}
 		});
+		
 		pidAngle = new PIDController(angleKp,
 				angleKi,
 				angleKd, 
@@ -86,7 +86,7 @@ public class DriveStraight extends Command {
 		LiveWindow.addActuator("Drive", "Distance Controller", pidDistance);
 		LiveWindow.addActuator("Drive", "Angle controller", pidAngle);
 	}
-	
+
 	@Override
 	protected void initialize() {
 		Preferences prefs = Preferences.getInstance();
@@ -122,7 +122,7 @@ public class DriveStraight extends Command {
 
 	@Override
 	protected boolean isFinished() {
-		return pidDistance.onTarget();
+		return Robot.gearIntake.getPegSwitch() || pidDistance.onTarget();
 	}
 
 	@Override

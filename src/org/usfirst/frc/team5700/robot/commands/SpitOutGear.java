@@ -1,32 +1,30 @@
 package org.usfirst.frc.team5700.robot.commands;
 
 import org.usfirst.frc.team5700.robot.Robot;
-import org.usfirst.frc.team5700.robot.subsystems.RopeClimber.Direction;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-/**
- *
- */
-public class AntiClimb extends Command {
+public class SpitOutGear extends Command {
 
-    public AntiClimb() {
-        requires(Robot.ropeClimber);
+	private double speed = 0.7;
+	
+    public SpitOutGear() {
+        requires(Robot.gearIntake);
     }
 
     protected void execute() {
-    	Robot.ropeClimber.climb(0.5, Direction.DOWN);
+    		Robot.gearIntake.setRollerSpeed(speed);
     }
 
     protected boolean isFinished() {
         return false;
     }
-
+    
     protected void end() {
-    		Robot.ropeClimber.climb(0);
+    		Robot.gearIntake.stopRoller();
     }
 
     protected void interrupted() {
-    		end();
+    	end();
     }
 }

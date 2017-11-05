@@ -1,19 +1,19 @@
 package org.usfirst.frc.team5700.robot;
 
-import org.usfirst.frc.team5700.robot.commands.DriveAndPlaceGear;
+import org.usfirst.frc.team5700.robot.commands.AutoCrossBaseline;
+import org.usfirst.frc.team5700.robot.commands.AutoMiddlePeg;
+import org.usfirst.frc.team5700.robot.commands.AutoSidePeg;
+import org.usfirst.frc.team5700.robot.commands.AutoTwoGear;
 import org.usfirst.frc.team5700.robot.commands.DriveStraight;
-import org.usfirst.frc.team5700.robot.commands.GearDropAutomatic;
 import org.usfirst.frc.team5700.robot.subsystems.DriveTrain;
-import org.usfirst.frc.team5700.robot.subsystems.GearSystem;
+import org.usfirst.frc.team5700.robot.subsystems.GearIntake;
 import org.usfirst.frc.team5700.robot.subsystems.RopeClimber;
-
-import edu.wpi.cscore.UsbCamera;
-import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -26,21 +26,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * directory.
  */
 public class Robot extends IterativeRobot {
-	Command autonomousCommand;
-	Preferences prefs;
+	private Command autonomousCommand;
+	public static Preferences prefs;
 	
 	SendableChooser<Command> chooser;
 
 	public static DriveTrain drivetrain;
-	//public static PidDriveTrain pidDrivetrain;
 	public static RopeClimber ropeClimber;
-	public static GearSystem gearSystem;
+	public static GearIntake gearIntake;
 	public static OI oi;
-	public static CameraServer cameraserver;
-	UsbCamera usbCamera0;
-	
-    public static boolean wasPressed = false;
-	public static GearDropAutomatic gearDropAutomatic;
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -48,39 +42,41 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-		CameraServer.getInstance().startAutomaticCapture();
+		
+		//always make sure we set vision to peg
+		NetworkTable.getTable("vision").putString("model", "peg");
+				
 		prefs = Preferences.getInstance();
-		double distance = prefs.getDouble("Auto Distance", 24.0);
+		
 		// Initialize all subsystems
 		drivetrain = new DriveTrain();
-        //pidDrivetrain = new PidDriveTrain();
 		ropeClimber = new RopeClimber();
-		gearSystem = new GearSystem();
+		gearIntake = new GearIntake();
 		oi = new OI();
-    	//cameraserver = CameraServer.getInstance();
-        //usbCamera0 = cameraserver.startAutomaticCapture();
 
 		// instantiate the command used for the autonomous period
-		
 		chooser = new SendableChooser<Command>();
-		chooser.addDefault("Cross Baseline", new DriveStraight(distance));
-		chooser.addObject("Place Middle Gear", new DriveAndPlaceGear());
+		chooser.addDefault("Cross Baseline", new AutoCrossBaseline());
+		chooser.addObject("Middle Peg Auto", new AutoMiddlePeg());
+		chooser.addObject("Right Peg Auto", new AutoSidePeg("right"));
+		chooser.addObject("Left Peg Auto", new AutoSidePeg("left"));
+		chooser.addObject("Two Gear to Right", new AutoTwoGear("right"));
+		chooser.addObject("Two Gear to Left", new AutoTwoGear("left"));
 		SmartDashboard.putData("Autonomous Chooser", chooser);
-		SmartDashboard.putString("Selected Autonomous", chooser.getSelected().getName());
 		autonomousCommand = chooser.getSelected();
 
 		// Show what command your subsystem is running on the SmartDashboard
 		SmartDashboard.putData(drivetrain);
-		SmartDashboard.putData(gearSystem);
+		SmartDashboard.putData(gearIntake);
 		SmartDashboard.putData(ropeClimber);
-		
-		SmartDashboard.putData("DriveStraight", new DriveStraight(distance));
+		SmartDashboard.putData("DriveStraight", new DriveStraight(prefs.getDouble("DriveStraight Distance", 200)));
+		SmartDashboard.putData("DriveStraightToPeg", new DriveStraight(Dimensions.DISTANCE_TO_PEG-Dimensions.LENGTH_IN/2));
 	}
 
 	@Override
 	public void autonomousInit() {
 		
-		SmartDashboard.putString("Selected Autonomous", chooser.getSelected().getName());
+		SmartDashboard.putString("Autonomous Mode: ", chooser.getSelected().getName());
 		autonomousCommand = chooser.getSelected();
 		autonomousCommand.start(); // schedule the autonomous command
 	}
@@ -96,11 +92,9 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void teleopInit() {
-		// This makes sure that the autonomous stops running when
-		// teleop starts running. If you want the autonomous to
-		// continue until interrupted by another command, remove
-		// this line or comment it out.
 		autonomousCommand.cancel();
+		//always make sure we set vision to peg
+		NetworkTable.getTable("vision").putString("model", "peg");
 	}
 
 	/**
@@ -110,19 +104,14 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
 		log();
-        if (gearSystem.gearSwitchPushed() && !wasPressed) {
-        	SmartDashboard.putBoolean("Run Drop Command", true);
-        	wasPressed = true;
-        	gearDropAutomatic = new GearDropAutomatic();
-        	gearDropAutomatic.start();			
-        }
 	}
-
+	
 	/**
-	 * This function is called periodically during test mode
+	 * This function is called periodically dulring test mode
 	 */
 	@Override
 	public void testPeriodic() {
+		
 		LiveWindow.run();
 	}
 
@@ -131,7 +120,7 @@ public class Robot extends IterativeRobot {
 	 */
 	private void log() {
 		drivetrain.log();
-		gearSystem.log();
+		gearIntake.log();
 		ropeClimber.log();
 	}
 }

@@ -1,21 +1,18 @@
 package org.usfirst.frc.team5700.robot.commands;
 
 import org.usfirst.frc.team5700.robot.Robot;
-import org.usfirst.frc.team5700.robot.subsystems.RopeClimber.Direction;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-/**
- *
- */
-public class AntiClimb extends Command {
-
-    public AntiClimb() {
-        requires(Robot.ropeClimber);
+public class ManualHangGear extends Command {
+	
+    public ManualHangGear() {
+        requires(Robot.gearIntake);
     }
 
     protected void execute() {
-    	Robot.ropeClimber.climb(0.5, Direction.DOWN);
+    		Robot.gearIntake.gearIntakeDown();
+    		Robot.gearIntake.rollerHangGear();
     }
 
     protected boolean isFinished() {
@@ -23,7 +20,8 @@ public class AntiClimb extends Command {
     }
 
     protected void end() {
-    		Robot.ropeClimber.climb(0);
+    		Robot.gearIntake.gearIntakeUp();
+    		Robot.gearIntake.stopRoller();;
     }
 
     protected void interrupted() {

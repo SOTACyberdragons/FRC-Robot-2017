@@ -2,76 +2,101 @@ package org.usfirst.frc.team5700.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
-
 import org.usfirst.frc.team5700.robot.commands.AntiClimb;
 import org.usfirst.frc.team5700.robot.commands.ClimbUp;
-import org.usfirst.frc.team5700.robot.commands.GearDrop;
+import org.usfirst.frc.team5700.robot.commands.ManualIntakeGear;
+import org.usfirst.frc.team5700.robot.commands.ManualHangGear;
+import org.usfirst.frc.team5700.robot.commands.SpitOutGear;
+import org.usfirst.frc.team5700.robot.commands.TurnOnLight;
 
 /**
  * This class is the glue that binds the controls on the physical operator
  * interface to the commands and command groups that allow control of the robot.
  */
-
-//random edit
-
 public class OI {
-	
-	//create Joysticks and squared inputs for driving tankDrive
+	private boolean toggle = false;
+	private boolean hasBeenPressed = false;
 
-		private Joystick rightStick = new Joystick(0);
-		private Joystick leftStick = new Joystick(1);
+	private Joystick rightStick = new Joystick(0);
+	private Joystick leftStick = new Joystick(1);
 	    
 	// Setting squaredInput to true decreases the sensitivity for tankdrive at lower speeds
 	private boolean squaredInput = true;
-	//// CREATING BUTTONS
-    // One type of button is a joystick button which is any button on a joystick.
-    // You create one by telling it which joystick it's on and which button
-    // number it is.
-    // Joystick stick = new Joystick(port);
-    // Button button = new JoystickButton(stick, buttonNumber);
+	
+	JoystickButton slowDrive;
+	JoystickButton toggleDirection;
+	
+	//gear intake
+	JoystickButton intakeGear;
+	JoystickButton hangGear;
+	JoystickButton spitOut;
+	
+	//climber
+	JoystickButton fastClimb;
+	JoystickButton slowClimb;
+	JoystickButton anticlimb;
+	
+	JoystickButton light;
+	
 	public OI() {
-		JoystickButton climbTrigger = new JoystickButton(leftStick, 1);
-		JoystickButton slowClimbButton = new JoystickButton(leftStick, 3);
-		JoystickButton antiClimbButton = new JoystickButton(leftStick, 2);
+		////set buttons
+		//drivetrain
+		slowDrive = new JoystickButton(rightStick, ButtonMap.SLOW_DRIVE);
+		toggleDirection = new JoystickButton(rightStick, ButtonMap.TOGGLE_DIRECTION);
 		
-		JoystickButton gearDropTrigger = new JoystickButton(rightStick, 1);
+		//gear intake
+		intakeGear = new JoystickButton(rightStick, ButtonMap.INTAKE_GEAR);
+		hangGear = new JoystickButton(leftStick, ButtonMap.HANG_GEAR);
+		spitOut = new JoystickButton(leftStick, ButtonMap.SPIT_OUT);
 		
-	    
-	    // There are a few additional built in buttons you can use. Additionally,
-	    // by subclassing Button you can create custom triggers and bind those to
-	    // commands the same as any other Button.
-	    
-	    //// TRIGGERING COMMANDS WITH BUTTONS
-	    // Once you have a button, it's trivial to bind it to a button in one of
-	    // three ways:
-	    
-	    // Start the command when the button is pressed and let it run the command
-	    // until it is finished as determined by it's isFinished method.
-	    // button.whenPressed(new ExampleCommand());
-	    
-		climbTrigger.whileHeld(new ClimbUp(1));
-		slowClimbButton.whileHeld(new ClimbUp(0.4));
-		antiClimbButton.whileHeld(new AntiClimb());
+		//climber
+		fastClimb = new JoystickButton(leftStick, ButtonMap.FAST_CLIMB);
+		slowClimb = new JoystickButton(leftStick, ButtonMap.SLOW_CLIMB);
+		anticlimb = new JoystickButton(leftStick, ButtonMap.ANTICLIMB);
 		
-		gearDropTrigger.whileHeld(new GearDrop());
+		light = new JoystickButton(rightStick, 10);
 		
-	    // Run the command while the button is being held down and interrupt it once
-	    // the button is released.
-	    // button.whileHeld(new ExampleCommand());
-	    
-	    // Start the command when the button is released  and let it run the command
-	    // until it is finished as determined by it's isFinished method.
-	    // button.whenReleased(new ExampleCommand());
+		//set commands
+		//gear intake
+		intakeGear.whileHeld(new ManualIntakeGear(-0.6, -0.3));
+		hangGear.whileHeld(new ManualHangGear());
+		spitOut.whileHeld(new SpitOutGear());
+		
+		//climber
+		fastClimb.whileHeld(new ClimbUp(1));
+		slowClimb.whileHeld(new ClimbUp(0.4));
+		anticlimb.whileHeld(new AntiClimb());
+		
+		//test vision
+		light.whileHeld(new TurnOnLight());
 	}
-	    public Joystick getLeftStick() {
-	    	return leftStick;	
-	    }
 	    
-	    public Joystick getRightStick() {
+	public Joystick getLeftStick() {
+	    	return leftStick;	
+	}
+	    
+	public Joystick getRightStick() {
 	    	return rightStick;
-	    }
-	    public boolean getSquaredInput() {
+	}
+	    
+	public boolean getSquaredInput() {
 	    	return squaredInput;
-	    }
+	}
+
+	public boolean driveSlow() {
+		return slowDrive.get();
+	}
+	
+	public boolean directionToggle() {
+		if (toggleDirection.get() && !hasBeenPressed) {
+			toggle = !toggle;
+			hasBeenPressed = true;
+		}
+		
+		if(!toggleDirection.get()) {
+			hasBeenPressed = false;
+		}
+		return toggle;
+	}
 }
 

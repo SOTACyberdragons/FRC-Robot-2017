@@ -7,9 +7,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.usfirst.frc.team5700.robot.RobotMap;
 
-/**
- *
- */
 public class RopeClimber extends Subsystem {
 
 	public enum Direction {UP, DOWN};
@@ -22,8 +19,8 @@ public class RopeClimber extends Subsystem {
 	}
 	
 	public void climb(double speed) {
-		this.speed = speed;
-		climber.set(speed);
+		this.speed = -speed;
+		climber.set(-speed);
 	}
 	
 	public void climb(double speed, Direction direction) {
@@ -34,8 +31,6 @@ public class RopeClimber extends Subsystem {
 	}
 	
     public void initDefaultCommand() {
-        // Set the default command for a subsystem here.
-        //setDefaultCommand(new MySpecialCommand());
     }
     
 	public void log() {
