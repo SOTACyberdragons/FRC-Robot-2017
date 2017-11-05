@@ -1,13 +1,9 @@
 package org.usfirst.frc.team5700.robot.commands;
 
-import org.usfirst.frc.team5700.robot.Robot;
 import org.usfirst.frc.team5700.robot.commands.DrivePastDistance;
-
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
-/**
- *
- */
 public class AutoSidePeg extends CommandGroup {
 
     //drive forward 6 feet, minus half of robot length (including bumpers).
@@ -16,44 +12,37 @@ public class AutoSidePeg extends CommandGroup {
 	double firstDistanceIn;
     boolean turnLeft;
     double turnAngleDeg;
-    //3.5 feet turn radius
     double turnRadiusIn;
     double driveSpeed;
     
     //drive back 4 feet
-  	double driveDistanceIn = 4 * 12;
+  	double driveDistanceIn;
   	
   	public double toPegDistanceRecord;
 	
-	//TODO make side enum
     public AutoSidePeg(String side) {
     	
-    	firstDistanceIn = Robot.prefs.getDouble("First Distance Inches", 55);
-    	turnAngleDeg = Robot.prefs.getDouble("Turn Angle Degrees", 44);
-    	turnRadiusIn = Robot.prefs.getDouble("Turn Radius Inches", 20);
-    	driveSpeed = Robot.prefs.getDouble("driveSpeed", 0.5);
-    	driveDistanceIn = Robot.prefs.getDouble("Drive Back Distance Inches", 4 * 12);
+    	Preferences prefs = Preferences.getInstance();
     	
+    	firstDistanceIn = prefs.getDouble("SidePeg First Distance in", 55);
+    	turnAngleDeg = prefs.getDouble("SidePeg Turn Angle deg", 44);
+    	turnRadiusIn = prefs.getDouble("SidePeg Radius in", 20);
+    	driveSpeed = prefs.getDouble("SidePeg driveSpeed", 0.5);
+    	driveDistanceIn = prefs.getDouble("SidePeg Drive Back in", 4 * 12);
 		
-		//right: 1; left: -1
-		turnLeft = side.equals("left");
+	//right: 1; left: -1
+	turnLeft = side.equals("left");
 		
-		addSequential(new DrivePastDistance(firstDistanceIn, driveSpeed, false));
+	addSequential(new DrivePastDistance(firstDistanceIn, driveSpeed, false));
     	
     	//turn angle to face peg
-    	addSequential(new TurnRadiusToAngle(turnRadiusIn, turnAngleDeg, driveSpeed, turnLeft));
+    	addSequential(new TurnRadiusPastAngle(turnRadiusIn, turnAngleDeg, driveSpeed, turnLeft, false));
     	
     	//ram into peg, timeout after 3 seconds
     	addSequential(new GetPegWithVision(false, false), 3);
     	
     	//hang gear while driving back, lift gear intake at end of HangGear command
-    	addParallel(new HangGear());
+    	addParallel(new AutoHangGear());
     	addSequential(new DrivePastDistance(driveDistanceIn, -driveSpeed, false), 2);
-//    	
-//    	//turn back angle
-//    	addSequential(new TurnRadiusToAngle(turnRadiusIn, turnAngleDeg, -driveSpeed, turnLeft));
-//    	
-//    	//return to start
-//    	addSequential(new DrivePastDistance(firstDistanceIn, -driveSpeed, true));
     }
 }

@@ -15,74 +15,83 @@ import edu.wpi.first.wpilibj.command.Command;
  * command is running. The input is the averaged values of the left and right
  * encoders.
  */
-public class TurnRadiusToAngle extends Command {
+public class TurnRadiusPastAngle extends Command {
 	
 	private double targetAngleDeg;
 	private double turnSpeed;
 	private double turnRadiusIn;
-	private boolean turnLeft;
+	private enum Direction {LEFT, RIGHT};
 	private int turnDirection;
 	private boolean useRecordedAngle;
+	private boolean recordAngle = false;
 
-	public TurnRadiusToAngle(double radius, double angle, double speed, boolean left) {
+	/**
+	 * No PID
+	 * @param radius
+	 * @param angle
+	 * @param speed
+	 * @param left
+	 */
+	public TurnRadiusPastAngle(double radius, double angle, double speed, boolean turnLeft, boolean recordAngle) {
 		requires(Robot.drivetrain);
 		
 		this.targetAngleDeg = angle;
 		this.turnSpeed = speed;
 		this.turnRadiusIn = radius;
-		this.turnLeft = left;
+		this.turnDirection = turnLeft ? 1 : -1;
+		this.recordAngle = recordAngle;
 	}
 	
 	/**
-	 * Take recorded angle
+	 * Use recorded angle
 	 */
-	public TurnRadiusToAngle(double radius, double speed, boolean left) {
+	public TurnRadiusPastAngle(double radius, double speed, boolean turnLeft) {
 		requires(Robot.drivetrain);
 		
 		this.useRecordedAngle = true;
 		this.turnSpeed = speed;
 		this.turnRadiusIn = radius;
-		this.turnLeft = left;
+		this.turnDirection = turnLeft ? 1 : -1;
 	}
 
-	// Called just before this Command runs the first time
 	@Override
 	protected void initialize() {
-		// Get everything in a safe starting state.
+
 		if (useRecordedAngle) {
-			targetAngleDeg = Robot.drivetrain.getRecordedAngle();
+			this.targetAngleDeg = Robot.drivetrain.getRecordedAngle();
+			System.out.println("Using recorded angle");
+		} else {
+			System.out.println("Using preset angle");
 		}
-				
+		
+		//logs
 		System.out.println();
-		System.out.println("Initiate Blind Turn at Radius to Angle");
-		System.out.println("Turn Radius: " + turnRadiusIn);
-	    	System.out.println("Turn Angle: " + targetAngleDeg);
-	    	System.out.println("Drive Speed: " + turnSpeed);
-	    	System.out.println("Do Turn Left?: " + turnLeft);
+		System.out.println("TurnRadiusPastAngle Initiated");
+		System.out.println("  Turn Radius: " + turnRadiusIn);
+	    	System.out.println("  Turn Angle: " + targetAngleDeg + " Degrees");
+	    	System.out.println("  Drive Speed: " + turnSpeed);
+	    	System.out.println("  Turn Direction (1 left, -1 right: " + turnDirection);
     	
 		Robot.drivetrain.reset();
-		
-		//TODO possibly wrong
-		turnDirection = turnLeft ? 1 : -1;
 	}
 
-	// Called repeatedly when this Command is scheduled to run
 	@Override
 	protected void execute() {
 		Robot.drivetrain.drive(turnSpeed, turnDirection * Math.exp(-turnRadiusIn / Dimensions.WHEELBASE_IN));
 	}
 
-	// Make this return true when this Command no longer needs to run execute()
 	@Override
 	protected boolean isFinished() {
 		return Math.abs(Robot.drivetrain.getHeading()) >= targetAngleDeg;
 	}
 
-	// Called once after isFinished returns true
 	@Override
 	protected void end() {
-		Robot.drivetrain.recordAngle();
-		System.out.println("Blind Angle Record: " + Robot.drivetrain.getRecordedAngle());
+		if (recordAngle) {
+			Robot.drivetrain.recordAngle();
+			System.out.println("Recorded angle: " + Robot.drivetrain.getRecordedAngle());
+		}
+		
 		Robot.drivetrain.reset();
 		System.out.println("Turn Radius To Angle Command Complete");
 	}

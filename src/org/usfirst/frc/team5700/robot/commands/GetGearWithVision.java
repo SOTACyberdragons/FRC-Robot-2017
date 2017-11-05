@@ -24,30 +24,26 @@ public class GetGearWithVision extends Command {
 
 	private PIDController pidAngle;
 
-	private double angleKp = 0.003;
-	private double angleKi = 0.000001;
-	private double angleKd = 0.001;
+	private double angleKp;
+	private double angleKi;
+	private double angleKd;
 
 	private double driveCurve = 0;
 	private double driveOutput;
 
 	private LinearAccelerationFilter filter;
-
 	private boolean useAccelerationFiler;
 
 	private BBoxLocator bBoxLocator = new BBoxLocator(Dimensions.GEAR_WIDTH_IN);
-
-	Preferences prefs = Preferences.getInstance();
 
 	private double MAX_WIDTH = 200; //measured off the screen
 
 	private Timer timer = new Timer();
 
+	private double distanceToGear;
+
 	public GetGearWithVision(boolean useAccelerationFiler) {
 		requires(Robot.drivetrain);
-
-		//driveOutput = Robot.prefs.getDouble("Drive with Vision Speed", 0.6);
-		driveOutput = prefs.getDouble("Gear with Vision Speed", 0.5);
 
 		pidAngle = new PIDController(angleKp,
 				angleKi,
@@ -65,10 +61,15 @@ public class GetGearWithVision extends Command {
 		LiveWindow.addActuator("drivetrain", "Gear Vision Angle Controller", pidAngle);
 	}
 
-	// Called just before this Command runs the first time
 	protected void initialize() {
 
-		System.out.println("Recorded blind + vision angle" + Robot.drivetrain.getRecordedAngle());
+		//Get PID values from preferences
+		Preferences prefs = Preferences.getInstance();
+		angleKp = prefs.getDouble("GetGear Kp", 0.01);
+		angleKi = prefs.getDouble("GetGear Ki", 0.001);
+		angleKd = prefs.getDouble("GetGear Kd", 0.0);
+		driveOutput = prefs.getDouble("GetGear Speed", 0.5);
+		distanceToGear = prefs.getDouble("GetGear D to Gear", 50);
 		
 		Robot.drivetrain.reset();
 		pidAngle.reset();
@@ -77,9 +78,10 @@ public class GetGearWithVision extends Command {
 		double filterSlopeTime = prefs.getDouble("FilterSlopeTime", 0.2);
 
 		filter = new LinearAccelerationFilter(filterSlopeTime);
+		
+		System.out.println("\n GetGearWithVision Initialized");
 	}
 
-	// Called repeatedly when this Command is scheduled to run
 	protected void execute() {
 		//updates setpoint only if vision sees object
 		Robot.gearIntake.gearIntakeDown();
@@ -91,23 +93,15 @@ public class GetGearWithVision extends Command {
 
 		if (bBox != null) {
 			pidAngle.setSetpoint(Robot.drivetrain.getHeading() + bBox.angleDeg);
-
-//			if (bBoxLocator.getBBox().widthPx > MAX_WIDTH && timer.get() == 0) {
-//				NetworkTable.getTable("vision").putString("model", "peg");
-//				timer.start();
-//			}
 		}
 
 		Robot.drivetrain.drive(driveOutput * (useAccelerationFiler ? filter.output() : 1), driveCurve);
 	}
 
-	// Make this return true when this Command no longer needs to run execute()
 	protected boolean isFinished() {
-		//switch off when peg pushes flap
-		return Robot.drivetrain.getDistance() > 50; //TODO prefs
+		return Robot.drivetrain.getDistance() > distanceToGear;
 	}
 
-	// Called once after isFinished returns true
 	protected void end() {
 		//Swtich models
 		NetworkTable.getTable("vision").putString("model", "peg");
@@ -126,10 +120,10 @@ public class GetGearWithVision extends Command {
 		pidAngle.reset();
 		Robot.drivetrain.drive(0, 0);
 		Robot.drivetrain.reset();
+		
+		System.out.println("GetGearWithVision ended");
 	}
 
-	// Called when another command which requires one or more of the same
-	// subsystems is scheduled to run
 	protected void interrupted() {
 		end();
 	}

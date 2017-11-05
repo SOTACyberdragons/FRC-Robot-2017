@@ -6,6 +6,7 @@ package org.usfirst.frc.team5700.robot.commands;
 
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
@@ -22,15 +23,16 @@ public class TurnAngle extends Command {
 	
 	private PIDController pidAngle;
 	private double turnSpeed = 0;
+	private double angleDeg;
 
-	private double angleKp = 0.01;
-	private double angleKi = 0.001;
-	private double angleKd = 0;
+	private double angleKp;
+	private double angleKi;
+	private double angleKd;
 	
 	private LinearAccelerationFilter filter;
 
 
-	public TurnAngle(double angle) {
+	public TurnAngle(double angleDeg) {
 		requires(Robot.drivetrain);
 		
 		pidAngle = new PIDController(angleKp,
@@ -44,16 +46,22 @@ public class TurnAngle extends Command {
 			}
 		});
 		
+		this.angleDeg = angleDeg;
 		pidAngle.setOutputRange(-1.0, 1.0);
-		pidAngle.setAbsoluteTolerance(4);
-		pidAngle.setSetpoint(angle);
+		pidAngle.setSetpoint(angleDeg);
 		
 		LiveWindow.addActuator("drivetrain", "Turn Angle controller", pidAngle);
 	}
 
-	// Called just before this Command runs the first time
 	@Override
 	protected void initialize() {
+		//Get PID values from preferences
+		Preferences prefs = Preferences.getInstance();
+		angleKp = prefs.getDouble("TurnAngle Kp", 0.01);
+		angleKi = prefs.getDouble("TurnAngle Ki", 0.001);
+		angleKd = prefs.getDouble("TurnAngle Kd", 0.0);
+		pidAngle.setAbsoluteTolerance(prefs.getDouble("TurnAngle Tol.", 4));
+		
 		// Get everything in a safe starting state.
 		Robot.drivetrain.reset();
 		pidAngle.reset();
@@ -61,21 +69,23 @@ public class TurnAngle extends Command {
 		
 		double filterSlopeTime = Robot.prefs.getDouble("FilterSlopeTime", 0.2);
 		filter = new LinearAccelerationFilter(filterSlopeTime);
+		
+		//log
+		System.out.println();
+		System.out.println("TurnAngle Initialized");
+		System.out.println("Turn to " + angleDeg + " Degrees");
 	}
 
-	// Called repeatedly when this Command is scheduled to run
 	@Override
 	protected void execute() {
 		Robot.drivetrain.drive(turnSpeed * filter.output(), 1);
 	}
 
-	// Make this return true when this Command no longer needs to run execute()
 	@Override
 	protected boolean isFinished() {
 		return pidAngle.onTarget();
 	}
 
-	// Called once after isFinished returns true
 	@Override
 	protected void end() {
 

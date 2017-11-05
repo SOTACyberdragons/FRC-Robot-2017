@@ -90,11 +90,9 @@ public class AutoDriveStraightWithStop extends Command {
 		LiveWindow.addActuator("Drive", "Angle controller", pidAngle);
 	}
 
-	// Called just before this Command runs the first time
 	@Override
 	protected void initialize() {
 		// Get everything in a safe starting state.
-
 		Robot.drivetrain.reset();
 		pidDistance.reset();
 		pidAngle.reset();
@@ -108,19 +106,16 @@ public class AutoDriveStraightWithStop extends Command {
 		filter = new LinearAccelerationFilter(filterSlopeTime);
 	}
 
-	// Called repeatedly when this Command is scheduled to run
 	@Override
 	protected void execute() {
 		Robot.drivetrain.drive(driveOutput * filter.output() * autoPower, driveCurve);
 	}
 
-	// Make this return true when this Command no longer needs to run execute()
 	@Override
 	protected boolean isFinished() {
 		return pidDistance.onTarget();
 	}
 
-	// Called once after isFinished returns true
 	@Override
 	protected void end() {
 

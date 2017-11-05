@@ -2,9 +2,6 @@ package org.usfirst.frc.team5700.robot.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
-/**
- *
- */
 public class AutoMiddlePeg extends CommandGroup {
 	
 	//drive back 4 feet
@@ -15,7 +12,7 @@ public class AutoMiddlePeg extends CommandGroup {
     	addSequential(new GetPegWithVision(true, false), 3);
     	
     	//hang gear while driving back 4 ft, lift gear intake at end of HangGear command
-    	addParallel(new HangGear());
-    	addSequential(new DrivePastDistance(driveDistanceIn, -0.6, true), 1);
+    	addParallel(new AutoHangGear());
+    	addSequential(new DrivePastDistance(driveDistanceIn, 0.6, true, true), 1);
     }
 }

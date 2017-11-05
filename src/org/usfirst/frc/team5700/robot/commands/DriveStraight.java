@@ -27,16 +27,15 @@ public class DriveStraight extends Command {
 	private double driveOutput = 0;
 	private double driveCurve = 0;
 
-	private double distanceKp = 0.05;
-	private double distanceKi = 0.005;
-	private double distanceKd = 0;
+	private double distanceKp;
+	private double distanceKi;
+	private double distanceKd;
 
-	private double angleKp = 0.01;
-	private double angleKi = 0.001;
-	private double angleKd = 0;
+	private double angleKp;
+	private double angleKi;
+	private double angleKd;
 	
 	private LinearAccelerationFilter filter;
-
 
 	public DriveStraight(double distance) {
 		requires(Robot.drivetrain);
@@ -79,55 +78,60 @@ public class DriveStraight extends Command {
 		});
 
 		pidDistance.setOutputRange(-1.0, 1.0);
-		pidDistance.setAbsoluteTolerance(0.5);
 		pidDistance.setSetpoint(distance);
 		
 		pidAngle.setOutputRange(-1.0, 1.0);
-		pidAngle.setAbsoluteTolerance(0.5);
 		pidAngle.setSetpoint(0);
 		
 		LiveWindow.addActuator("Drive", "Distance Controller", pidDistance);
 		LiveWindow.addActuator("Drive", "Angle controller", pidAngle);
 	}
-
-	// Called just before this Command runs the first time
+	
 	@Override
 	protected void initialize() {
+		Preferences prefs = Preferences.getInstance();
+		//get PID constants from Preferences Table
+		distanceKp = prefs.getDouble("DriveStraight D Kp", 0.05);
+		distanceKi = prefs.getDouble("DriveStraight D Ki", 0.005);
+		distanceKd = prefs.getDouble("DriveStraight D Kd", 0.0);
+
+		angleKp = prefs.getDouble("DriveStraight A Kp", 0.01);
+		angleKi = prefs.getDouble("DriveStraight A Ki", 0.001);
+		angleKd = prefs.getDouble("DriveStraight A Kd", 0.0);
+
+		pidDistance.setAbsoluteTolerance(prefs.getDouble("DriveStraight D Tol.", 3));
+		pidAngle.setAbsoluteTolerance(prefs.getDouble("DriveStraight A Tol.", 0.5));
+		
 		// Get everything in a safe starting state.
 		Robot.drivetrain.reset();
 		pidDistance.reset();
 		pidAngle.reset();
 		pidDistance.enable();
 		pidAngle.enable();
-		System.out.println("DriveStraight initialize");
 		
-		
-    	Preferences prefs = Preferences.getInstance();
 		double filterSlopeTime = prefs.getDouble("FilterSlopeTime", 0.5);
 		filter = new LinearAccelerationFilter(filterSlopeTime);
+		
+		System.out.println("DriveStraight initialized");
 	}
 
-	// Called repeatedly when this Command is scheduled to run
 	@Override
 	protected void execute() {
 		Robot.drivetrain.drive(driveOutput * filter.output(), driveCurve);
 	}
 
-	// Make this return true when this Command no longer needs to run execute()
 	@Override
 	protected boolean isFinished() {
 		return pidDistance.onTarget();
 	}
 
-	// Called once after isFinished returns true
 	@Override
 	protected void end() {
 
 		// Stop PID and the wheels
-
 		pidDistance.disable();
 		pidAngle.disable();
-		Robot.drivetrain.drive(0, 0);
+		Robot.drivetrain.stop();
 		
 		Robot.drivetrain.reset();
 		pidDistance.reset();

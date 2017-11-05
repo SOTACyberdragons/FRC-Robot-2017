@@ -42,7 +42,7 @@ public class DriveTrain extends Subsystem {
     public static final double PULSE_PER_REVOLUTION = 360;
     public static final double ENCODER_GEAR_RATIO = 1;
     public static final double GEAR_RATIO = 10.71;
-    public static final double FUDGE_FACTOR = 0.88235; //340/300
+    public static final double FUDGE_FACTOR = 0.88235; //340/300 //TODO what is this
 
 
     final double distancePerPulse = 12 * Math.PI * WHEEL_DIAMETER / PULSE_PER_REVOLUTION /

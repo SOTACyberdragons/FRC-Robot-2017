@@ -2,9 +2,6 @@ package org.usfirst.frc.team5700.robot.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
-/**
- *
- */
 public class AutoTwoGear extends CommandGroup {
 
     private boolean turnLeft;
@@ -32,13 +29,13 @@ public class AutoTwoGear extends CommandGroup {
     	addSequential(new GetPegWithVision(true, false), 3);
     	
     	//hang gear while driving back 4 ft, lift gear intake at end of HangGear command
-    	addParallel(new HangGear());
-    	addSequential(new DrivePastDistance(44, -0.6, true), 2);
+    	addParallel(new AutoHangGear());
+    	addSequential(new DrivePastDistance(44, 0.6, true, true), 2);
     	
     	
     	//PART 2
     	//No PID turn angle, make sure to record
-    	addSequential(new TurnRadiusToAngle(0, 90, 0.32, !turnLeft));
+    	addSequential(new TurnRadiusPastAngle(0, 90, 0.32, !turnLeft, true));
     	
     	//PART 3
     	addSequential(new TurnToGearWithVision());
@@ -50,7 +47,7 @@ public class AutoTwoGear extends CommandGroup {
     	addSequential(new DrivePastDistance(-0.6, true));
     	
     	//PART 6
-    	addSequential(new TurnRadiusToAngle(0, 0.4, turnLeft));
+    	addSequential(new TurnRadiusPastAngle(0, 0.4, turnLeft));
     	
     	//PART 7
     	addSequential(new GetPegWithVision(true, true));

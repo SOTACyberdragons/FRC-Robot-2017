@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-
 import org.usfirst.frc.team5700.robot.Robot;
 import org.usfirst.frc.team5700.utils.LinearAccelerationFilter;
 
@@ -21,25 +20,23 @@ import org.usfirst.frc.team5700.utils.LinearAccelerationFilter;
  * command is running. The input is the averaged values of the left and right
  * encoders.
  */
-public class DriveStraightWithStop extends Command {
+public class DriveStraightToPeg extends Command {
 	private PIDController pidDistance;
 	private PIDController pidAngle;
 	private double driveOutput = 0;
 	private double driveCurve = 0;
 
-	private double distanceKp = 0.05;
-	private double distanceKi = 0.005;
-	private double distanceKd = 0;
+	private double distanceKp;
+	private double distanceKi;
+	private double distanceKd;
 
-	private double angleKp = 0.01;
-	private double angleKi = 0.001;
-	private double angleKd = 0;
-	private double autoPower = 1.0;
+	private double angleKp;
+	private double angleKi;
+	private double angleKd;
 	
 	private LinearAccelerationFilter filter;
 
-
-	public DriveStraightWithStop(double distance) {
+	public DriveStraightToPeg(double distance) {
 		requires(Robot.drivetrain);
 		pidDistance = new PIDController(distanceKp, 
 				distanceKi, 
@@ -68,6 +65,7 @@ public class DriveStraightWithStop extends Command {
 				driveOutput = d;
 			}
 		});
+		
 		pidAngle = new PIDController(angleKp,
 				angleKi,
 				angleKd, 
@@ -80,62 +78,65 @@ public class DriveStraightWithStop extends Command {
 		});
 
 		pidDistance.setOutputRange(-1.0, 1.0);
-		pidDistance.setAbsoluteTolerance(0.5);
 		pidDistance.setSetpoint(distance);
 		
 		pidAngle.setOutputRange(-1.0, 1.0);
-		pidAngle.setAbsoluteTolerance(0.5);
 		pidAngle.setSetpoint(0);
 		
 		LiveWindow.addActuator("Drive", "Distance Controller", pidDistance);
 		LiveWindow.addActuator("Drive", "Angle controller", pidAngle);
 	}
 
-	// Called just before this Command runs the first time
 	@Override
 	protected void initialize() {
-		// Get everything in a safe starting state.
+		Preferences prefs = Preferences.getInstance();
+		//get PID constants from Preferences Table
+		distanceKp = prefs.getDouble("DriveStraight D Kp", 0.05);
+		distanceKi = prefs.getDouble("DriveStraight D Ki", 0.005);
+		distanceKd = prefs.getDouble("DriveStraight D Kd", 0.0);
 
+		angleKp = prefs.getDouble("DriveStraight A Kp", 0.01);
+		angleKi = prefs.getDouble("DriveStraight A Ki", 0.001);
+		angleKd = prefs.getDouble("DriveStraight A Kd", 0.0);
+
+		pidDistance.setAbsoluteTolerance(prefs.getDouble("DriveStraight D Tol.", 3));
+		pidAngle.setAbsoluteTolerance(prefs.getDouble("DriveStraight A Tol.", 0.5));
+		
+		// Get everything in a safe starting state.
 		Robot.drivetrain.reset();
 		pidDistance.reset();
 		pidAngle.reset();
 		pidDistance.enable();
 		pidAngle.enable();
-		System.out.println("DriveStraightWithStop initialize");
 		
-		
-    	Preferences prefs = Preferences.getInstance();
 		double filterSlopeTime = prefs.getDouble("FilterSlopeTime", 0.5);
-		autoPower = prefs.getDouble("Auto Power", 1.0);
-				
 		filter = new LinearAccelerationFilter(filterSlopeTime);
+		
+		System.out.println("DriveStraight initialized");
 	}
 
-	// Called repeatedly when this Command is scheduled to run
 	@Override
 	protected void execute() {
-		Robot.drivetrain.drive(driveOutput * filter.output() * autoPower, driveCurve);
+		Robot.drivetrain.drive(driveOutput * filter.output(), driveCurve);
 	}
 
-	// Make this return true when this Command no longer needs to run execute()
 	@Override
 	protected boolean isFinished() {
-		return (Robot.gearIntake.getPegSwitch() || pidDistance.onTarget());
+		return Robot.gearIntake.getPegSwitch() || pidDistance.onTarget();
 	}
 
-	// Called once after isFinished returns true
 	@Override
 	protected void end() {
 
 		// Stop PID and the wheels
 		pidDistance.disable();
 		pidAngle.disable();
-		Robot.drivetrain.drive(0, 0);
+		Robot.drivetrain.stop();
 		
 		Robot.drivetrain.reset();
 		pidDistance.reset();
 		pidAngle.reset();
 		
-		System.out.println("DriveStraightWithStop ended");
+		System.out.println("DriveStraight ended");
 	}
 }

@@ -23,32 +23,26 @@ public class GetPegWithVision extends Command {
 
 	private PIDController pidAngle;
 
-	private double angleKp = 0.004;
-	private double angleKi = 0.000001;
-	private double angleKd = 0.001;
+	private double angleKp;
+	private double angleKi;
+	private double angleKd;
 
 	private double driveCurve = 0;
 	private double driveOutput;
 
 	private LinearAccelerationFilter filter;
-
 	private boolean useAccelerationFiler;
 
 	private BBoxLocator bBoxLocator = new BBoxLocator(Dimensions.TAPE_WIDTH_IN);
 
-	Preferences prefs = Preferences.getInstance();
+	private boolean wasDetected;
 
 	private boolean waitForVision;
-
-	private boolean wasDetected;
 
 	public GetPegWithVision(boolean useAccelerationFiler, boolean waitForVision) {
 		requires(Robot.drivetrain);
 
 		this.waitForVision = waitForVision;
-
-		//driveOutput = Robot.prefs.getDouble("Drive with Vision Speed", 0.6);
-		driveOutput = prefs.getDouble("Drive with Vision Speed", 0.5);
 
 		pidAngle = new PIDController(angleKp,
 				angleKi,
@@ -66,9 +60,17 @@ public class GetPegWithVision extends Command {
 		LiveWindow.addActuator("drivetrain", "Peg Vision Angle Controller", pidAngle);
 	}
 
-	// Called just before this Command runs the first time
 	protected void initialize() {
+
+		//Get PID values from preferences
+		Preferences prefs = Preferences.getInstance();
+		angleKp = prefs.getDouble("GetPeg Kp", 0.01);
+		angleKi = prefs.getDouble("GetPeg Ki", 0.001);
+		angleKd = prefs.getDouble("GetPeg Kd", 0.0);
+		driveOutput = prefs.getDouble("GetPeg Speed", 0.5);
+		
 		Robot.drivetrain.reset();
+		Robot.drivetrain.stop();
 		pidAngle.reset();
 		pidAngle.enable();
 
@@ -77,10 +79,10 @@ public class GetPegWithVision extends Command {
 		double filterSlopeTime = prefs.getDouble("FilterSlopeTime", 0.2);
 
 		filter = new LinearAccelerationFilter(filterSlopeTime);
-
+		
+		System.out.println("\n GetPegWithVision Initialized");
 	}
 
-	// Called repeatedly when this Command is scheduled to run
 	protected void execute() {
 		//updates setpoint only if vision sees object
 		BBox bBox = bBoxLocator.getBBox();
@@ -92,23 +94,16 @@ public class GetPegWithVision extends Command {
 			SmartDashboard.putNumber("PID Vision Setpoint Angle", pidAngle.getSetpoint());
 		}
 
-		if (waitForVision) {
-			Robot.drivetrain.stop();
-			if (wasDetected) {
-				Robot.drivetrain.drive(driveOutput * (useAccelerationFiler ? filter.output() : 1), driveCurve);
-			}
-		} else {
+		if (!waitForVision || wasDetected) {
 			Robot.drivetrain.drive(driveOutput * (useAccelerationFiler ? filter.output() : 1), driveCurve);
 		}
 	}
 
-	// Make this return true when this Command no longer needs to run execute()
 	protected boolean isFinished() {
 		//switch off when peg pushes flap
 		return Robot.gearIntake.getPegSwitch();
 	}
 
-	// Called once after isFinished returns true
 	protected void end() {
 
 		NetworkTable.getTable("vision").putString("model", "gear");
@@ -121,9 +116,7 @@ public class GetPegWithVision extends Command {
 
 		Robot.gearIntake.lightOff();
 	}
-
-	// Called when another command which requires one or more of the same
-	// subsystems is scheduled to run
+	
 	protected void interrupted() {
 		end();
 	}

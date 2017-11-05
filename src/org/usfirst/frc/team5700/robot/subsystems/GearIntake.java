@@ -85,5 +85,8 @@ public class GearIntake extends Subsystem {
 	@Override
 	protected void initDefaultCommand() {
 	}
+	
+	public void log() {
+	}
 }
 

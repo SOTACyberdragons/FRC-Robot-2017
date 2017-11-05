@@ -4,10 +4,10 @@ import org.usfirst.frc.team5700.robot.commands.AutoCrossBaseline;
 import org.usfirst.frc.team5700.robot.commands.AutoMiddlePeg;
 import org.usfirst.frc.team5700.robot.commands.AutoSidePeg;
 import org.usfirst.frc.team5700.robot.commands.AutoTwoGear;
+import org.usfirst.frc.team5700.robot.commands.DriveStraight;
 import org.usfirst.frc.team5700.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team5700.robot.subsystems.GearIntake;
 import org.usfirst.frc.team5700.robot.subsystems.RopeClimber;
-
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Command;
@@ -69,6 +69,8 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putData(drivetrain);
 		SmartDashboard.putData(gearIntake);
 		SmartDashboard.putData(ropeClimber);
+		SmartDashboard.putData("DriveStraight", new DriveStraight(prefs.getDouble("DriveStraight Distance", 200)));
+		SmartDashboard.putData("DriveStraightToPeg", new DriveStraight(Dimensions.DISTANCE_TO_PEG-Dimensions.LENGTH_IN/2));
 	}
 
 	@Override
@@ -90,10 +92,6 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void teleopInit() {
-		// This makes sure that the autonomous stops running when
-		// teleop starts running. If you want the autonomous to
-		// continue until interrupted by another command, remove
-		// this line or comment it out.
 		autonomousCommand.cancel();
 		//always make sure we set vision to peg
 		NetworkTable.getTable("vision").putString("model", "peg");
@@ -122,7 +120,7 @@ public class Robot extends IterativeRobot {
 	 */
 	private void log() {
 		drivetrain.log();
-		//gearSystem.log();
+		gearIntake.log();
 		ropeClimber.log();
 	}
 }

@@ -24,9 +24,9 @@ public class TurnToGearWithVision extends Command {
 	private PIDController pidAngle;
 	
 	//TODO tune
-	private double angleKp = 0.03;
-	private double angleKi = 0.0001;
-	private double angleKd = 0.001;
+	private double angleKp;
+	private double angleKi;
+	private double angleKd;
 	
 	private double driveOutput;
 	
@@ -54,24 +54,30 @@ public class TurnToGearWithVision extends Command {
 		});
        
 		pidAngle.setOutputRange(-1.0, 1.0);
-		pidAngle.setAbsoluteTolerance(5); //Degrees
 		
 		LiveWindow.addActuator("drivetrain", "Peg Vision Angle Controller", pidAngle);
     }
 
-    // Called just before this Command runs the first time
     protected void initialize() {
+    
+		//Get PID values from preferences
+		Preferences prefs = Preferences.getInstance();
+		angleKp = prefs.getDouble("TurnToGear Kp", 0.01);
+		angleKi = prefs.getDouble("TurnToGear Ki", 0.001);
+		angleKd = prefs.getDouble("TurnToGear Kd", 0.0);
+		pidAngle.setAbsoluteTolerance(prefs.getDouble("TurnAngle Tol.", 4));
 
-    		System.out.println();
-        	System.out.println("Initiate Turn to Gear with Vision");
     		Robot.drivetrain.reset();
 		pidAngle.reset();
 		pidAngle.enable();
+		
+		//logs
+		System.out.println();
+		System.out.println("TurnToGearWithVision Initialized");
 	}
 
-    // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	//updates setpoint only if vision sees object
+    		//updates setpoint only if vision sees object
         BBox bBox = bBoxLocator.getBBox();
     	
         if (bBox != null) {
@@ -80,35 +86,33 @@ public class TurnToGearWithVision extends Command {
 	    		pidAngle.setSetpoint(Robot.drivetrain.getHeading() + bBox.angleDeg);
         		SmartDashboard.putNumber("PID Vision Setpoint Angle", pidAngle.getSetpoint());
         }
+        
         //Turn in place
     		if (wasDetected) {
     			Robot.drivetrain.drive(driveOutput, 1);
     		}
     }
 
-    // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
         //switch off when peg pushes flap
     		return wasDetected && pidAngle.onTarget();
     }
 
-    // Called once after isFinished returns true
     protected void end() {
-	    	//record driven distance
-	    	System.out.println("Vision turn to gear recorded angle");
-	    System.out.println("Vision Angle Recorded; " + Robot.drivetrain.getHeading());
+	    	//record angle turned with vision
+	    System.out.println("Angle Recorded; " + Robot.drivetrain.getHeading());
 	    Robot.drivetrain.addToRecordedAngle();
-	    	System.out.println("Total Angle Recorded; " + Robot.drivetrain.getRecordedAngle());
+	    	System.out.println("Total Angle Recorde: " + Robot.drivetrain.getRecordedAngle() + " Degrees");
 	    	
 	    	// Stop PID and the wheels
 		pidAngle.disable();
 		pidAngle.reset();
 		Robot.drivetrain.drive(0, 0);
 		Robot.drivetrain.reset();
+		
+		System.out.println("TurnToGearWithVision ended");
     }
 
-    // Called when another command which requires one or more of the same
-    // subsystems is scheduled to run
     protected void interrupted() {
     		end();
     }
