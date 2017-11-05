@@ -21,7 +21,7 @@ public class ManualHangGear extends Command {
 
     protected void end() {
     		Robot.gearIntake.gearIntakeUp();
-    		Robot.gearIntake.stopRoller();;
+    		Robot.gearIntake.stopRoller();
     }
 
     protected void interrupted() {

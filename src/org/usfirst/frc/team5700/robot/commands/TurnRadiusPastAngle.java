@@ -20,7 +20,6 @@ public class TurnRadiusPastAngle extends Command {
 	private double targetAngleDeg;
 	private double turnSpeed;
 	private double turnRadiusIn;
-	private enum Direction {LEFT, RIGHT};
 	private int turnDirection;
 	private boolean useRecordedAngle;
 	private boolean recordAngle = false;

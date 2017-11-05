@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 import org.usfirst.frc.team5700.robot.Robot;
 import org.usfirst.frc.team5700.utils.LinearAccelerationFilter;
@@ -21,7 +20,7 @@ import org.usfirst.frc.team5700.utils.LinearAccelerationFilter;
  * command is running. The input is the averaged values of the left and right
  * encoders.
  */
-public class DriveStraight extends Command {
+public class DriveStraightToDistance extends Command {
 	private PIDController pidDistance;
 	private PIDController pidAngle;
 	private double driveOutput = 0;
@@ -37,7 +36,7 @@ public class DriveStraight extends Command {
 	
 	private LinearAccelerationFilter filter;
 
-	public DriveStraight(double distance) {
+	public DriveStraightToDistance(double distance) {
 		requires(Robot.drivetrain);
 		pidDistance = new PIDController(distanceKp, 
 				distanceKi, 
@@ -82,22 +81,19 @@ public class DriveStraight extends Command {
 		
 		pidAngle.setOutputRange(-1.0, 1.0);
 		pidAngle.setSetpoint(0);
-		
-		LiveWindow.addActuator("Drive", "Distance Controller", pidDistance);
-		LiveWindow.addActuator("Drive", "Angle controller", pidAngle);
 	}
 	
 	@Override
 	protected void initialize() {
 		Preferences prefs = Preferences.getInstance();
 		//get PID constants from Preferences Table
-		distanceKp = prefs.getDouble("DriveStraight D Kp", 0.05);
-		distanceKi = prefs.getDouble("DriveStraight D Ki", 0.005);
-		distanceKd = prefs.getDouble("DriveStraight D Kd", 0.0);
+		distanceKp = prefs.getDouble("DriveStraightToDistance D Kp", 0.05);
+		distanceKi = prefs.getDouble("DriveStraightToDistance D Ki", 0.005);
+		distanceKd = prefs.getDouble("DriveStraightToDistance D Kd", 0.0);
 
-		angleKp = prefs.getDouble("DriveStraight A Kp", 0.01);
-		angleKi = prefs.getDouble("DriveStraight A Ki", 0.001);
-		angleKd = prefs.getDouble("DriveStraight A Kd", 0.0);
+		angleKp = prefs.getDouble("DriveStraightToDistance A Kp", 0.01);
+		angleKi = prefs.getDouble("DriveStraightToDistance A Ki", 0.001);
+		angleKd = prefs.getDouble("DriveStraightToDistance A Kd", 0.0);
 
 		pidDistance.setAbsoluteTolerance(prefs.getDouble("DriveStraight D Tol.", 3));
 		pidAngle.setAbsoluteTolerance(prefs.getDouble("DriveStraight A Tol.", 0.5));
@@ -112,7 +108,7 @@ public class DriveStraight extends Command {
 		double filterSlopeTime = prefs.getDouble("FilterSlopeTime", 0.5);
 		filter = new LinearAccelerationFilter(filterSlopeTime);
 		
-		System.out.println("DriveStraight initialized");
+		System.out.println("\nDriveStraightToDistance initialized");
 	}
 
 	@Override

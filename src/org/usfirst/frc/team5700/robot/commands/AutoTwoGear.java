@@ -28,10 +28,9 @@ public class AutoTwoGear extends CommandGroup {
     	//ram into peg, timeout after 3 seconds
     	addSequential(new GetPegWithVision(true, false), 3);
     	
-    	//hang gear while driving back 4 ft, lift gear intake at end of HangGear command
-    	addParallel(new AutoHangGear());
+    	//hang gear while driving back 4 ft, lift gear intake after 0.5 seconds
+    	addParallel(new AutoHangGear(0.5));
     	addSequential(new DrivePastDistance(44, 0.6, true, true), 2);
-    	
     	
     	//PART 2
     	//No PID turn angle, make sure to record
@@ -51,6 +50,7 @@ public class AutoTwoGear extends CommandGroup {
     	
     	//PART 7
     	addSequential(new GetPegWithVision(true, true));
-    	
+    	addParallel(new AutoHangGear(0.5));
+    	addSequential(new DrivePastDistance(44, 0.6, true, true), 2);
     }
 }

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.usfirst.frc.team5700.robot.commands;
 
 import edu.wpi.first.wpilibj.PIDController;
@@ -36,7 +32,6 @@ public class AutoDriveStraightWithStop extends Command {
 	private double autoPower = 1.0;
 	
 	private LinearAccelerationFilter filter;
-
 
 	public AutoDriveStraightWithStop(double distance) {
 		requires(Robot.drivetrain);
@@ -129,5 +124,10 @@ public class AutoDriveStraightWithStop extends Command {
 		pidAngle.reset();
 		
 		System.out.println("DriveStraightWithStop ended");
+	}
+	
+	@Override
+	protected void interrupted() {
+		end();
 	}
 }

@@ -8,24 +8,27 @@ import edu.wpi.first.wpilibj.command.Command;
 public class AutoHangGear extends Command {
 	
 	Timer timer = new Timer();
-
-	double gearIntakeDownTime = 0.5;
+	double intakeDownTime;
 	
-    public AutoHangGear() {
+    /**
+     * @param intakeDownTime, 0.5 is good
+     */
+	public AutoHangGear(double intakeDownTime) {
         requires(Robot.gearIntake);
+        this.intakeDownTime = intakeDownTime;
     }
 
     protected void initialize() {
-    	timer.start();
+    		timer.start();
     }
 
     protected void execute() {
-    	Robot.gearIntake.gearIntakeDown();
-    	Robot.gearIntake.rollerHangGear();
+    		Robot.gearIntake.gearIntakeDown();
+    		Robot.gearIntake.rollerHangGear();
     }
 
     protected boolean isFinished() {
-        return timer.get() > gearIntakeDownTime;
+        return timer.get() > intakeDownTime;
     }
 
     protected void end() {
@@ -34,6 +37,6 @@ public class AutoHangGear extends Command {
     }
 
     protected void interrupted() {
-    	end();
+    		end();
     }
 }

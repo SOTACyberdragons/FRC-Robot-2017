@@ -36,10 +36,6 @@ public class GetGearWithVision extends Command {
 
 	private BBoxLocator bBoxLocator = new BBoxLocator(Dimensions.GEAR_WIDTH_IN);
 
-	private double MAX_WIDTH = 200; //measured off the screen
-
-	private Timer timer = new Timer();
-
 	private double distanceToGear;
 
 	public GetGearWithVision(boolean useAccelerationFiler) {

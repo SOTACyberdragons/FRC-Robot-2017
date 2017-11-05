@@ -36,19 +36,16 @@ public class DrivePastDistance extends Command {
     }
 
     protected void initialize() {
-    		//logs
-    		System.out.println("Initializing DrivePastDistance Command");
-    		
+		System.out.println("\nDrivePastDistance Initializing...");
+		
     		if (useRecordedDistance) {
-    			
     			this.distanceIn = Robot.drivetrain.getRecordedDistance();
     			System.out.println("Using recorded distance");
-    			
     		} else {
     			System.out.println("Using preset distance");
     		}
     		
-    		System.out.println("First Distance: " + distanceIn * direction);
+    		System.out.println("distance: " + distanceIn * direction);
 	    	System.out.println("driveSpeed: " + speed);
 	    	
 	    	Robot.drivetrain.reset();

@@ -58,7 +58,7 @@ public class OI {
 		
 		//set commands
 		//gear intake
-		intakeGear.whileHeld(new ManualIntakeGear(-0.6, -0.3));
+		intakeGear.whileHeld(new ManualIntakeGear());
 		hangGear.whileHeld(new ManualHangGear());
 		spitOut.whileHeld(new SpitOutGear());
 		

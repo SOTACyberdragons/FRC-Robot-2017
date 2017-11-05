@@ -7,17 +7,9 @@ import org.usfirst.frc.team5700.vision.BBoxLocator.BBox;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.Preferences;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-/**
- * 
- * @author romandimov
- *
- */
 
 public class TurnToGearWithVision extends Command {
 	
@@ -35,9 +27,6 @@ public class TurnToGearWithVision extends Command {
     Preferences prefs = Preferences.getInstance();
 
 	private boolean wasDetected = false;
-
-	//TODO find spec
-    private static final double MAX_WIDTH = 640;
 
     public TurnToGearWithVision() {
        requires(Robot.drivetrain);

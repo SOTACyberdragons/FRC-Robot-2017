@@ -12,7 +12,6 @@ public class ClimbUp extends Command {
     public ClimbUp(double climbSpeed) {
         // Use requires() here to declare subsystem dependencies
         requires(Robot.ropeClimber);
-        
         speed = climbSpeed;
     }
 

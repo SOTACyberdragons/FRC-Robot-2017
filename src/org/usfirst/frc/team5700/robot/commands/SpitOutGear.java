@@ -25,6 +25,6 @@ public class SpitOutGear extends Command {
     }
 
     protected void interrupted() {
-    	end();
+    		end();
     }
 }

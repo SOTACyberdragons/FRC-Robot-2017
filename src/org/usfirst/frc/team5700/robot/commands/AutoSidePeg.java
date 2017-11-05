@@ -8,16 +8,12 @@ public class AutoSidePeg extends CommandGroup {
 
     //drive forward 6 feet, minus half of robot length (including bumpers).
 	//start from edge of wall, turn to face peg just under 60 deg to compensate for inertia
-	//We want to rotate about the center of the robot.
 	double firstDistanceIn;
     boolean turnLeft;
     double turnAngleDeg;
     double turnRadiusIn;
     double driveSpeed;
-    
-    //drive back 4 feet
   	double driveDistanceIn;
-  	
   	public double toPegDistanceRecord;
 	
     public AutoSidePeg(String side) {
@@ -29,7 +25,7 @@ public class AutoSidePeg extends CommandGroup {
     	turnRadiusIn = prefs.getDouble("SidePeg Radius in", 20);
     	driveSpeed = prefs.getDouble("SidePeg driveSpeed", 0.5);
     	driveDistanceIn = prefs.getDouble("SidePeg Drive Back in", 4 * 12);
-		
+    	
 	//right: 1; left: -1
 	turnLeft = side.equals("left");
 		
@@ -41,8 +37,8 @@ public class AutoSidePeg extends CommandGroup {
     	//ram into peg, timeout after 3 seconds
     	addSequential(new GetPegWithVision(false, false), 3);
     	
-    	//hang gear while driving back, lift gear intake at end of HangGear command
-    	addParallel(new AutoHangGear());
+    	//hang gear while driving back, lift gear intake after 0.5 seconds
+    	addParallel(new AutoHangGear(0.5));
     	addSequential(new DrivePastDistance(driveDistanceIn, -driveSpeed, false), 2);
     }
 }

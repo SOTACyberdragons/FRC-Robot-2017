@@ -5,9 +5,6 @@ import org.usfirst.frc.team5700.robot.subsystems.RopeClimber.Direction;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-/**
- *
- */
 public class AntiClimb extends Command {
 
     public AntiClimb() {
@@ -15,7 +12,7 @@ public class AntiClimb extends Command {
     }
 
     protected void execute() {
-    	Robot.ropeClimber.climb(0.5, Direction.DOWN);
+    		Robot.ropeClimber.climb(0.5, Direction.DOWN);
     }
 
     protected boolean isFinished() {

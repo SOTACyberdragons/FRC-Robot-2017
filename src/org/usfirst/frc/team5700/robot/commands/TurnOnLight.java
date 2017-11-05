@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.command.Command;
 public class TurnOnLight extends Command {
 
     public TurnOnLight() {
-        requires(Robot.gearIntake);
     }
 
     protected void initialize() {

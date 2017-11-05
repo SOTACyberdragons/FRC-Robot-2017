@@ -31,7 +31,6 @@ public class TurnAngle extends Command {
 	
 	private LinearAccelerationFilter filter;
 
-
 	public TurnAngle(double angleDeg) {
 		requires(Robot.drivetrain);
 		
