@@ -28,7 +28,7 @@ public class GetPegWithVision extends Command {
 	private double angleKd;
 
 	private double driveCurve = 0;
-	private double driveOutput;
+	private double driveSpeed;
 
 	private LinearAccelerationFilter filter;
 	private boolean useAccelerationFiler;
@@ -67,7 +67,7 @@ public class GetPegWithVision extends Command {
 		angleKp = prefs.getDouble("GetPeg Kp", 0.01);
 		angleKi = prefs.getDouble("GetPeg Ki", 0.001);
 		angleKd = prefs.getDouble("GetPeg Kd", 0.0);
-		driveOutput = prefs.getDouble("GetPeg Speed", 0.5);
+		driveSpeed = prefs.getDouble("GetPeg Speed", 0.5);
 		
 		Robot.drivetrain.reset();
 		Robot.drivetrain.stop();
@@ -95,7 +95,7 @@ public class GetPegWithVision extends Command {
 		}
 
 		if (!waitForVision || wasDetected) {
-			Robot.drivetrain.drive(driveOutput * (useAccelerationFiler ? filter.output() : 1), driveCurve);
+			Robot.drivetrain.drive(driveSpeed * (useAccelerationFiler ? filter.output() : 1), driveCurve);
 		}
 	}
 

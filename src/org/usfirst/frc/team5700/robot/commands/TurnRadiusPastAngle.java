@@ -55,6 +55,8 @@ public class TurnRadiusPastAngle extends Command {
 
 	@Override
 	protected void initialize() {
+		
+		System.out.println("\nInitializing TurnRaiusPastAngle...");
 
 		if (useRecordedAngle) {
 			this.targetAngleDeg = Robot.drivetrain.getRecordedAngle();
@@ -72,6 +74,8 @@ public class TurnRadiusPastAngle extends Command {
 	    	System.out.println("  Turn Direction (1 left, -1 right: " + turnDirection);
     	
 		Robot.drivetrain.reset();
+		
+		System.out.println("TurnRadiusPastAngle Intitialized");
 	}
 
 	@Override
@@ -87,7 +91,7 @@ public class TurnRadiusPastAngle extends Command {
 	@Override
 	protected void end() {
 		if (recordAngle) {
-			Robot.drivetrain.recordAngle();
+			Robot.drivetrain.addToRecordedAngle();
 			System.out.println("Recorded angle: " + Robot.drivetrain.getRecordedAngle());
 		}
 		

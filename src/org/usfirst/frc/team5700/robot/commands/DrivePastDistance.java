@@ -14,6 +14,11 @@ public class DrivePastDistance extends Command {
 	private LinearAccelerationFilter filter;
 	private boolean useRecordedDistance;
 
+	/**
+	 * @param distance
+	 * @param speed
+	 * @param stop?
+	 */
 	public DrivePastDistance(double distance, double speed, boolean stop) {
         requires(Robot.drivetrain);
         
@@ -22,11 +27,22 @@ public class DrivePastDistance extends Command {
         this.stop = stop;
     }
 	
+	/**
+	 * @param distance
+	 * @param speed
+	 * @param stop?
+	 * @param backwards?
+	 */
 	public DrivePastDistance(double distance, double speed, boolean stop, boolean backwards) {
 		this(distance, speed, stop);
 		this.direction = backwards ? -1 : 1;
 	}
 	
+	/**
+	 * This constructor will make the command use the recorded distance
+	 * @param speed
+	 * @param stop?
+	 */
 	public DrivePastDistance(double speed, boolean stop) {
         requires(Robot.drivetrain);
         
@@ -36,7 +52,7 @@ public class DrivePastDistance extends Command {
     }
 
     protected void initialize() {
-		System.out.println("\nDrivePastDistance Initializing...");
+		System.out.println("\nInitializing DrivePastDistance...");
 		
     		if (useRecordedDistance) {
     			this.distanceIn = Robot.drivetrain.getRecordedDistance();
@@ -51,6 +67,8 @@ public class DrivePastDistance extends Command {
 	    	Robot.drivetrain.reset();
 	    	double filterSlopeTime = Robot.prefs.getDouble("FilterSlopeTime", 0.2);
 		filter = new LinearAccelerationFilter(filterSlopeTime);
+		
+		System.out.println("DrivePastDistance Initialized");
     }
 
     protected void execute() {
@@ -68,7 +86,7 @@ public class DrivePastDistance extends Command {
     			Robot.drivetrain.stop();
     		}
     		
-    		System.out.println("DrivePastDistance Command Finished");
+    		System.out.println("DrivePastDistance Command ended");
     }
 
     protected void interrupted() {

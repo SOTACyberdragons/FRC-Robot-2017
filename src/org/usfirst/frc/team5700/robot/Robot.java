@@ -72,7 +72,7 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putData(ropeClimber);
 		SmartDashboard.putData("DriveStraight", new DriveStraightToDistance(prefs.getDouble("DriveStraight Distance", 200)));
 		SmartDashboard.putData("DriveStraightToPeg", new DriveStraightToDistance(Dimensions.DISTANCE_TO_PEG-Dimensions.LENGTH_IN/2));
-		SmartDashboard.putData("Turn 90 Deg", new TurnAngle(90));
+		SmartDashboard.putData("Turn 90 Deg", new TurnAngle(90, false));
 	}
 
 	@Override

@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 import org.usfirst.frc.team5700.robot.Robot;
 import org.usfirst.frc.team5700.utils.LinearAccelerationFilter;
@@ -30,26 +29,27 @@ public class TurnAngle extends Command {
 	private double angleKd;
 	
 	private LinearAccelerationFilter filter;
+	private boolean useRecordedAngle;
+	private boolean recordAngle;
 
-	public TurnAngle(double angleDeg) {
+	/**
+	 * 
+	 * Turn to angle you give it, may record angle you turn
+	 * @param angleDeg
+	 * @param recordAngle
+	 */
+	public TurnAngle(double angleDeg, boolean recordAngle) {
 		requires(Robot.drivetrain);
-		
-		pidAngle = new PIDController(angleKp,
-				angleKi,
-				angleKd, 
-				Robot.drivetrain.getGyro(), 
-				new PIDOutput() {
-			@Override
-			public void pidWrite(double c) {
-				turnSpeed = c;
-			}
-		});
-		
 		this.angleDeg = angleDeg;
-		pidAngle.setOutputRange(-1.0, 1.0);
-		pidAngle.setSetpoint(angleDeg);
-		
-		LiveWindow.addActuator("drivetrain", "Turn Angle controller", pidAngle);
+		this.recordAngle = recordAngle;
+	}
+	
+	/**
+	 * Turns to recorded angle
+	 */
+	public TurnAngle() {
+		this.useRecordedAngle = true;
+		this.recordAngle = false;
 	}
 
 	@Override
@@ -61,18 +61,37 @@ public class TurnAngle extends Command {
 		angleKd = prefs.getDouble("TurnAngle Kd", 0.0);
 		pidAngle.setAbsoluteTolerance(prefs.getDouble("TurnAngle Tol.", 4));
 		
+		//setup PID
+		pidAngle = new PIDController(angleKp,
+				angleKi,
+				angleKd, 
+				Robot.drivetrain.getGyro(), 
+				new PIDOutput() {
+			@Override
+			public void pidWrite(double c) {
+				turnSpeed = c;
+			}
+		});
+		
+		double filterSlopeTime = Robot.prefs.getDouble("FilterSlopeTime", 0.2);
+		filter = new LinearAccelerationFilter(filterSlopeTime);
+		
+		if (useRecordedAngle) {
+			this.angleDeg = Robot.drivetrain.getRecordedAngle();
+			System.out.println("Using recorded angle");
+		} else {
+			System.out.println("Using preset angle");
+		}
+		
+		pidAngle.setOutputRange(-1.0, 1.0);
+		pidAngle.setSetpoint(angleDeg);
+		
 		// Get everything in a safe starting state.
 		Robot.drivetrain.reset();
 		pidAngle.reset();
 		pidAngle.enable();
 		
-		double filterSlopeTime = Robot.prefs.getDouble("FilterSlopeTime", 0.2);
-		filter = new LinearAccelerationFilter(filterSlopeTime);
-		
-		//log
-		System.out.println();
 		System.out.println("TurnAngle Initialized");
-		System.out.println("Turn to " + angleDeg + " Degrees");
 	}
 
 	@Override
@@ -87,6 +106,12 @@ public class TurnAngle extends Command {
 
 	@Override
 	protected void end() {
+
+		if (recordAngle) {
+			Robot.drivetrain.addToRecordedAngle();
+			System.out.println("Recorded angle: " + Robot.drivetrain.getRecordedAngle());
+		}
+		
 
 		// Stop PID and the motors
 		pidAngle.disable();

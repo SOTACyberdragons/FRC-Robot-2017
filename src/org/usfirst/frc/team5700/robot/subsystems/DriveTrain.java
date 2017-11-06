@@ -48,8 +48,8 @@ public class DriveTrain extends Subsystem {
     final double distancePerPulse = 12 * Math.PI * WHEEL_DIAMETER / PULSE_PER_REVOLUTION /
         		ENCODER_GEAR_RATIO / GEAR_RATIO * FUDGE_FACTOR;
     
-	private double angleRecord;
-	private double distanceRecord;
+	private double angleRecord = 0;
+	private double distanceRecord= 0;
 
 	public DriveTrain() {
 		super();
@@ -163,16 +163,16 @@ public class DriveTrain extends Subsystem {
 		drive.drive(0.0, 0.0);
 	}
 	
-	public void recordDrivenDistanceIn() {
+	public void addToDrivenDistanceIn() {
 		distanceRecord = this.getDistance();
 	}
 	
 	public double getRecordedDistance() {
 		return distanceRecord;
 	}
-
-	public void recordAngle() {
-		angleRecord = this.getHeading();
+	
+	public void resetRecordedDistance() {
+		distanceRecord = 0;
 	}
 	
 	public void addToRecordedAngle() {
@@ -181,5 +181,9 @@ public class DriveTrain extends Subsystem {
 	
 	public double getRecordedAngle() {
 		return angleRecord;
+	}
+	
+	public void resetRecordedAngle() {
+		angleRecord = 0;
 	}
 }
