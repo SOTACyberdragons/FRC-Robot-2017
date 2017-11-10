@@ -93,7 +93,7 @@ public class OI {
 			hasBeenPressed = true;
 		}
 		
-		if(!toggleDirection.get()) {
+		if (!toggleDirection.get()) {
 			hasBeenPressed = false;
 		}
 		return toggle;

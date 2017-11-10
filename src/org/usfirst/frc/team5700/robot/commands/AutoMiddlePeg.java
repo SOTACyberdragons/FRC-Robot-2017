@@ -9,7 +9,7 @@ public class AutoMiddlePeg extends CommandGroup {
 
     public AutoMiddlePeg() {
     	//ram into peg, timeout after 3 seconds
-    	addSequential(new GetPegWithVision(true, false), 3);
+    	addSequential(new GetPegWithVision(true, false));
     	
     	//hang gear while driving back 4 ft, lift gear intake at after 0.5 seconds
     	addParallel(new AutoHangGear(0.5));

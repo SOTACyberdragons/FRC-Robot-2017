@@ -43,6 +43,17 @@ public class GetPegWithVision extends Command {
 		requires(Robot.drivetrain);
 
 		this.waitForVision = waitForVision;
+	}
+
+	protected void initialize() {
+
+		//Get PID values from preferences
+		Preferences prefs = Preferences.getInstance();
+		angleKp = prefs.getDouble("GetPeg Kp", 0.03);
+		angleKi = prefs.getDouble("GetPeg Ki", 0.0);
+		angleKd = prefs.getDouble("GetPeg Kd", 0.0);
+		driveSpeed = prefs.getDouble("GetPeg Speed", 0.4);
+		
 
 		pidAngle = new PIDController(angleKp,
 				angleKi,
@@ -56,18 +67,6 @@ public class GetPegWithVision extends Command {
 		});
 
 		pidAngle.setOutputRange(-1.0, 1.0);
-
-		LiveWindow.addActuator("drivetrain", "Peg Vision Angle Controller", pidAngle);
-	}
-
-	protected void initialize() {
-
-		//Get PID values from preferences
-		Preferences prefs = Preferences.getInstance();
-		angleKp = prefs.getDouble("GetPeg Kp", 0.01);
-		angleKi = prefs.getDouble("GetPeg Ki", 0.001);
-		angleKd = prefs.getDouble("GetPeg Kd", 0.0);
-		driveSpeed = prefs.getDouble("GetPeg Speed", 0.5);
 		
 		Robot.drivetrain.reset();
 		Robot.drivetrain.stop();
@@ -81,6 +80,8 @@ public class GetPegWithVision extends Command {
 		filter = new LinearAccelerationFilter(filterSlopeTime);
 		
 		System.out.println("\n GetPegWithVision Initialized");
+		System.out.println("Kp: " + angleKp + "  Ki: " + angleKi + "  Kd: " + angleKd);
+		System.out.println("Speed: " + driveSpeed);
 	}
 
 	protected void execute() {

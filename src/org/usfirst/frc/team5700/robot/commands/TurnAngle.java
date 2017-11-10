@@ -59,7 +59,6 @@ public class TurnAngle extends Command {
 		angleKp = prefs.getDouble("TurnAngle Kp", 0.01);
 		angleKi = prefs.getDouble("TurnAngle Ki", 0.001);
 		angleKd = prefs.getDouble("TurnAngle Kd", 0.0);
-		pidAngle.setAbsoluteTolerance(prefs.getDouble("TurnAngle Tol.", 4));
 		
 		//setup PID
 		pidAngle = new PIDController(angleKp,
@@ -72,6 +71,8 @@ public class TurnAngle extends Command {
 				turnSpeed = c;
 			}
 		});
+
+		pidAngle.setAbsoluteTolerance(prefs.getDouble("TurnAngle Tol.", 4));
 		
 		double filterSlopeTime = Robot.prefs.getDouble("FilterSlopeTime", 0.2);
 		filter = new LinearAccelerationFilter(filterSlopeTime);

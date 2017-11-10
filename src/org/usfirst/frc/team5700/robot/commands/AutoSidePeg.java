@@ -20,10 +20,10 @@ public class AutoSidePeg extends CommandGroup {
     	
     	Preferences prefs = Preferences.getInstance();
     	
-    	firstDistanceIn = prefs.getDouble("SidePeg First Distance in", 55);
+    	firstDistanceIn = prefs.getDouble("SidePeg First Distance in", 38);
     	turnAngleDeg = prefs.getDouble("SidePeg Turn Angle deg", 44);
     	turnRadiusIn = prefs.getDouble("SidePeg Radius in", 20);
-    	driveSpeed = prefs.getDouble("SidePeg driveSpeed", 0.5);
+    	driveSpeed = prefs.getDouble("SidePeg driveSpeed", 0.4);
     	driveDistanceIn = prefs.getDouble("SidePeg Drive Back in", 4 * 12);
     	
 	//right: 1; left: -1
@@ -35,7 +35,7 @@ public class AutoSidePeg extends CommandGroup {
     	addSequential(new TurnRadiusPastAngle(turnRadiusIn, turnAngleDeg, driveSpeed, turnLeft, false));
     	
     	//ram into peg, timeout after 3 seconds
-    	addSequential(new GetPegWithVision(false, false), 3);
+    	addSequential(new GetPegWithVision(false, false));
     	
     	//hang gear while driving back, lift gear intake after 0.5 seconds
     	addParallel(new AutoHangGear(0.5));
