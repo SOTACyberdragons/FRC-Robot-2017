@@ -101,8 +101,6 @@ public class Robot extends IterativeRobot {
 		autonomousCommand.cancel();
 		//always make sure we set vision to peg
 		NetworkTable.getTable("vision").putString("model", "peg");
-		
-		SmartDashboard.putNumber("Total Energy Used", PDP.getTotalEnergy());
 	}
 
 	/**
@@ -112,6 +110,8 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
 		log();
+		
+		SmartDashboard.putNumber("Total Energy Used", PDP.getTotalEnergy());
 	}
 	
 	/**
