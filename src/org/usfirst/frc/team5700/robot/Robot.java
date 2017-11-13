@@ -11,6 +11,7 @@ import org.usfirst.frc.team5700.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team5700.robot.subsystems.GearIntake;
 import org.usfirst.frc.team5700.robot.subsystems.RopeClimber;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -28,6 +29,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * directory.
  */
 public class Robot extends IterativeRobot {
+	
+	//public PowerDistributionPanel pdp = new PowerDistributionPanel();
+	
 	private Command autonomousCommand;
 	public static Preferences prefs;
 	
@@ -111,7 +115,7 @@ public class Robot extends IterativeRobot {
 		Scheduler.getInstance().run();
 		log();
 		
-		SmartDashboard.putNumber("Total Energy Used", PDP.getTotalEnergy());
+		//SmartDashboard.putNumber("Total Energy Used", pdp.getTotalEnergy());
 	}
 	
 	/**

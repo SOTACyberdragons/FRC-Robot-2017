@@ -3,6 +3,7 @@ package org.usfirst.frc.team5700.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import org.usfirst.frc.team5700.robot.commands.AntiClimb;
+import org.usfirst.frc.team5700.robot.commands.BellyLightsOn;
 import org.usfirst.frc.team5700.robot.commands.ClimbUp;
 import org.usfirst.frc.team5700.robot.commands.ManualIntakeGear;
 import org.usfirst.frc.team5700.robot.commands.ManualHangGear;
@@ -36,7 +37,8 @@ public class OI {
 	JoystickButton slowClimb;
 	JoystickButton anticlimb;
 	
-	JoystickButton light;
+	JoystickButton ringLight;
+	JoystickButton bellyLights;
 	
 	public OI() {
 		////set buttons
@@ -54,7 +56,8 @@ public class OI {
 		slowClimb = new JoystickButton(leftStick, ButtonMap.SLOW_CLIMB);
 		anticlimb = new JoystickButton(leftStick, ButtonMap.ANTICLIMB);
 		
-		light = new JoystickButton(rightStick, 10);
+		ringLight = new JoystickButton(rightStick, 10);
+		bellyLights = new JoystickButton(rightStick, 11);
 		
 		//set commands
 		//gear intake
@@ -68,7 +71,10 @@ public class OI {
 		anticlimb.whileHeld(new AntiClimb());
 		
 		//test vision
-		light.whileHeld(new TurnOnLight());
+		ringLight.whileHeld(new TurnOnLight());
+		
+		//bellylights
+		bellyLights.toggleWhenPressed(new BellyLightsOn());
 	}
 	    
 	public Joystick getLeftStick() {

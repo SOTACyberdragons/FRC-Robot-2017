@@ -12,7 +12,7 @@ public class RopeClimber extends Subsystem {
 	public enum Direction {UP, DOWN};
 	private double speed;
 	
-	private SpeedController climber = new Spark(RobotMap.CLIMB_MOTORS);
+	private Spark climber = new Spark(RobotMap.CLIMB_MOTORS);
 	
 	public void climb(double speed) {
 		this.speed = -speed;

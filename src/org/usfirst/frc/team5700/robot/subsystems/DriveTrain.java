@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Joystick.AxisType;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.RobotDrive;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -22,6 +23,8 @@ import org.usfirst.frc.team5700.robot.commands.ArcadeDriveWithJoysticks;
  * and a gyro.
  */
 public class DriveTrain extends Subsystem {
+	
+	private Solenoid bellyLights = new Solenoid(5);
 	
 	private SpeedController frontLeftMotor = new Spark(RobotMap.FRONT_LEFT_DRIVE_MOTOR);
 	private SpeedController rearLeftMotor = new Spark(RobotMap.BACK_LEFT_DRIVE_MOTOR);
@@ -185,5 +188,13 @@ public class DriveTrain extends Subsystem {
 	
 	public void resetRecordedAngle() {
 		angleRecord = 0;
+	}
+	
+	public void bellyLightsOn() {
+		bellyLights.set(true);
+	}
+	
+	public void bellyLightsOff() {
+		bellyLights.set(false);
 	}
 }
