@@ -18,4 +18,7 @@ public class RobotMap {
 	
 	//DIO
 	public static final int PEG_SWITCH = 5;
+	
+	//PDP Channels
+	public static final int INTAKE_PDP = 0; //TODO find this
 }

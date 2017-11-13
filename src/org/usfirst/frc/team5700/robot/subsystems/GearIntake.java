@@ -1,5 +1,6 @@
 package org.usfirst.frc.team5700.robot.subsystems;
 
+import org.usfirst.frc.team5700.electronics.PDP;
 import org.usfirst.frc.team5700.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.Compressor;
@@ -24,6 +25,8 @@ public class GearIntake extends Subsystem {
 	double rollerHangSpeed = 0.4;
 	
 	DigitalInput pegSwitch;
+
+	private double intakeHasGearCurrent = 5; //TODO find this value
     
     public GearIntake() {
 		super();
@@ -87,6 +90,10 @@ public class GearIntake extends Subsystem {
 	}
 	
 	public void log() {
+	}
+	
+	public boolean intakeHasGear() {
+		return PDP.getIntakeCurrent() >= intakeHasGearCurrent ;
 	}
 }
 

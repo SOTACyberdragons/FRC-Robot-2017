@@ -1,5 +1,6 @@
 package org.usfirst.frc.team5700.robot;
 
+import org.usfirst.frc.team5700.electronics.PDP;
 import org.usfirst.frc.team5700.robot.commands.AutoCrossBaseline;
 import org.usfirst.frc.team5700.robot.commands.AutoMiddlePeg;
 import org.usfirst.frc.team5700.robot.commands.AutoSidePeg;
@@ -46,6 +47,9 @@ public class Robot extends IterativeRobot {
 		
 		//always make sure we set vision to peg
 		NetworkTable.getTable("vision").putString("model", "peg");
+		
+		//Reset PDP energy record
+		PDP.resetEnergyRecord();
 				
 		prefs = Preferences.getInstance();
 		
@@ -97,6 +101,8 @@ public class Robot extends IterativeRobot {
 		autonomousCommand.cancel();
 		//always make sure we set vision to peg
 		NetworkTable.getTable("vision").putString("model", "peg");
+		
+		SmartDashboard.putNumber("Total Energy Used", PDP.getTotalEnergy());
 	}
 
 	/**
@@ -109,7 +115,7 @@ public class Robot extends IterativeRobot {
 	}
 	
 	/**
-	 * This function is called periodically dulring test mode
+	 * This function is called periodically during test mode
 	 */
 	@Override
 	public void testPeriodic() {
