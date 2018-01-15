@@ -21,6 +21,9 @@ public class ButtonMap {
 	//Vision Test
 	public static final int TEST_VISION = 10; //rightStick
 	
+	//2018 learning
+	public static final int DRIVE_STRAIGHT_TWENTY_INCHES = 6; //leftStick
+	
 
 }
 //danny g was here O.O
