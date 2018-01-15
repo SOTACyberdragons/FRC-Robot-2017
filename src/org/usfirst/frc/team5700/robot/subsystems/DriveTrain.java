@@ -1,3 +1,5 @@
+
+
 package org.usfirst.frc.team5700.robot.subsystems;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
@@ -129,6 +131,7 @@ public class DriveTrain extends Subsystem {
 		tankDrive(-joy.getY(), -joy.getAxis(AxisType.kThrottle));
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void drive(double outputMagnitude, double curve) {
 		drive.drive(outputMagnitude, curve);
 	}

@@ -25,6 +25,7 @@ public class OI {
 	
 	JoystickButton slowDrive;
 	JoystickButton toggleDirection;
+	JoystickButton spinRobotRight;
 	
 	//gear intake
 	JoystickButton intakeGear;
@@ -43,6 +44,7 @@ public class OI {
 		//drivetrain
 		slowDrive = new JoystickButton(rightStick, ButtonMap.SLOW_DRIVE);
 		toggleDirection = new JoystickButton(rightStick, ButtonMap.TOGGLE_DIRECTION);
+		spinRobotRight = new JoystickButton(rightStick, ButtonMap.SPIN_RIGHT);
 		
 		//gear intake
 		intakeGear = new JoystickButton(rightStick, ButtonMap.INTAKE_GEAR);
@@ -85,6 +87,9 @@ public class OI {
 
 	public boolean driveSlow() {
 		return slowDrive.get();
+	}
+	public boolean spinRight() {
+		return spinRobotRight.get();
 	}
 	
 	public boolean directionToggle() {
