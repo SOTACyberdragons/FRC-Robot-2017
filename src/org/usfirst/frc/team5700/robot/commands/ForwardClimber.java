@@ -35,6 +35,8 @@ public class ForwardClimber extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
+    		Robot.ropeClimber.climb(0);
+    		Robot.gearIntake.compressor.setClosedLoopControl(true);
     }
 
     // Called when another command which requires one or more of the same
