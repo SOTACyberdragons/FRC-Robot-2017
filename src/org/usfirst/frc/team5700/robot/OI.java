@@ -38,7 +38,7 @@ public class OI {
 	JoystickButton fastClimb;
 	JoystickButton slowClimb;
 	JoystickButton anticlimb;
-	JoystickButton ForwardClimb;
+	JoystickButton forwardClimb;
 	
 	JoystickButton light;
 	
