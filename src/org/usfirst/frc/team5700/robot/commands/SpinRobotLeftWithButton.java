@@ -7,14 +7,14 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class SpinRobotRight extends Command {
-	private double rightSpinSpeed  = .5;
-	private double rightSpinCurve  = .5;
+public class SpinRobotLeftWithButton extends Command {
+	private double leftSpinSpeed = .5;
+	private double leftSpinCurve = .5;
 	
-    public SpinRobotRight() {
+    public SpinRobotLeftWithButton() {
+    	requires(Robot.drivetrain);
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
-    	requires(Robot.drivetrain);
     }
 
     // Called just before this Command runs the first time
@@ -23,8 +23,9 @@ public class SpinRobotRight extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.drivetrain.drive(rightSpinSpeed,rightSpinCurve);
+    	Robot.drivetrain.drive(leftSpinSpeed, leftSpinCurve);
     }
+   
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {

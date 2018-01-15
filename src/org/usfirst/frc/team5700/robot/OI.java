@@ -23,10 +23,11 @@ public class OI {
 	    
 	// Setting squaredInput to true decreases the sensitivity for tankdrive at lower speeds
 	private boolean squaredInput = true;
-	
+	//driving buttons
 	JoystickButton slowDrive;
 	JoystickButton toggleDirection;
 	JoystickButton spinRobotRight;
+	JoystickButton spinRobotLeft;
 	
 	//gear intake
 	JoystickButton intakeGear;
@@ -49,6 +50,7 @@ public class OI {
 		slowDrive = new JoystickButton(rightStick, ButtonMap.SLOW_DRIVE);
 		toggleDirection = new JoystickButton(rightStick, ButtonMap.TOGGLE_DIRECTION);
 		spinRobotRight = new JoystickButton(rightStick, ButtonMap.SPIN_RIGHT);
+		spinRobotLeft = new JoystickButton(rightStick, ButtonMap.SPIN_LEFT);
 		
 		//gear intake
 		intakeGear = new JoystickButton(rightStick, ButtonMap.INTAKE_GEAR);
