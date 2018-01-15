@@ -24,9 +24,10 @@ public class SpinIntakeBackwardLeftJoystick extends Command {
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
     	double speed = Robot.oi.getRightStick().getX();
-
-    	double negitaveSpeed = Math.min(0,speed);
-    	Robot.gearIntake.setRollerSpeed(negitaveSpeed);
+    			if(speed < 0) {
+    		Robot.gearIntake.setRollerSpeed(speed);
+    	}
+    	else speed = 0;
     }
 
     // Make this return true when this Command no longer needs to run execute()
