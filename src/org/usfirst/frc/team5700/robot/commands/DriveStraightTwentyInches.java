@@ -10,10 +10,9 @@ import edu.wpi.first.wpilibj.command.Command;
  */
 
 public class DriveStraightTwentyInches extends Command {
-
 	
-		private boolean stop;
-		
+	double distance;
+
 		
     public DriveStraightTwentyInches() {
     	requires(Robot.drivetrain);
@@ -24,31 +23,26 @@ public class DriveStraightTwentyInches extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
     	Robot.drivetrain.reset();
-    	System.out.println("Initializing DrivePastDistance Command");
+    	System.out.println("Initializing DriveStraightTwnetyInches Command");
     	
     
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	double distance = Robot.drivetrain.getDistance();
-    	while(distance < 20) {
-    		Robot.drivetrain.drive(0.5, 0);
-    	}
-    	
- 
-    		
+    	distance = Robot.drivetrain.getDistance();
+		Robot.drivetrain.drive(0.25, 0);
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return false;
+    	return distance > 20;
     }
 
     // Called once after isFinished returns true
     protected void end() {
-    	Robot.drivetrain.reset();
-		
+    	
+    	Robot.drivetrain.stop();
 		System.out.println("DriveStraightTwentyInches Command Finished");
     }
 
