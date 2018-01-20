@@ -26,7 +26,7 @@ public class ButtonMap {
 	
 	//2018 learning
 	public static final int DRIVE_STRAIGHT_TWENTY_INCHES = 6; //leftStick
-	
+	public static final int DRIVE_BACK_1FT = 7; //leftStick
 
 }
 //danny g was here O.O

@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import org.usfirst.frc.team5700.robot.commands.AntiClimb;
 import org.usfirst.frc.team5700.robot.commands.ClimbUp;
+import org.usfirst.frc.team5700.robot.commands.DriveBack1ft;
 import org.usfirst.frc.team5700.robot.commands.DriveStraightTwentyInches;
 import org.usfirst.frc.team5700.robot.commands.ManualIntakeGear;
 import org.usfirst.frc.team5700.robot.commands.ManualHangGear;
@@ -28,6 +29,7 @@ public class OI {
 	JoystickButton toggleDirection;
 	JoystickButton spinRobotRight;
 	JoystickButton spinRobotLeft;
+	JoystickButton driveBack1ft;
 	
 	//gear intake
 	JoystickButton intakeGear;
@@ -52,6 +54,7 @@ public class OI {
 		spinRobotRight = new JoystickButton(rightStick, ButtonMap.SPIN_RIGHT);
 		spinRobotLeft = new JoystickButton(rightStick, ButtonMap.SPIN_LEFT);
 		
+		
 		//gear intake
 		intakeGear = new JoystickButton(rightStick, ButtonMap.INTAKE_GEAR);
 		hangGear = new JoystickButton(leftStick, ButtonMap.HANG_GEAR);
@@ -66,6 +69,7 @@ public class OI {
 		
 		//2018 learning 
 		driveStraightTwentyInches = new JoystickButton(leftStick, ButtonMap.DRIVE_STRAIGHT_TWENTY_INCHES);
+		driveBack1ft = new JoystickButton(leftStick, ButtonMap.DRIVE_BACK_1FT);
 		
 		//set commands
 		//gear intake
@@ -83,7 +87,7 @@ public class OI {
 		
 		//2018 learning
 		driveStraightTwentyInches.whenPressed(new DriveStraightTwentyInches());
-		
+		driveBack1ft.whileHeld(new DriveBack1ft());
 	}
 	    
 	public Joystick getLeftStick() {
