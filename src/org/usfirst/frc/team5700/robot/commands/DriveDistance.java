@@ -21,15 +21,27 @@ public class DriveDistance extends Command {
 	private PIDOutput pidOutput;
 	
 	private double driveOutput = 0;
+	private double distanceInches;
 
 	private double kP;
 	private double kI;
 	private double kD;
 
-	public DriveDistance(double distance) {
+	public DriveDistance(double distanceInches) {
 		requires(Robot.drivetrain);
 		
-		pidSource = new PIDSource() {
+		this.distanceInches = distanceInches;
+	}
+	
+	@Override
+	protected void initialize() {
+		Preferences prefs = Preferences.getInstance();
+		//get PID constants from Preferences Table
+		kP = prefs.getDouble("kP", 0.01);
+		kI = prefs.getDouble("kI", 0.0);
+		kD = prefs.getDouble("kD", 0.0);
+		
+pidSource = new PIDSource() {
 			
 			PIDSourceType m_sourceType = PIDSourceType.kDisplacement;
 
@@ -61,18 +73,9 @@ public class DriveDistance extends Command {
 		PIDController = new PIDController(kP, kI, kD, pidSource, pidOutput);
 
 		PIDController.setOutputRange(-1.0, 1.0);
-		PIDController.setSetpoint(distance);
+		PIDController.setSetpoint(distanceInches);
 		
 		LiveWindow.addActuator("Drive", "Distance Controller", PIDController);
-	}
-	
-	@Override
-	protected void initialize() {
-		Preferences prefs = Preferences.getInstance();
-		//get PID constants from Preferences Table
-		kP = prefs.getDouble("kP", 0.01);
-		kI = prefs.getDouble("kI", 0.0);
-		kD = prefs.getDouble("kD", 0.0);
 
 		PIDController.setAbsoluteTolerance(prefs.getDouble("Tol", 1));
 		
@@ -86,6 +89,8 @@ public class DriveDistance extends Command {
 
 	@Override
 	protected void execute() {
+		System.out.println("Output: " + driveOutput);
+		System.out.println("Distance un Unches: " + Robot.drivetrain.getDistance());
 		Robot.drivetrain.drive(driveOutput, 0);
 	}
 
@@ -104,6 +109,10 @@ public class DriveDistance extends Command {
 		Robot.drivetrain.reset();
 		PIDController.reset();
 		
-		System.out.println("DriveStraight ended");
+		System.out.println("DriveDistance ended");
+	}
+	
+	protected void interrupted() {
+		end();
 	}
 }

@@ -43,7 +43,7 @@ public class DriveTrain extends Subsystem {
     public static final double ENCODER_GEAR_RATIO = 1;
 
 
-    final double distancePerPulse = (WHEEL_DIAMETER * Math.PI) / PULSE_PER_REVOLUTION
+    final double distancePerPulse = (WHEEL_DIAMETER * Math.PI) / PULSE_PER_REVOLUTION;
     
 	private double angleRecord;
 	private double distanceRecord;

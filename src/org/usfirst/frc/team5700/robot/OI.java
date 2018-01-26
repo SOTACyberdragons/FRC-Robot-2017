@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import org.usfirst.frc.team5700.robot.commands.AntiClimb;
 import org.usfirst.frc.team5700.robot.commands.ClimbUp;
+import org.usfirst.frc.team5700.robot.commands.DriveDistance;
 import org.usfirst.frc.team5700.robot.commands.ManualIntakeGear;
 import org.usfirst.frc.team5700.robot.commands.ManualHangGear;
 import org.usfirst.frc.team5700.robot.commands.SpitOutGear;
@@ -38,6 +39,8 @@ public class OI {
 	
 	JoystickButton light;
 	
+	JoystickButton testDriveStraight;
+	
 	public OI() {
 		////set buttons
 		//drivetrain
@@ -69,6 +72,10 @@ public class OI {
 		
 		//test vision
 		light.whileHeld(new TurnOnLight());
+		
+		//test PID
+		testDriveStraight = new JoystickButton(rightStick, ButtonMap.TEST_DRIVESTRAIGHT);
+		testDriveStraight.whenPressed(new DriveDistance(88));
 	}
 	    
 	public Joystick getLeftStick() {
@@ -100,3 +107,4 @@ public class OI {
 	}
 }
 
+//test save
