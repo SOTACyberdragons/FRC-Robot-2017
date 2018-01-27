@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
@@ -26,6 +27,8 @@ public class DriveDistance extends Command {
 	private double kP;
 	private double kI;
 	private double kD;
+	
+	private Timer timer;
 
 	public DriveDistance(double distanceInches) {
 		requires(Robot.drivetrain);
@@ -35,13 +38,16 @@ public class DriveDistance extends Command {
 	
 	@Override
 	protected void initialize() {
+		timer = new Timer();
+		timer.start();
+		
 		Preferences prefs = Preferences.getInstance();
 		//get PID constants from Preferences Table
 		kP = prefs.getDouble("kP", 0.01);
 		kI = prefs.getDouble("kI", 0.0);
 		kD = prefs.getDouble("kD", 0.0);
 		
-pidSource = new PIDSource() {
+		pidSource = new PIDSource() {
 			
 			PIDSourceType m_sourceType = PIDSourceType.kDisplacement;
 
@@ -77,7 +83,7 @@ pidSource = new PIDSource() {
 		
 		LiveWindow.addActuator("Drive", "Distance Controller", PIDController);
 
-		PIDController.setAbsoluteTolerance(prefs.getDouble("Tol", 1));
+		PIDController.setAbsoluteTolerance(prefs.getDouble("Tol", 0.25));
 		
 		// Get everything in a safe starting state.
 		Robot.drivetrain.reset();
@@ -96,7 +102,8 @@ pidSource = new PIDSource() {
 
 	@Override
 	protected boolean isFinished() {
-		return PIDController.onTarget();
+		return timer.get() > 7;
+		
 	}
 
 	@Override
@@ -105,8 +112,6 @@ pidSource = new PIDSource() {
 		// Stop PID and the wheels
 		PIDController.disable();
 		Robot.drivetrain.stop();
-		
-		Robot.drivetrain.reset();
 		PIDController.reset();
 		
 		System.out.println("DriveDistance ended");
