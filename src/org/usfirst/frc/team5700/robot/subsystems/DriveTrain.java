@@ -84,6 +84,7 @@ public class DriveTrain extends Subsystem {
 		SmartDashboard.putNumber("Left Speed", leftEncoder.getRate());
 		SmartDashboard.putNumber("Right Speed", rightEncoder.getRate());
 		SmartDashboard.putNumber("Gyro", gyro.getAngle());
+		
 	}
 
 	/**
@@ -149,8 +150,10 @@ public class DriveTrain extends Subsystem {
 	 * @return The distance driven (average of left and right encoders).
 	 */
 	public double getDistance() {
-		return (leftEncoder.getDistance() + rightEncoder.getDistance()) / 2;
+		//return (leftEncoder.getDistance() + rightEncoder.getDistance()) / 2;
+		return (rightEncoder.getDistance());
 	}
+	
 	
 	public PIDSource getGyro() {
 		return gyro;
@@ -179,4 +182,5 @@ public class DriveTrain extends Subsystem {
 	public double getRecordedAngle() {
 		return angleRecord;
 	}
+	
 }

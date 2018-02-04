@@ -39,8 +39,10 @@ public class OI {
 	
 	JoystickButton light;
 	
+	// PID
 	JoystickButton testDriveStraight;
-	
+	JoystickButton pidDrive;
+		
 	public OI() {
 		////set buttons
 		//drivetrain
@@ -75,7 +77,7 @@ public class OI {
 		
 		//test PID
 		testDriveStraight = new JoystickButton(rightStick, ButtonMap.TEST_DRIVESTRAIGHT);
-		testDriveStraight.whenPressed(new DriveDistance(60));
+		testDriveStraight.whenPressed(new DriveDistance());
 	}
 	    
 	public Joystick getLeftStick() {
