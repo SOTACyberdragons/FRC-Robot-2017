@@ -2,7 +2,6 @@
 package org.usfirst.frc.team5700.robot.commands;
 
 import org.usfirst.frc.team5700.robot.Robot;
-import org.usfirst.frc.team5700.utils.LinearAccelerationFilter;
 
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
@@ -29,9 +28,15 @@ public class DriveDistance extends Command {
 	private double kI;
 	private double kD;
 	
+	private double setpoint;
+	private double endpoint;
+	private double startpoint;
+	private double time;
+	private double velocity;
+	
 	private Timer timer;
 
-	public DriveDistance(double distanceInches) {
+	public DriveDistance() {
 		requires(Robot.drivetrain);
 		
 		this.distanceInches = distanceInches;
@@ -47,7 +52,13 @@ public class DriveDistance extends Command {
 		kP = prefs.getDouble("kP", 0.01);
 		kI = prefs.getDouble("kI", 0.0);
 		kD = prefs.getDouble("kD", 0.0);
+		endpoint = prefs.getDouble("Endpoint", 0);
+		setpoint = prefs.getDouble("Setpoint", 0);
+		velocity = prefs.getDouble("Velocity", 1);
+		startpoint = Robot.drivetrain.getDistance();
+		time = 0;
 		
+				
 		pidSource = new PIDSource() {
 			
 			PIDSourceType m_sourceType = PIDSourceType.kDisplacement;
@@ -73,6 +84,7 @@ public class DriveDistance extends Command {
 			@Override
 			public void pidWrite(double d) {
 				driveOutput = d;
+				Robot.drivetrain.drive(driveOutput, 0);
 			}
 		};
 		
@@ -80,7 +92,7 @@ public class DriveDistance extends Command {
 		PIDController = new PIDController(kP, kI, kD, pidSource, pidOutput);
 
 		PIDController.setOutputRange(-1.0, 1.0);
-		PIDController.setSetpoint(distanceInches);
+		PIDController.setSetpoint(setpoint);
 		
 		LiveWindow.addActuator("Drive", "Distance Controller", PIDController);
 
@@ -92,18 +104,24 @@ public class DriveDistance extends Command {
 		PIDController.enable();
 		
 		System.out.println("DriveDistance initialized: kP:" + kP + " kI: " + kI + " kD: " + kD);
+		System.out.println("Current Setpoint" + setpoint);
 	}
 
 	@Override
 	protected void execute() {
-		System.out.println("Output: " + driveOutput);
-		System.out.println("Distance un Unches: " + Robot.drivetrain.getDistance());
-		Robot.drivetrain.drive(driveOutput, 0);
+		//System.out.println("Feedback position: " + Robot.drivetrain.getDistance());
+		//System.out.println("Drive Output: " + driveOutput);	
+		time += .05;
+		setpoint = startpoint + time * velocity;
+		PIDController.setSetpoint(setpoint);
+		System.out.println(setpoint);
 	}
 
 	@Override
 	protected boolean isFinished() {
-		return timer.get() > 7;
+		//return timer.get() > 60;
+		return (Math.abs(endpoint - setpoint) < 0.2);
+		
 		
 	}
 
@@ -114,11 +132,14 @@ public class DriveDistance extends Command {
 		PIDController.disable();
 		Robot.drivetrain.stop();
 		PIDController.reset();
-		
+		System.out.println(setpoint);
 		System.out.println("DriveDistance ended");
 	}
 	
 	protected void interrupted() {
 		end();
+	}
+	public void Log() {
+		System.out.print("Finished PID command");
 	}
 }
