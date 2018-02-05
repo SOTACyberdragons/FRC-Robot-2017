@@ -36,16 +36,12 @@ public class DriveDistance extends Command {
 	
 	private Timer timer;
 	
-	private double getTime(double currentTime){
-		currentTime = timer.get();
-		return currentTime;
-	}
-
 	public DriveDistance() {
 		requires(Robot.drivetrain);
 		
 		this.distanceInches = distanceInches;
 	}
+	
 	
 	@Override
 	protected void initialize() {
@@ -116,9 +112,7 @@ public class DriveDistance extends Command {
 	protected void execute() {
 		//System.out.println("Feedback position: " + Robot.drivetrain.getDistance());
 		//System.out.println("Drive Output: " + driveOutput);
-		Preferences prefs = Preferences.getInstance();
-		getTime(time);
-		time = prefs.getDouble("CurrentTime", 0);
+		time =+ .05;
 		setpoint = startpoint + time * velocity;
 		PIDController.setSetpoint(setpoint);
 		System.out.println(setpoint);
