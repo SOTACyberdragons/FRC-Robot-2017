@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 /**
  *
  */
-public class GearIntake extends Subsystem {
+public class GearIntake extends Subsystem {  
     
 	public Compressor compressor = new Compressor();
 	
