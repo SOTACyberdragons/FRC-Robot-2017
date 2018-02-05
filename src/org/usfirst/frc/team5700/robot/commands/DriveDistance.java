@@ -35,6 +35,11 @@ public class DriveDistance extends Command {
 	private double velocity;
 	
 	private Timer timer;
+	
+	private double getTime(double currentTime){
+		currentTime = timer.get();
+		return currentTime;
+	}
 
 	public DriveDistance() {
 		requires(Robot.drivetrain);
@@ -52,11 +57,11 @@ public class DriveDistance extends Command {
 		kP = prefs.getDouble("kP", 0.01);
 		kI = prefs.getDouble("kI", 0.0);
 		kD = prefs.getDouble("kD", 0.0);
+		
 		endpoint = prefs.getDouble("Endpoint", 0);
 		setpoint = prefs.getDouble("Setpoint", 0);
 		velocity = prefs.getDouble("Velocity", 1);
 		startpoint = Robot.drivetrain.getDistance();
-		time = 0;
 		
 				
 		pidSource = new PIDSource() {
@@ -104,34 +109,38 @@ public class DriveDistance extends Command {
 		PIDController.enable();
 		
 		System.out.println("DriveDistance initialized: kP:" + kP + " kI: " + kI + " kD: " + kD);
-		System.out.println("Current Setpoint" + setpoint);
+		System.out.println("Current Setpoint: " + setpoint);
 	}
 
 	@Override
 	protected void execute() {
 		//System.out.println("Feedback position: " + Robot.drivetrain.getDistance());
-		//System.out.println("Drive Output: " + driveOutput);	
-		time += .05;
+		//System.out.println("Drive Output: " + driveOutput);
+		Preferences prefs = Preferences.getInstance();
+		getTime(time);
+		time = prefs.getDouble("CurrentTime", 0);
 		setpoint = startpoint + time * velocity;
 		PIDController.setSetpoint(setpoint);
 		System.out.println(setpoint);
+		System.out.println(time);
 	}
 
 	@Override
 	protected boolean isFinished() {
 		//return timer.get() > 60;
-		return (Math.abs(endpoint - setpoint) < 0.2);
+		return (Math.abs(endpoint - setpoint) < 0.5);
 		
 		
 	}
 
 	@Override
-	protected void end() {
+	protected void end() { 
 
 		// Stop PID and the wheels
 		PIDController.disable();
 		Robot.drivetrain.stop();
 		PIDController.reset();
+		
 		System.out.println(setpoint);
 		System.out.println("DriveDistance ended");
 	}
