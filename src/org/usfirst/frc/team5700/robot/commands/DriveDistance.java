@@ -1,3 +1,4 @@
+
 package org.usfirst.frc.team5700.robot.commands;
 
 import org.usfirst.frc.team5700.robot.Robot;
@@ -41,12 +42,13 @@ public class DriveDistance extends Command {
 	private double rightVelocity;
 	
 	private Timer timer;
-
+	
 	public DriveDistance() {
 		requires(Robot.drivetrain);
 		
 		this.distanceInches = distanceInches;
 	}
+	
 	
 	@Override
 	protected void initialize() {
@@ -58,6 +60,7 @@ public class DriveDistance extends Command {
 		kP = prefs.getDouble("kP", 0.2);
 		kI = prefs.getDouble("kI", 0.01);
 		kD = prefs.getDouble("kD", 0.0);
+<<<<<<< HEAD
 		leftEndpoint = prefs.getDouble("LeftEndpoint", 0);
 		leftVelocity = prefs.getDouble("LeftVelocity", 1);
 		leftStartpoint = Robot.drivetrain.getLeftDistance();
@@ -67,6 +70,13 @@ public class DriveDistance extends Command {
 			leftVelocity = -leftVelocity;
 		
 		time = 0;
+=======
+		
+		endpoint = prefs.getDouble("Endpoint", 0);
+		setpoint = prefs.getDouble("Setpoint", 0);
+		velocity = prefs.getDouble("Velocity", 1);
+		startpoint = Robot.drivetrain.getDistance();
+>>>>>>> 75bcee0807f97f085e365646ba1b2b79c80b85ac
 		
 				
 		pidSourceLeft = new PIDSource() {
@@ -113,33 +123,57 @@ public class DriveDistance extends Command {
 		PIDControllerLeft.enable();
 		
 		System.out.println("DriveDistance initialized: kP:" + kP + " kI: " + kI + " kD: " + kD);
+<<<<<<< HEAD
 		System.out.println("Current Setpoint" + leftSetpoint);
+=======
+		System.out.println("Current Setpoint: " + setpoint);
+>>>>>>> 75bcee0807f97f085e365646ba1b2b79c80b85ac
 	}
 
 	@Override
 	protected void execute() {
+<<<<<<< HEAD
 		time += .02;
 		leftSetpoint = leftStartpoint + time * leftVelocity;
 		PIDControllerLeft.setSetpoint(leftSetpoint);
 		//System.out.println("time: " + time + ", setpoint: " +  setpoint + ", Position: " + Robot.drivetrain.getDistance());
+=======
+		//System.out.println("Feedback position: " + Robot.drivetrain.getDistance());
+		//System.out.println("Drive Output: " + driveOutput);
+		time =+ .05;
+		setpoint = startpoint + time * velocity;
+		PIDController.setSetpoint(setpoint);
+		System.out.println(setpoint);
+		System.out.println(time);
+>>>>>>> 75bcee0807f97f085e365646ba1b2b79c80b85ac
 	}
 
 	@Override
 	protected boolean isFinished() {
 		//return timer.get() > 60;
+<<<<<<< HEAD
 		return (Math.abs(leftEndpoint - leftSetpoint) < 1.0);
+=======
+		return (Math.abs(endpoint - setpoint) < 0.5);
+>>>>>>> 75bcee0807f97f085e365646ba1b2b79c80b85ac
 		
 		
 	}
 
 	@Override
-	protected void end() {
+	protected void end() { 
 
 		// Stop PID and the wheels
 		PIDControllerLeft.disable();
 		Robot.drivetrain.stop();
+<<<<<<< HEAD
 		PIDControllerLeft.reset();
 		System.out.println(leftSetpoint);
+=======
+		PIDController.reset();
+		
+		System.out.println(setpoint);
+>>>>>>> 75bcee0807f97f085e365646ba1b2b79c80b85ac
 		System.out.println("DriveDistance ended");
 	}
 	
