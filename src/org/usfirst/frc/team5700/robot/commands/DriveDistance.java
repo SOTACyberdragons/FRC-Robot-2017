@@ -123,21 +123,15 @@ public class DriveDistance extends Command {
 		PIDControllerLeft.enable();
 		
 		System.out.println("DriveDistance initialized: kP:" + kP + " kI: " + kI + " kD: " + kD);
-<<<<<<< HEAD
 		System.out.println("Current Setpoint" + leftSetpoint);
-=======
 		System.out.println("Current Setpoint: " + setpoint);
->>>>>>> 75bcee0807f97f085e365646ba1b2b79c80b85ac
 	}
 
 	@Override
 	protected void execute() {
-<<<<<<< HEAD
 		time += .02;
 		leftSetpoint = leftStartpoint + time * leftVelocity;
 		PIDControllerLeft.setSetpoint(leftSetpoint);
-		//System.out.println("time: " + time + ", setpoint: " +  setpoint + ", Position: " + Robot.drivetrain.getDistance());
-=======
 		//System.out.println("Feedback position: " + Robot.drivetrain.getDistance());
 		//System.out.println("Drive Output: " + driveOutput);
 		time =+ .05;
@@ -145,17 +139,12 @@ public class DriveDistance extends Command {
 		PIDController.setSetpoint(setpoint);
 		System.out.println(setpoint);
 		System.out.println(time);
->>>>>>> 75bcee0807f97f085e365646ba1b2b79c80b85ac
 	}
 
 	@Override
 	protected boolean isFinished() {
 		//return timer.get() > 60;
-<<<<<<< HEAD
-		return (Math.abs(leftEndpoint - leftSetpoint) < 1.0);
-=======
 		return (Math.abs(endpoint - setpoint) < 0.5);
->>>>>>> 75bcee0807f97f085e365646ba1b2b79c80b85ac
 		
 		
 	}
@@ -166,14 +155,10 @@ public class DriveDistance extends Command {
 		// Stop PID and the wheels
 		PIDControllerLeft.disable();
 		Robot.drivetrain.stop();
-<<<<<<< HEAD
 		PIDControllerLeft.reset();
 		System.out.println(leftSetpoint);
-=======
-		PIDController.reset();
 		
 		System.out.println(setpoint);
->>>>>>> 75bcee0807f97f085e365646ba1b2b79c80b85ac
 		System.out.println("DriveDistance ended");
 	}
 	
