@@ -130,6 +130,7 @@ public class DriveTrain extends Subsystem {
 	public void drive(double outputMagnitude, double curve) {
 		drive.drive(outputMagnitude, curve);
 	}
+	
 	/**
 	 * Reset the robots sensors to the zero states.
 	 */
@@ -149,11 +150,14 @@ public class DriveTrain extends Subsystem {
 	/**
 	 * @return The distance driven (average of left and right encoders).
 	 */
-	public double getDistance() {
+	public double getRightDistance() {
 		//return (leftEncoder.getDistance() + rightEncoder.getDistance()) / 2;
 		return (rightEncoder.getDistance());
 	}
 	
+	public double getLeftDistance() {
+		return (leftEncoder.getDistance());
+	}
 	
 	public PIDSource getGyro() {
 		return gyro;
