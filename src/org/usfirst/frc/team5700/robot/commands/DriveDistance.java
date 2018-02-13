@@ -37,6 +37,9 @@ public class DriveDistance extends Command {
 	private double leftVelocity;
 	private double rightVelocity;
 	
+	private double pidLeftOutputVal;
+	private double pidRightOutputVal;
+	
 	private Timer timer;
 	
 	public DriveDistance() {
@@ -59,6 +62,14 @@ public class DriveDistance extends Command {
 		leftVelocity = prefs.getDouble("LeftVelocity", 1);
 		leftStartpoint = Robot.drivetrain.getLeftDistance();
 		leftSetpoint = leftStartpoint;
+		
+		rightEndpoint = prefs.getDouble("RightEndpoint", 0);
+		rightVelocity = prefs.getDouble("RightVelocity", 1);
+		rightStartpoint = Robot.drivetrain.getRightDistance();
+		rightSetpoint = rightStartpoint;
+		
+		pidLeftOutputVal = 0;
+		pidRightOutputVal = 0;
 		
 		if (leftEndpoint < leftStartpoint)
 			leftVelocity = -leftVelocity;
@@ -90,7 +101,8 @@ public class DriveDistance extends Command {
 			
 			@Override
 			public void pidWrite(double d) {
-				Robot.drivetrain.tankDrive(0, d);
+				pidLeftOutputVal = d;
+				Robot.drivetrain.tankDrive(pidLeftOutputVal, pidRightOutputVal);
 			}
 		};
 		
@@ -118,7 +130,8 @@ public class DriveDistance extends Command {
 			
 			@Override
 			public void pidWrite(double d) {
-				Robot.drivetrain.tankDrive(0, d);
+				pidRightOutputVal = d;
+				Robot.drivetrain.tankDrive(pidLeftOutputVal, pidRightOutputVal);
 			}
 		};
 		
@@ -128,7 +141,7 @@ public class DriveDistance extends Command {
 		PIDControllerLeft.setOutputRange(-1.0, 1.0);
 		PIDControllerLeft.setSetpoint(leftSetpoint);
 		PIDControllerRight.setOutputRange(-1.0, 1.0);
-		PIDControllerRight.setSetpoint(leftSetpoint);
+		PIDControllerRight.setSetpoint(rightSetpoint);
 		
 		LiveWindow.addActuator("Drive", "Distance Controller", PIDControllerLeft);
 
@@ -142,14 +155,13 @@ public class DriveDistance extends Command {
 		PIDControllerRight.enable();
 		
 		System.out.println("DriveDistance initialized: kP:" + kP + " kI: " + kI + " kD: " + kD);
-		System.out.println("Current leftSetpoint" + leftSetpoint);
+		System.out.println("Current leftSetpoint: " + leftSetpoint);
 		System.out.println("Current rightSetpoint: " + rightSetpoint);
 	}
 
 	@Override
 	protected void execute() {
 		time += .02;
-		leftSetpoint = leftStartpoint + time * leftVelocity;
 		leftSetpoint = leftStartpoint + time * leftVelocity;
 		rightSetpoint = rightStartpoint + time * rightVelocity;
 		PIDControllerLeft.setSetpoint(leftSetpoint);
@@ -161,7 +173,7 @@ public class DriveDistance extends Command {
 
 	@Override
 	protected boolean isFinished() {
-		return (Math.abs(leftEndpoint - leftSetpoint) < 0.5);
+		return ((Math.abs(leftEndpoint - leftSetpoint) < 0.5) && (Math.abs(rightEndpoint - rightSetpoint) < 0.5));
 		
 	}
 

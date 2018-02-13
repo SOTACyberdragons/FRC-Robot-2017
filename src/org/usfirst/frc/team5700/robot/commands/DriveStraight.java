@@ -21,6 +21,7 @@ import org.usfirst.frc.team5700.utils.LinearAccelerationFilter;
  * command is running. The input is the averaged values of the left and right
  * encoders.
  */
+/*
 public class DriveStraight extends Command {
 	private PIDController pidDistance;
 	private PIDController pidAngle;
@@ -139,4 +140,4 @@ public class DriveStraight extends Command {
 		
 		System.out.println("DriveStraight ended");
 	}
-}
+}*/

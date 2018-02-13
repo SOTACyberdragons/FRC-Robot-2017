@@ -1,13 +1,13 @@
 package org.usfirst.frc.team5700.robot.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-
+/*
 public class AutoTwoGear extends CommandGroup {
 
     private boolean turnLeft;
 
 	public AutoTwoGear(String side) {
-        /**
+        /*
          * Plan:
          * 
          * 1. Middle Peg (drive with vision, hang, drive back 56 inches)
@@ -21,7 +21,7 @@ public class AutoTwoGear extends CommandGroup {
          * 6. Turn back to angle recorded angle (Vision and blind)
          * 7. Middle Peg with vision
          */
-    	
+    	/*
     	turnLeft = side.equals("left");
     	
     	//PART 1
@@ -54,3 +54,4 @@ public class AutoTwoGear extends CommandGroup {
     	
     }
 }
+*/
