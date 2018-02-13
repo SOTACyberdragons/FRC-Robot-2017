@@ -41,8 +41,10 @@ public class DrivePastDistance extends Command {
     		
     		if (useRecordedDistance) {
     			
-    			this.distanceIn = Robot.drivetrain.getRecordedDistance();
+    			this.distanceIn = Robot.drivetrain.getLeftRecordedDistance();
+    			this.distanceIn = Robot.drivetrain.getRightRecordedDistance();
     			System.out.println("Using recorded distance");
+    			
     			
     		} else {
     			System.out.println("Using preset distance");
@@ -61,7 +63,7 @@ public class DrivePastDistance extends Command {
     }
 
     protected boolean isFinished() {
-        return Math.abs(Robot.drivetrain.getDistance()) > distanceIn;
+        return Math.abs(Robot.drivetrain.getLeftDistance()) > distanceIn;
     }
 
     protected void end() {

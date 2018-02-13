@@ -46,7 +46,8 @@ public class DriveTrain extends Subsystem {
     final double distancePerPulse = (WHEEL_DIAMETER * Math.PI) / PULSE_PER_REVOLUTION;
     
 	private double angleRecord;
-	private double distanceRecord;
+	private double leftDistanceRecord;
+	private double rightDistanceRecord;
 
 	public DriveTrain() {
 		super();
@@ -167,14 +168,22 @@ public class DriveTrain extends Subsystem {
 		drive.drive(0.0, 0.0);
 	}
 	
-	public void recordDrivenDistanceIn() {
-		distanceRecord = this.getDistance();
+	public void recordRightDrivenDistanceIn() {
+		rightDistanceRecord = this.getRightDistance();
 	}
 	
-	public double getRecordedDistance() {
-		return distanceRecord;
+	public double getRightRecordedDistance() {
+		return rightDistanceRecord;
 	}
-
+	
+	public void recordLeftDrivenDistanceIn() {
+		leftDistanceRecord = this.getLeftDistance();
+	}
+	
+	public double getLeftRecordedDistance() {
+		return leftDistanceRecord;
+	}
+	
 	public void recordAngle() {
 		angleRecord = this.getHeading();
 	}
