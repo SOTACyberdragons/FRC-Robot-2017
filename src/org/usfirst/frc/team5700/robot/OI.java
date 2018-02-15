@@ -79,7 +79,8 @@ public class OI {
 		testDriveStraight = new JoystickButton(rightStick, ButtonMap.TEST_DRIVESTRAIGHT);
 		testDriveStraight.whenPressed(new DriveDistance());
 	}
-	    
+	
+
 	public Joystick getLeftStick() {
 	    	return leftStick;	
 	}

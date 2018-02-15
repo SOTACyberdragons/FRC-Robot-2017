@@ -1,6 +1,5 @@
-
 package org.usfirst.frc.team5700.robot.commands;
-
+	
 import org.usfirst.frc.team5700.robot.Robot;
 
 import edu.wpi.first.wpilibj.PIDController;
@@ -11,7 +10,7 @@ import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-
+	
 public class DriveDistance extends Command {
 	
 	private PIDController PIDControllerLeft;
@@ -20,9 +19,9 @@ public class DriveDistance extends Command {
 	private PIDSource pidSourceRight;
 	private PIDOutput pidOutputLeft;
 	private PIDOutput pidOutputRight;
-
+	
 	private double distanceInches;
-
+	
 	private double kP;
 	private double kI;
 	private double kD;
@@ -44,7 +43,7 @@ public class DriveDistance extends Command {
 	
 	public DriveDistance() {
 		requires(Robot.drivetrain);
-		
+	
 		this.distanceInches = distanceInches;
 	}
 	
@@ -102,7 +101,7 @@ public class DriveDistance extends Command {
 			@Override
 			public void pidWrite(double d) {
 				pidLeftOutputVal = d;
-				Robot.drivetrain.tankDrive(pidLeftOutputVal, pidRightOutputVal);
+				Robot.drivetrain.runLeftMotors(pidLeftOutputVal);
 			}
 		};
 		
@@ -131,7 +130,7 @@ public class DriveDistance extends Command {
 			@Override
 			public void pidWrite(double d) {
 				pidRightOutputVal = d;
-				Robot.drivetrain.tankDrive(pidLeftOutputVal, pidRightOutputVal);
+				Robot.drivetrain.runRightMotors(pidRightOutputVal);
 			}
 		};
 		
@@ -176,7 +175,7 @@ public class DriveDistance extends Command {
 		return ((Math.abs(leftEndpoint - leftSetpoint) < 0.5) && (Math.abs(rightEndpoint - rightSetpoint) < 0.5));
 		
 	}
-
+	
 	@Override
 	protected void end() { 
 		PIDControllerLeft.disable();
