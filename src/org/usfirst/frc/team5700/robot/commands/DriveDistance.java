@@ -59,11 +59,13 @@ public class DriveDistance extends Command {
 		kD = prefs.getDouble("kD", 0.0);
 		leftEndpoint = prefs.getDouble("LeftEndpoint", 0);
 		leftVelocity = prefs.getDouble("LeftVelocity", 1);
+		pidOutputLeft.pidWrite(leftVelocity);
 		leftStartpoint = Robot.drivetrain.getLeftDistance();
 		leftSetpoint = leftStartpoint;
 		
 		rightEndpoint = prefs.getDouble("RightEndpoint", 0);
 		rightVelocity = prefs.getDouble("RightVelocity", 1);
+		pidOutputRight.pidWrite(rightVelocity);
 		rightStartpoint = Robot.drivetrain.getRightDistance();
 		rightSetpoint = rightStartpoint;
 		
