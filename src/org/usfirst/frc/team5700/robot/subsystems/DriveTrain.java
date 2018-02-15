@@ -30,6 +30,9 @@ public class DriveTrain extends Subsystem {
 
 	private RobotDrive drive = new RobotDrive(frontLeftMotor, rearLeftMotor, frontRightMotor, rearRightMotor);
 	
+	private RobotDrive leftDrive = new RobotDrive(frontRightMotor, rearRightMotor);
+	private RobotDrive rightDrive = new RobotDrive(frontLeftMotor, rearLeftMotor);
+	
 	private ADXRS450_Gyro gyro = new ADXRS450_Gyro();
 
 	private Encoder leftEncoder = new Encoder(1, 2, true);
@@ -87,7 +90,8 @@ public class DriveTrain extends Subsystem {
 		SmartDashboard.putNumber("Gyro", gyro.getAngle());
 		
 	}
-
+	
+	
 	/**
 	 * Arcade Drive
 	 * @param rightStick joystick is for moving forwards and backwards
@@ -98,7 +102,7 @@ public class DriveTrain extends Subsystem {
 		double direction = Robot.oi.directionToggle() ? -1 : 1;
 		drive.arcadeDrive(-rightStick.getY() * direction * speed, -leftStick.getX() * speed, squaredInputs);
 	}	
-	
+
 	/**
 	 * Tank Drive
 	 * @param leftStick left set of wheels
@@ -151,6 +155,7 @@ public class DriveTrain extends Subsystem {
 	/**
 	 * @return The distance driven (average of left and right encoders).
 	 */
+	
 	public double getRightDistance() {
 		//return (leftEncoder.getDistance() + rightEncoder.getDistance()) / 2;
 		return (rightEncoder.getDistance());

@@ -105,7 +105,7 @@ public class DriveDistance extends Command {
 				Robot.drivetrain.tankDrive(pidLeftOutputVal, pidRightOutputVal);
 			}
 		};
-		
+		 
 		pidSourceRight = new PIDSource() {
 			
 			PIDSourceType m_sourceType = PIDSourceType.kDisplacement;
@@ -131,7 +131,7 @@ public class DriveDistance extends Command {
 			@Override
 			public void pidWrite(double d) {
 				pidRightOutputVal = d;
-				Robot.drivetrain.tankDrive(pidLeftOutputVal, pidRightOutputVal);
+				//Robot.drivetrain.tankDrive(pidLeftOutputVal, pidRightOutputVal);
 			}
 		};
 		
@@ -166,9 +166,7 @@ public class DriveDistance extends Command {
 		rightSetpoint = rightStartpoint + time * rightVelocity;
 		PIDControllerLeft.setSetpoint(leftSetpoint);
 		PIDControllerRight.setSetpoint(rightSetpoint);
-		System.out.println(leftSetpoint);
-		System.out.println(rightSetpoint);
-		System.out.println(time);
+		// System.out.println("Left setpoint: " + leftSetpoint + "right setpoint: " + rightSetpoint + "time: " + time);
 	}
 
 	@Override
