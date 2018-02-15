@@ -30,9 +30,6 @@ public class DriveTrain extends Subsystem {
 
 	private RobotDrive drive = new RobotDrive(frontLeftMotor, rearLeftMotor, frontRightMotor, rearRightMotor);
 	
-	private RobotDrive leftDrive = new RobotDrive(frontRightMotor, rearRightMotor);
-	private RobotDrive rightDrive = new RobotDrive(frontLeftMotor, rearLeftMotor);
-	
 	private ADXRS450_Gyro gyro = new ADXRS450_Gyro();
 
 	private Encoder leftEncoder = new Encoder(1, 2, true);
@@ -145,6 +142,15 @@ public class DriveTrain extends Subsystem {
 		rightEncoder.reset();
 	}
 	
+	public void runRightMotors(double d) {
+		frontLeftMotor.set(d);
+		rearLeftMotor.set(d);
+	}
+	
+	public void runLeftMotors(double d) {
+		frontRightMotor.set(d);
+		rearLeftMotor.set(d);
+	}
 	/**
 	 * @return The robots heading in degrees.
 	 */
