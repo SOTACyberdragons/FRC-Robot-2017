@@ -1,6 +1,7 @@
 package org.usfirst.frc.team5700.vision;
 
-import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class BBoxLocator {
@@ -12,8 +13,8 @@ public class BBoxLocator {
 
 	private double objectWidthIn;
 	
-	static final double frameHeight = 480,
-			frameWidth = 640,
+	static final double frameHeight = 240,
+			frameWidth = 320,
 			ANGLE_OF_VIEW_DEG = 60, //degrees
 			ANGLE_OF_VIEW = ANGLE_OF_VIEW_DEG * Math.PI/180;
 	
@@ -39,7 +40,7 @@ public class BBoxLocator {
 	}
 	
 	public BBoxLocator(double objectWidthIn) {
-		networkTable = NetworkTable.getTable("vision");
+		networkTable = NetworkTableInstance.getDefault().getTable("vision");
 		
 		this.objectWidthIn = objectWidthIn;
 	}
@@ -50,7 +51,7 @@ public class BBoxLocator {
 	 * @return Angle between center of the object found and center of camera, in degrees
 	 */
 	public BBox getBBox() {
-		double[] coordinates = networkTable.getNumberArray("BBoxCoordinates", defaultValue);
+		double[] coordinates = networkTable.getEntry("BBoxCoordinates").getDoubleArray((double[]) null);
 		SmartDashboard.putString("coordinate array", coordinates.toString());
 		
 		if (coordinates == null || coordinates.length != 6)
