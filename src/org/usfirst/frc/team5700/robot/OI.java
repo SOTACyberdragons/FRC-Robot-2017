@@ -98,5 +98,9 @@ public class OI {
 		}
 		return toggle;
 	}
+
+	public double getSpeed() {
+		return (-rightStick.getZ() + 1)/2;
+	}
 }
 

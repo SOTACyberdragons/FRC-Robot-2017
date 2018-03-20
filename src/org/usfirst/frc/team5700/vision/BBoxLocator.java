@@ -12,8 +12,8 @@ public class BBoxLocator {
 
 	private double objectWidthIn;
 	
-	static final double frameHeight = 480,
-			frameWidth = 640,
+	static final double frameHeight = 240,
+			frameWidth = 320,
 			ANGLE_OF_VIEW_DEG = 60, //degrees
 			ANGLE_OF_VIEW = ANGLE_OF_VIEW_DEG * Math.PI/180;
 	

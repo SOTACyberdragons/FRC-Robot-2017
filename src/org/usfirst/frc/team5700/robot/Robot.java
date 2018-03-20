@@ -5,6 +5,7 @@ import org.usfirst.frc.team5700.robot.commands.AutoMiddlePeg;
 import org.usfirst.frc.team5700.robot.commands.AutoSidePeg;
 import org.usfirst.frc.team5700.robot.commands.AutoTwoGear;
 import org.usfirst.frc.team5700.robot.commands.DriveStraight;
+import org.usfirst.frc.team5700.robot.commands.GetGearWithVision;
 import org.usfirst.frc.team5700.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team5700.robot.subsystems.GearIntake;
 import org.usfirst.frc.team5700.robot.subsystems.RopeClimber;
@@ -30,6 +31,8 @@ public class Robot extends IterativeRobot {
 	public static Preferences prefs;
 	
 	SendableChooser<Command> chooser;
+	SendableChooser<String> stringChooser;
+	String selectedString;
 
 	public static DriveTrain drivetrain;
 	public static RopeClimber ropeClimber;
@@ -62,6 +65,7 @@ public class Robot extends IterativeRobot {
 		chooser.addObject("Left Peg Auto", new AutoSidePeg("left"));
 		chooser.addObject("Two Gear to Right", new AutoTwoGear("right"));
 		chooser.addObject("Two Gear to Left", new AutoTwoGear("left"));
+		chooser.addObject("Get Gear with Vision", new GetGearWithVision(true));
 		SmartDashboard.putData("Autonomous Chooser", chooser);
 		autonomousCommand = chooser.getSelected();
 
@@ -71,6 +75,9 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putData(ropeClimber);
 		SmartDashboard.putData("DriveStraight", new DriveStraight(prefs.getDouble("DriveStraight Distance", 200)));
 		SmartDashboard.putData("DriveStraightToPeg", new DriveStraight(Dimensions.DISTANCE_TO_PEG-Dimensions.LENGTH_IN/2));
+
+
+
 	}
 
 	@Override
@@ -103,6 +110,9 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
+
+		SmartDashboard.putNumber("Throttled speed", oi.getSpeed());
+		SmartDashboard.putNumber("Right stick Z", oi.getRightStick().getZ());
 		log();
 	}
 	
