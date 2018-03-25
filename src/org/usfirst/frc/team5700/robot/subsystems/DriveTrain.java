@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -43,6 +44,7 @@ public class DriveTrain extends Subsystem {
 	private double limitedX = 0;
 
 	private ADXRS450_Gyro gyro = new ADXRS450_Gyro();
+	Timer timer = new Timer();
 
 	//Encoder specs: S4T-360-250-S-D (usdigital.com)
 	//S4T Shaft Encoder, 360 CPR, 1/4" Dia Shaft, Single-Ended, Default Torque
@@ -64,6 +66,7 @@ public class DriveTrain extends Subsystem {
 	public DriveTrain() {
 		leftEncoder.setDistancePerPulse(distancePerPulseIn);
 		rightEncoder.setDistancePerPulse(distancePerPulseIn);
+		timer.start();
 
 		//leftMotor.setInverted(false);
 		//rightMotor.setInverted(false);
@@ -77,33 +80,22 @@ public class DriveTrain extends Subsystem {
 	 * @param rightStick joystick is for moving forwards and backwards
 	 * @param leftStick joystick is for turning
 	 */
-	public void arcadeDrive(Joystick rightStick, Joystick leftStick, boolean squaredInputs) {
-
+	public void arcadeDrive(Joystick leftStick, Joystick rightStick) {
+		
+		double rightStickY = rightStick.getY();
+		double leftStickX = leftStick.getX();
 		Preferences prefs = Preferences.getInstance();
-		//get max change rates  from Preferences Table
-		//		double maxChangeY = prefs.getDouble("MaxChangeY", 0.05);
-		//		double maxChangeX = prefs.getDouble("MaxChangeX", 0.05);
-		//		
-		//		double y = rightStick.getY();
-		//		double x = leftStick.getX();
-		//
-		//		double changeY = y - limitedY;
-		//		double changeX = x - limitedX;
-		//		
-		//		if (Math.abs(changeY) > maxChangeY)	
-		//			limitedY += (changeY > 0) ? maxChangeY : - maxChangeY;
-		//		else
-		//			limitedY = y;
-		//		
-		//		if (Math.abs(changeX) > maxChangeX)	{
-		//			limitedX += (changeX > 0) ? maxChangeX : - maxChangeX;
-		//			System.out.println("Limiting x to " + limitedX);
-		//		}
-		//		else
-		//			limitedX = x;
+		boolean squaredInputs = prefs.getBoolean("squaredInputs", false);
+
+		SmartDashboard.putNumber("averageEncoderRate", getAverageEncoderRate());
+		SmartDashboard.putNumber("rightStickY", rightStickY);
+		SmartDashboard.putNumber("leftStickX", leftStickX);
+		SmartDashboard.putNumber("X Acceleration", accel.getX());
+		SmartDashboard.putNumber("Y Acceleration", accel.getY());
+		SmartDashboard.putNumber("Timer", timer.get());
 
 
-		drive.arcadeDrive(-rightStick.getY() * 0.8, -(leftStick.getX() + 0.05) * 0.8, squaredInputs);	
+		drive.arcadeDrive(-rightStickY, -leftStickX, squaredInputs);	
 	}
 
 	public void safeArcadeDrive(double speed, double turn) {
