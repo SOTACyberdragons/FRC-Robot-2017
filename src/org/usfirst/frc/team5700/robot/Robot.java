@@ -129,7 +129,7 @@ public class Robot extends IterativeRobot {
 	 * The log method puts interesting information to the SmartDashboard.
 	 */
 	private void log() {
-		drivetrain.log();
+		//drivetrain.log();
 		gearIntake.log();
 		ropeClimber.log();
 	}
