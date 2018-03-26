@@ -1,6 +1,7 @@
 package org.usfirst.frc.team5700.robot.subsystems;
 
 import org.usfirst.frc.team5700.robot.Constants;
+import org.usfirst.frc.team5700.robot.Robot;
 import org.usfirst.frc.team5700.robot.RobotMap;
 import org.usfirst.frc.team5700.robot.commands.ArcadeDriveWithJoysticks;
 import org.usfirst.frc.team5700.utils.BumpUpFilter;
@@ -70,6 +71,10 @@ public class DriveTrain extends Subsystem {
 
 		//leftMotor.setInverted(false);
 		//rightMotor.setInverted(false);
+		frontLeftMotor.setInverted(true);
+		frontRightMotor.setInverted(true);
+		rearLeftMotor.setInverted(true);
+		rearRightMotor.setInverted(true);
 
 		reset();
 	}
@@ -84,18 +89,32 @@ public class DriveTrain extends Subsystem {
 		
 		double rightStickY = rightStick.getY();
 		double leftStickX = leftStick.getX();
+		double averageEncoderRate = getAverageEncoderRate();
+		double accelY = accel.getY();
+		double accelX = accel.getX();
+		double time = timer.get();
 		Preferences prefs = Preferences.getInstance();
 		boolean squaredInputs = prefs.getBoolean("squaredInputs", false);
+		BumpUpFilter bumpUpFilter = new BumpUpFilter();
 
-		SmartDashboard.putNumber("averageEncoderRate", getAverageEncoderRate());
-		SmartDashboard.putNumber("rightStickY", rightStickY);
-		SmartDashboard.putNumber("leftStickX", leftStickX);
-		SmartDashboard.putNumber("X Acceleration", accel.getX());
-		SmartDashboard.putNumber("Y Acceleration", accel.getY());
-		SmartDashboard.putNumber("Timer", timer.get());
+//		SmartDashboard.putNumber("averageEncoderRate", averageEncoderRate);
+//		SmartDashboard.putNumber("rightStickY", rightStickY);
+//		SmartDashboard.putNumber("leftStickX", leftStickX);
+//		SmartDashboard.putNumber("accelX", accelX);
+//		SmartDashboard.putNumber("accelY", accelY);
+//		SmartDashboard.putNumber("time", timer.get());
+		
+//		data fields for reference		
+//		String[] data_fields ={"time",
+//				"average_encoder_rate",
+//				"right_stick_y",
+//				"accel_y"
+//				};
 
+		Robot.csvLogger.writeData(time, averageEncoderRate, rightStickY, accelY);
+		double bumpedY = bumpUpFilter.output(rightStickY);
 
-		drive.arcadeDrive(-rightStickY, -leftStickX, squaredInputs);	
+		drive.arcadeDrive(bumpedY, leftStickX, squaredInputs);	
 	}
 
 	public void safeArcadeDrive(double speed, double turn) {
@@ -107,7 +126,7 @@ public class DriveTrain extends Subsystem {
 		Preferences prefs = Preferences.getInstance();
 		//double bumpThreshold = prefs.getDouble("bumpThreshold", 0.5);
 		double bumpExp = prefs.getDouble("bumpExp", 50);
-		BumpUpFilter bumpUpFilter = new BumpUpFilter(bumpExp);
+		BumpUpFilter bumpUpFilter = new BumpUpFilter();
 
 		//linear accel.
 		//double newSpeedInput = Math.signum(speed) * Math.pow(speed, 2); //squared input with sign

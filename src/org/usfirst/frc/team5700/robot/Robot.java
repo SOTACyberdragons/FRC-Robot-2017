@@ -9,6 +9,8 @@ import org.usfirst.frc.team5700.robot.commands.GetGearWithVision;
 import org.usfirst.frc.team5700.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team5700.robot.subsystems.GearIntake;
 import org.usfirst.frc.team5700.robot.subsystems.RopeClimber;
+import org.usfirst.frc.team5700.utils.CsvLogger;
+
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Command;
@@ -38,6 +40,12 @@ public class Robot extends IterativeRobot {
 	public static RopeClimber ropeClimber;
 	public static GearIntake gearIntake;
 	public static OI oi;
+	public static CsvLogger csvLogger;
+	String[] data_fields ={"time",
+			"average_encoder_rate",
+			"right_stick_y",
+			"accel_y"
+			};
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -76,6 +84,9 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putData("DriveStraight", new DriveStraight(prefs.getDouble("DriveStraight Distance", 200)));
 		SmartDashboard.putData("DriveStraightToPeg", new DriveStraight(Dimensions.DISTANCE_TO_PEG-Dimensions.LENGTH_IN/2));
 
+		System.out.println("Instantiating CsvLogger...");
+		csvLogger = new CsvLogger();
+		
 
 
 	}
@@ -100,8 +111,11 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopInit() {
 		autonomousCommand.cancel();
+		
 		//always make sure we set vision to peg
 		NetworkTable.getTable("vision").putString("model", "peg");
+		
+		csvLogger.init(data_fields);
 	}
 
 	/**
@@ -125,6 +139,10 @@ public class Robot extends IterativeRobot {
 		LiveWindow.run();
 	}
 
+	public void disabledInit() {
+		
+		csvLogger.close();
+	}
 	/**
 	 * The log method puts interesting information to the SmartDashboard.
 	 */
