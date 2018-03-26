@@ -24,9 +24,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class DriveTrain extends Subsystem {
 
-	public static double MAX_SPEED_IN_PER_SEC; //TODO find
-	public static double MAX_FORWARD_ACCEL;
-	public static double MAX_BACKWARD_ACCEL;
+	public static double maxSpeed; //TODO find
+	public static double maxForwardAccel;
+	public static double maxBackwardAccel;
 	public static double MAX_SIDE_ACCEL;
 	public double previousSpeedInput = 0;
 
@@ -38,11 +38,6 @@ public class DriveTrain extends Subsystem {
 	private RobotDrive drive = new RobotDrive(frontLeftMotor, rearLeftMotor, frontRightMotor, rearRightMotor);
 
 	private BuiltInAccelerometer accel = new BuiltInAccelerometer();
-
-	// Put methods for controlling this subsystem
-	// here. Call these from Commands.
-	private double limitedY = 0;
-	private double limitedX = 0;
 
 	private ADXRS450_Gyro gyro = new ADXRS450_Gyro();
 	Timer timer = new Timer();
@@ -56,9 +51,6 @@ public class DriveTrain extends Subsystem {
 
 	private Encoder leftEncoder = new Encoder(1, 2, true);
 	private Encoder rightEncoder = new Encoder(3, 4, false);
-	private boolean overrideDriveStick;
-	private boolean overrideTurnStick;
-	public double wantedChangeInSpeedInPerCycle;
 	private double distanceRecord;
 	private double angleRecord;
 
@@ -71,10 +63,10 @@ public class DriveTrain extends Subsystem {
 
 		//leftMotor.setInverted(false);
 		//rightMotor.setInverted(false);
-		frontLeftMotor.setInverted(true);
-		frontRightMotor.setInverted(true);
-		rearLeftMotor.setInverted(true);
-		rearRightMotor.setInverted(true);
+		frontLeftMotor.setInverted(false);
+		frontRightMotor.setInverted(false);
+		rearLeftMotor.setInverted(false);
+		rearRightMotor.setInverted(false);
 
 		reset();
 	}
@@ -86,7 +78,7 @@ public class DriveTrain extends Subsystem {
 	 * @param leftStick joystick is for turning
 	 */
 	public void arcadeDrive(Joystick leftStick, Joystick rightStick) {
-		
+
 		double rightStickY = rightStick.getY();
 		double leftStickX = leftStick.getX();
 		double averageEncoderRate = getAverageEncoderRate();
@@ -97,19 +89,19 @@ public class DriveTrain extends Subsystem {
 		boolean squaredInputs = prefs.getBoolean("squaredInputs", false);
 		BumpUpFilter bumpUpFilter = new BumpUpFilter();
 
-//		SmartDashboard.putNumber("averageEncoderRate", averageEncoderRate);
-//		SmartDashboard.putNumber("rightStickY", rightStickY);
-//		SmartDashboard.putNumber("leftStickX", leftStickX);
-//		SmartDashboard.putNumber("accelX", accelX);
-//		SmartDashboard.putNumber("accelY", accelY);
-//		SmartDashboard.putNumber("time", timer.get());
-		
-//		data fields for reference		
-//		String[] data_fields ={"time",
-//				"average_encoder_rate",
-//				"right_stick_y",
-//				"accel_y"
-//				};
+		//		SmartDashboard.putNumber("averageEncoderRate", averageEncoderRate);
+		//		SmartDashboard.putNumber("rightStickY", rightStickY);
+		//		SmartDashboard.putNumber("leftStickX", leftStickX);
+		//		SmartDashboard.putNumber("accelX", accelX);
+		//		SmartDashboard.putNumber("accelY", accelY);
+		//		SmartDashboard.putNumber("time", timer.get());
+
+		//		data fields for reference		
+		//		String[] data_fields ={"time",
+		//				"average_encoder_rate",
+		//				"right_stick_y",
+		//				"accel_y"
+		//				};
 
 		Robot.csvLogger.writeData(time, averageEncoderRate, rightStickY, accelY);
 		double bumpedY = bumpUpFilter.output(rightStickY);
@@ -117,80 +109,82 @@ public class DriveTrain extends Subsystem {
 		drive.arcadeDrive(bumpedY, leftStickX, squaredInputs);	
 	}
 
-	public void safeArcadeDrive(double speed, double turn) {
+	public void safeArcadeDrive(double moveValue, double rotateValue) {
 
-		double currentSpeedInPerSec = getAverageEncoderRate(); //positive or negative
+		double currentSpeed = getAverageEncoderRate(); //may be positive or negative
+		double newRotateValue = rotateValue;
+		boolean forwardAccelLimit = false;
+		boolean backwardAccelLimit = false;
+		double accelY = accel.getY();
+		double accelX = accel.getX();
+		double time = timer.get();
 
-		overrideDriveStick = false;
-		overrideTurnStick = false;
 		Preferences prefs = Preferences.getInstance();
-		//double bumpThreshold = prefs.getDouble("bumpThreshold", 0.5);
-		double bumpExp = prefs.getDouble("bumpExp", 50);
-		BumpUpFilter bumpUpFilter = new BumpUpFilter();
-
-		//linear accel.
-		//double newSpeedInput = Math.signum(speed) * Math.pow(speed, 2); //squared input with sign
+		boolean squaredInputs = prefs.getBoolean("squaredInputs", false);
+		boolean useAccelLimit = prefs.getBoolean("useAccelLimit", true);
 		
-		//speed = bumpUpFilter.output(speed);
-		double newSpeedInput = speed;
-		//double newSpeedInput = speed;
+		//Bump-up filter parameters
+		double exp = prefs.getDouble("exp", 200);
+		double threshold = prefs.getDouble("threshold", 0.04);
+		double target = prefs.getDouble("target", 0.3);
 
+		BumpUpFilter bumpUpFilter = new BumpUpFilter(exp, threshold, target);
+		double newMoveValue = bumpUpFilter.output(moveValue); //convert to desired joystick response
 
-		//prevent getting 0 or negative values from prefs
-		MAX_FORWARD_ACCEL = Math.max(prefs.getDouble("Max Forward Accel", 60), 5); //0.3 g -> 116 in/s^2
-		MAX_BACKWARD_ACCEL = Math.max(prefs.getDouble("Max Backward Accel", 60), 5); //0.3 g -> 116 in/s^2
-		MAX_SPEED_IN_PER_SEC = Math.max(prefs.getDouble("Max Speed", 60), Math.abs(currentSpeedInPerSec)); //14 ft/s
-		wantedChangeInSpeedInPerCycle = speed * MAX_SPEED_IN_PER_SEC - currentSpeedInPerSec;
-		double speedThreshold = 0; //Math.max(prefs.getDouble("Speed Threshold", 1), 1);
-		
-		
-		//if (Math.abs(currentSpeedInPerSec) > speedThreshold) {
-			if (wantedChangeInSpeedInPerCycle > MAX_FORWARD_ACCEL * Constants.CYCLE_SEC) {
-				newSpeedInput = Math.min(previousSpeedInput + (MAX_FORWARD_ACCEL * Constants.CYCLE_SEC / MAX_SPEED_IN_PER_SEC ),
-						speed);
-				overrideDriveStick = true;
+		if (useAccelLimit) {
 
-			} else if (wantedChangeInSpeedInPerCycle < -MAX_BACKWARD_ACCEL * Constants.CYCLE_SEC) {
-				newSpeedInput = Math.max(previousSpeedInput - (MAX_BACKWARD_ACCEL * Constants.CYCLE_SEC / MAX_SPEED_IN_PER_SEC),
-						speed);
-				overrideDriveStick = true;
+			//prevent getting 0 or negative values from prefs
+			maxForwardAccel = Math.max(prefs.getDouble("maxForwardAccel", 60), 5); //0.3 g -> 116 in/s^2
+			maxBackwardAccel = Math.max(prefs.getDouble("maxBackwardAccel", 60), 5); //0.3 g -> 116 in/s^2
+			maxSpeed = Math.max(prefs.getDouble("maxSpeed", 120), Math.abs(currentSpeed)); //10 ft/s
+
+			double requestedSpeedChange = moveValue * maxSpeed - currentSpeed;
+			SmartDashboard.putNumber("requestedSpeedChange", requestedSpeedChange);
+
+			if (requestedSpeedChange > maxForwardAccel * Constants.CYCLE_SEC) {
+				newMoveValue = Math.min(previousSpeedInput + (maxForwardAccel * Constants.CYCLE_SEC / maxSpeed ),
+						moveValue);
+				forwardAccelLimit = true;
+
+			} else if (requestedSpeedChange < -maxBackwardAccel * Constants.CYCLE_SEC) {
+				newMoveValue = Math.max(previousSpeedInput - (maxBackwardAccel * Constants.CYCLE_SEC / maxSpeed),
+						moveValue);
+				backwardAccelLimit = true;
 			}
-		//}
 
-		//rotational accel.
-		//double newTurnInput = Math.signum(turn) * Math.pow(turn, 2);
-		double newTurnInput = turn;
-		//		double turnRadiusIn = -Math.log(newTurnInput) * WHEEL_BASE_WIDTH_IN;
-		//		MAX_SIDE_ACCEL = prefs.getDouble("Max Side Accel", 60);
-		//		double radiusThreshhold = prefs.getDouble("radius threshhold", 10);
-		//		double wantedSideAccel = Math.pow(currentSpeedInPerSec, 2) / turnRadiusIn;
-		//
-		//		if (turnRadiusIn > radiusThreshhold && wantedSideAccel > MAX_SIDE_ACCEL) {
-		//			newTurnInput = Math.exp((-Math.pow(currentSpeedInPerSec, 2)/MAX_SIDE_ACCEL)/WHEEL_BASE_WIDTH_IN);
-		//			setOverrideTurnStick(true);
-		//		}
 
-		SmartDashboard.putNumber("MAX_FORWARD_ACCEL", MAX_FORWARD_ACCEL);
-		SmartDashboard.putNumber("MAX_BACKWARD_ACCEL", MAX_BACKWARD_ACCEL);
-		SmartDashboard.putNumber("MAX_SPEED_IN_PER_SEC", MAX_SPEED_IN_PER_SEC);
-		SmartDashboard.putNumber("speedThreshold", speedThreshold);
-		SmartDashboard.putNumber("Average Encoder Rate", (rightEncoder.getRate() + leftEncoder.getRate()) / 2);
-		SmartDashboard.putNumber("currentSpeedInPerSec", currentSpeedInPerSec);
-		SmartDashboard.putNumber("Requested Speed", speed);
-		SmartDashboard.putNumber("X Acceleration", accel.getX());
-		SmartDashboard.putNumber("Y Acceleration", accel.getY());
-		SmartDashboard.putNumber("Wanted Change", wantedChangeInSpeedInPerCycle);
-		SmartDashboard.putNumber("New Speed Input", newSpeedInput);
-		SmartDashboard.putNumber("Previous Speed Input", previousSpeedInput);
-		SmartDashboard.putBoolean("Override Drive Stick", overrideDriveStick);
+			//rotational accel.
+
+			//		double turnRadiusIn = -Math.log(newTurnInput) * WHEEL_BASE_WIDTH_IN;
+			//		MAX_SIDE_ACCEL = prefs.getDouble("Max Side Accel", 60);
+			//		double radiusThreshhold = prefs.getDouble("radius threshhold", 10);
+			//		double wantedSideAccel = Math.pow(currentSpeedInPerSec, 2) / turnRadiusIn;
+			//
+			//		if (turnRadiusIn > radiusThreshhold && wantedSideAccel > MAX_SIDE_ACCEL) {
+			//			newTurnInput = Math.exp((-Math.pow(currentSpeedInPerSec, 2)/MAX_SIDE_ACCEL)/WHEEL_BASE_WIDTH_IN);
+			//			setOverrideTurnStick(true);
+			//		}
+
+			//		SmartDashboard.putNumber("MAX_FORWARD_ACCEL", MAX_FORWARD_ACCEL);
+			//		SmartDashboard.putNumber("MAX_BACKWARD_ACCEL", MAX_BACKWARD_ACCEL);
+			//		SmartDashboard.putNumber("MAX_SPEED_IN_PER_SEC", MAX_SPEED_IN_PER_SEC);
+			//		SmartDashboard.putNumber("X Acceleration", accel.getX());
+			//		SmartDashboard.putNumber("Y Acceleration", accel.getY());
+
+			previousSpeedInput = newMoveValue;
+		}
 		
-		previousSpeedInput = newSpeedInput;
-		newSpeedInput = bumpUpFilter.output(newSpeedInput);
-		SmartDashboard.putNumber("Actual Drive Input", newSpeedInput);
+		SmartDashboard.putBoolean("forwardAccelLimit", forwardAccelLimit);
+		SmartDashboard.putBoolean("backwardAccelLimit", backwardAccelLimit);
+		SmartDashboard.putNumber("currentSpeed", currentSpeed);
+		SmartDashboard.putNumber("moveValue", moveValue);
 
+		Robot.csvLogger.writeData(time, currentSpeed, moveValue, accelY);
 
-		drive.arcadeDrive(newSpeedInput, newTurnInput);
+		drive.arcadeDrive(newMoveValue, newRotateValue, squaredInputs);
 	}
+
+
 
 	public void arcadeDrive(double outputMagnitude, double curve) {
 		drive.arcadeDrive(-outputMagnitude, -curve);
@@ -258,18 +252,10 @@ public class DriveTrain extends Subsystem {
 		return leftEncoder;
 	}
 
-	public boolean isOverrideDriveStick() {
-		return overrideDriveStick;
-	}
-
-	public boolean isOverrideTurnStick() {
-		return overrideTurnStick;
-	}
-
 	public PIDSource getGyro() {
 		return gyro;
 	}
-	
+
 	public void drive(double outputMagnitude, double curve) {
 		drive.drive(outputMagnitude, curve);
 	}
@@ -277,11 +263,11 @@ public class DriveTrain extends Subsystem {
 	public double getRecordedDistance() {
 		return distanceRecord;
 	}
-	
+
 	public double getRecordedAngle() {
 		return angleRecord;
 	}
-	
+
 	public void addToRecordedAngle() {
 		angleRecord += this.getHeading();
 	}
