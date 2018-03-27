@@ -122,7 +122,7 @@ public class DriveTrain extends Subsystem {
 		Preferences prefs = Preferences.getInstance();
 		boolean squaredInputs = prefs.getBoolean("squaredInputs", false);
 		boolean useAccelLimit = prefs.getBoolean("useAccelLimit", true);
-		
+
 		//Bump-up filter parameters
 		double exp = prefs.getDouble("exp", 200);
 		double threshold = prefs.getDouble("threshold", 0.04);
@@ -173,28 +173,33 @@ public class DriveTrain extends Subsystem {
 
 			previousSpeedInput = newMoveValue;
 		}
-		
+
 		SmartDashboard.putBoolean("forwardAccelLimit", forwardAccelLimit);
 		SmartDashboard.putBoolean("backwardAccelLimit", backwardAccelLimit);
 		SmartDashboard.putNumber("currentSpeed", currentSpeed);
 		SmartDashboard.putNumber("moveValue", moveValue);
-		
-//		String[] data_fields ={"time",
-//				"move_value"
-//				"rotate_value",
-//				"average_encoder_rate",
-//				"accel_y"
-//				};
 
-		Robot.csvLogger.writeData(time, moveValue, rotateValue, currentSpeed, accelY);
+		//		String[] data_fields ={"time",
+		//				"move_value"
+		//				"rotate_value",
+		//				"average_encoder_rate",
+		//				"accel_y"
+		//				};
 
-		drive.arcadeDrive(newMoveValue, newRotateValue, squaredInputs);
+		Robot.csvLogger.writeData(time, newMoveValue, newRotateValue, currentSpeed, accelY);
+
+		drive.arcadeDrive(newMoveValue, newRotateValue);
 	}
 
+	public void arcadeDriveDelayed(double moveValue, double rotateValue) {
+		timer.delay(0.04);
+		arcadeDrive(moveValue, rotateValue);
+	}
 
+	public void arcadeDrive(double moveValue, double rotateValue) {
 
-	public void arcadeDrive(double outputMagnitude, double curve) {
-		drive.arcadeDrive(-outputMagnitude, -curve);
+		Robot.csvLogger.writeData(timer.get(), moveValue, rotateValue, 0, 0);
+		drive.arcadeDrive(moveValue, rotateValue);
 	}
 
 	public void tankDrive(double left, double right) {

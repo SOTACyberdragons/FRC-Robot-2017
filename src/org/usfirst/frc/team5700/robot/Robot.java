@@ -4,6 +4,7 @@ import org.usfirst.frc.team5700.robot.commands.AutoCrossBaseline;
 import org.usfirst.frc.team5700.robot.commands.AutoMiddlePeg;
 import org.usfirst.frc.team5700.robot.commands.AutoSidePeg;
 import org.usfirst.frc.team5700.robot.commands.AutoTwoGear;
+import org.usfirst.frc.team5700.robot.commands.DriveReplay;
 import org.usfirst.frc.team5700.robot.commands.DriveStraight;
 import org.usfirst.frc.team5700.robot.commands.GetGearWithVision;
 import org.usfirst.frc.team5700.robot.subsystems.DriveTrain;
@@ -75,6 +76,7 @@ public class Robot extends IterativeRobot {
 		chooser.addObject("Two Gear to Right", new AutoTwoGear("right"));
 		chooser.addObject("Two Gear to Left", new AutoTwoGear("left"));
 		chooser.addObject("Get Gear with Vision", new GetGearWithVision(true));
+		chooser.addObject("Replay", new DriveReplay());
 		SmartDashboard.putData("Autonomous Chooser", chooser);
 		autonomousCommand = chooser.getSelected();
 
@@ -92,7 +94,7 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void autonomousInit() {
-		
+		csvLogger.init(data_fields);
 		SmartDashboard.putString("Autonomous Mode: ", chooser.getSelected().getName());
 		autonomousCommand = chooser.getSelected();
 		autonomousCommand.start(); // schedule the autonomous command
@@ -103,7 +105,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		Scheduler.getInstance().run();
+		Scheduler.getInstance().run();	
 		log();
 	}
 

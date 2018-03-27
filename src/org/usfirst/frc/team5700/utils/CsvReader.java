@@ -12,7 +12,7 @@ public class CsvReader {
 	List<float[]> values = new ArrayList<float[]>();
 
 	public CsvReader() throws FileNotFoundException {
-		Scanner scanner = new Scanner(new File("/home/lvuser/replay/replay.csv"));
+		Scanner scanner = new Scanner(new File("/home/lvuser/data_capture/replay.csv"));
 		scanner.useDelimiter("\n");
 		scanner.nextLine(); //skip header
 
@@ -26,7 +26,7 @@ public class CsvReader {
 		}
 
 //		for (float[] element : values) {
-//			System.out.println("time: " + element[0] + ", speed: " + element[1]);
+//			System.out.println("move_value: " + element[1] + ", rotate_value: " + element[2]);
 //		}
 		scanner.close();
 	}
