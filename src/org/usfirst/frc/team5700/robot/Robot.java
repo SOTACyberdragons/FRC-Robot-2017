@@ -125,9 +125,6 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
-
-		SmartDashboard.putNumber("Throttled speed", oi.getSpeed());
-		SmartDashboard.putNumber("Right stick Z", oi.getRightStick().getZ());
 		log();
 	}
 	
