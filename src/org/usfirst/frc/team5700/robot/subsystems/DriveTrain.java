@@ -178,8 +178,15 @@ public class DriveTrain extends Subsystem {
 		SmartDashboard.putBoolean("backwardAccelLimit", backwardAccelLimit);
 		SmartDashboard.putNumber("currentSpeed", currentSpeed);
 		SmartDashboard.putNumber("moveValue", moveValue);
+		
+//		String[] data_fields ={"time",
+//				"move_value"
+//				"rotate_value",
+//				"average_encoder_rate",
+//				"accel_y"
+//				};
 
-		Robot.csvLogger.writeData(time, currentSpeed, moveValue, accelY);
+		Robot.csvLogger.writeData(time, moveValue, rotateValue, currentSpeed, accelY);
 
 		drive.arcadeDrive(newMoveValue, newRotateValue, squaredInputs);
 	}

@@ -42,8 +42,9 @@ public class Robot extends IterativeRobot {
 	public static OI oi;
 	public static CsvLogger csvLogger;
 	String[] data_fields ={"time",
+			"move_value",
+			"rotate_value",
 			"average_encoder_rate",
-			"right_stick_y",
 			"accel_y"
 			};
 
@@ -86,8 +87,6 @@ public class Robot extends IterativeRobot {
 
 		System.out.println("Instantiating CsvLogger...");
 		csvLogger = new CsvLogger();
-		
-
 
 	}
 
@@ -131,7 +130,7 @@ public class Robot extends IterativeRobot {
 	}
 	
 	/**
-	 * This function is called periodically dulring test mode
+	 * This function is called periodically during test mode
 	 */
 	@Override
 	public void testPeriodic() {
