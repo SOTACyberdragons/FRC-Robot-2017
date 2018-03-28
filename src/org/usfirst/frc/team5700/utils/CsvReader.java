@@ -11,8 +11,10 @@ public class CsvReader {
 
 	List<float[]> values = new ArrayList<float[]>();
 
-	public CsvReader() throws FileNotFoundException {
-		Scanner scanner = new Scanner(new File("/home/lvuser/data_capture/replay.csv"));
+	public CsvReader(String replayName) throws FileNotFoundException {
+		String fileName = "/home/lvuser/data_capture/" + replayName + ".rpl";
+		System.out.println(fileName);
+		Scanner scanner = new Scanner(new File(fileName));
 		scanner.useDelimiter("\n");
 		scanner.nextLine(); //skip header
 

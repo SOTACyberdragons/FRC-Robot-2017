@@ -1,5 +1,12 @@
 package org.usfirst.frc.team5700.robot;
 
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Iterator;
+
 import org.usfirst.frc.team5700.robot.commands.AutoCrossBaseline;
 import org.usfirst.frc.team5700.robot.commands.AutoMiddlePeg;
 import org.usfirst.frc.team5700.robot.commands.AutoSidePeg;
@@ -32,9 +39,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends IterativeRobot {
 	private Command autonomousCommand;
 	public static Preferences prefs;
-	
+
 	SendableChooser<Command> chooser;
 	SendableChooser<String> stringChooser;
+	SendableChooser<String> replayChooser;
 	String selectedString;
 
 	public static DriveTrain drivetrain;
@@ -47,7 +55,10 @@ public class Robot extends IterativeRobot {
 			"rotate_value",
 			"average_encoder_rate",
 			"accel_y"
-			};
+	};
+	private String recordMode;
+	private static String replayName;
+
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -55,12 +66,12 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-		
+
 		//always make sure we set vision to peg
 		NetworkTable.getTable("vision").putString("model", "peg");
-				
+
 		prefs = Preferences.getInstance();
-		
+
 		// Initialize all subsystems
 		drivetrain = new DriveTrain();
 		ropeClimber = new RopeClimber();
@@ -80,6 +91,16 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putData("Autonomous Chooser", chooser);
 		autonomousCommand = chooser.getSelected();
 
+		stringChooser = new SendableChooser<String>();
+		stringChooser.addDefault("Just Drive", "justDrive");
+		stringChooser.addObject("Replay", "replay");
+		SmartDashboard.putData("RecordMode", stringChooser);
+		SmartDashboard.putString("Replay Name", "MyReplay");
+		recordMode = stringChooser.getSelected();
+
+		listReplays();
+
+
 		// Show what command your subsystem is running on the SmartDashboard
 		SmartDashboard.putData(drivetrain);
 		SmartDashboard.putData(gearIntake);
@@ -92,11 +113,35 @@ public class Robot extends IterativeRobot {
 
 	}
 
+	private void listReplays() {
+		replayChooser = new SendableChooser<String>();
+		Iterator<Path> replayFiles = null;
+		try {
+			replayFiles = Files.newDirectoryStream(Paths.get(Constants.dataDir), "*.rpl").iterator();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		if (replayFiles.hasNext()) {
+			String replayFile = replayFiles.next().getFileName().toString().replaceFirst("[.][^.]+$", "");
+			replayChooser.addDefault(replayFile, replayFile);
+		}
+		while (replayFiles.hasNext()) {
+			String replayFile = replayFiles.next().getFileName().toString().replaceFirst("[.][^.]+$", "");
+			System.out.println(replayFile);
+			replayChooser.addObject(replayFile, replayFile);
+		}
+		SmartDashboard.putData("ReplaySelector", replayChooser);
+	}
+
 	@Override
 	public void autonomousInit() {
-		csvLogger.init(data_fields);
+		csvLogger.init(data_fields, Constants.dataDir, false, null);
 		SmartDashboard.putString("Autonomous Mode: ", chooser.getSelected().getName());
 		autonomousCommand = chooser.getSelected();
+		replayName = replayChooser.getSelected();
+
 		autonomousCommand.start(); // schedule the autonomous command
 	}
 
@@ -112,11 +157,15 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopInit() {
 		autonomousCommand.cancel();
-		
+
 		//always make sure we set vision to peg
 		NetworkTable.getTable("vision").putString("model", "peg");
-		
-		csvLogger.init(data_fields);
+		listReplays();
+
+		recordMode = stringChooser.getSelected();
+
+		String replayName = SmartDashboard.getString("Replay Name", "MyReplay");
+		csvLogger.init(data_fields, Constants.dataDir, recordMode.equals("replay"), replayName);
 	}
 
 	/**
@@ -127,18 +176,22 @@ public class Robot extends IterativeRobot {
 		Scheduler.getInstance().run();
 		log();
 	}
-	
+
 	/**
 	 * This function is called periodically during test mode
 	 */
 	@Override
 	public void testPeriodic() {
-		
+
 		LiveWindow.run();
 	}
 
 	public void disabledInit() {
-		
+	}
+
+	public void disabledPeriodic() {
+
+		//System.out.println("Disabling robot...");
 		csvLogger.close();
 	}
 	/**
@@ -148,5 +201,10 @@ public class Robot extends IterativeRobot {
 		//drivetrain.log();
 		gearIntake.log();
 		ropeClimber.log();
+	}
+
+	public static String getReplayName() {
+		// TODO Auto-generated method stub
+		return replayName;
 	}
 }

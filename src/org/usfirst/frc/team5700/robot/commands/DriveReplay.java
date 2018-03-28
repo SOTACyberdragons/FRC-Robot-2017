@@ -4,22 +4,14 @@
  */
 package org.usfirst.frc.team5700.robot.commands;
 
-import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.PIDOutput;
-import edu.wpi.first.wpilibj.PIDSource;
-import edu.wpi.first.wpilibj.PIDSourceType;
-import edu.wpi.first.wpilibj.Preferences;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-
 import java.io.FileNotFoundException;
 import java.util.Iterator;
-import java.util.List;
 
 import org.usfirst.frc.team5700.robot.Robot;
 import org.usfirst.frc.team5700.utils.CsvReader;
-import org.usfirst.frc.team5700.utils.LinearAccelerationFilter;
+
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.command.Command;
 
 /**
  * Drive the given distance straight (negative values go backwards). Uses a
@@ -31,7 +23,6 @@ public class DriveReplay extends Command {
 	private CsvReader csvReader;
 	private Iterator<float[]> valuesIterator;
 	private Timer timer = new Timer();
-	private Timer timer2 = new Timer();
 	private float replayStartTime;
 	private boolean timerStarted;
 	private double offset;
@@ -45,7 +36,7 @@ public class DriveReplay extends Command {
 
 		timer.reset();
 		try {
-			csvReader = new CsvReader();
+			csvReader = new CsvReader(Robot.getReplayName());
 			valuesIterator = csvReader.getValues().iterator();
 
 
@@ -75,7 +66,7 @@ public class DriveReplay extends Command {
 			double periodic_offset = Math.max(nextLine[0] - timer.get() - offset, 0);
 			System.out.println("In execute, time difference: " + periodic_offset);
 
-			timer.delay(periodic_offset);
+			Timer.delay(periodic_offset);
 			Robot.drivetrain.arcadeDrive(nextLine[1], nextLine[2]);
 		}
 	}
