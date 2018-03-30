@@ -5,6 +5,8 @@ import org.usfirst.frc.team5700.robot.Robot;
 import org.usfirst.frc.team5700.robot.RobotMap;
 import org.usfirst.frc.team5700.robot.commands.ArcadeDriveWithJoysticks;
 import org.usfirst.frc.team5700.utils.BumpUpFilter;
+import org.usfirst.frc.team5700.utils.ReluFilter;
+import org.usfirst.frc.team5700.utils.SoftMaxFilter;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
@@ -110,6 +112,9 @@ public class DriveTrain extends Subsystem {
 	}
 
 	public void safeArcadeDrive(double moveValue, double rotateValue) {
+		
+		SmartDashboard.putNumber("Move Value", moveValue);
+		SmartDashboard.putNumber("Rotate Value", rotateValue);
 
 		double currentSpeed = getAverageEncoderRate(); //may be positive or negative
 		double newRotateValue = rotateValue;
@@ -125,20 +130,25 @@ public class DriveTrain extends Subsystem {
 
 		//Bump-up filter parameters
 		double exp = prefs.getDouble("exp", 200);
-		double threshold = prefs.getDouble("threshold", 0.04);
+		double threshold = prefs.getDouble("threshold", 0.1);
 		double target = prefs.getDouble("target", 0.3);
 
 		BumpUpFilter bumpUpFilter = new BumpUpFilter(exp, threshold, target);
 		double newMoveValue = bumpUpFilter.output(moveValue); //convert to desired joystick response
+		
+		//Bump-up filter parameters
+		double respThreshold = prefs.getDouble("respThreshold", 0.1);
+		ReluFilter reluFilter = new ReluFilter(respThreshold);
+		double requestedSpeedChange = 0;
 
 		if (useAccelLimit) {
 
 			//prevent getting 0 or negative values from prefs
 			maxForwardAccel = Math.max(prefs.getDouble("maxForwardAccel", 60), 5); //0.3 g -> 116 in/s^2
 			maxBackwardAccel = Math.max(prefs.getDouble("maxBackwardAccel", 60), 5); //0.3 g -> 116 in/s^2
-			maxSpeed = Math.max(prefs.getDouble("maxSpeed", 120), Math.abs(currentSpeed)); //10 ft/s
+			maxSpeed = prefs.getDouble("maxSpeed", 50); //10 ft/s
 
-			double requestedSpeedChange = moveValue * maxSpeed - currentSpeed;
+			requestedSpeedChange = reluFilter.output(moveValue) * maxSpeed - currentSpeed;
 			SmartDashboard.putNumber("requestedSpeedChange", requestedSpeedChange);
 
 			if (requestedSpeedChange > maxForwardAccel * Constants.CYCLE_SEC) {
@@ -182,17 +192,21 @@ public class DriveTrain extends Subsystem {
 		//		String[] data_fields ={"time",
 		//				"move_value"
 		//				"rotate_value",
-		//				"average_encoder_rate",
+		//				"current_speed",
+		//				"requested_speed_change",
+		//				"forward_accel_limit",
+		//				"backward_accel_limit,
 		//				"accel_y"
 		//				};
 
-		Robot.csvLogger.writeData(time, newMoveValue, newRotateValue, currentSpeed, accelY);
+		Robot.csvLogger.writeData(time, moveValue, rotateValue, newMoveValue, newRotateValue, 
+				currentSpeed, requestedSpeedChange, forwardAccelLimit ? 1 : 0, backwardAccelLimit ? 1 : 0, accelY, maxSpeed);
 
 		drive.arcadeDrive(newMoveValue, newRotateValue);
 	}
 
 	public void arcadeDriveDelayed(double moveValue, double rotateValue) {
-		timer.delay(0.04);
+		timer.delay(0.02);
 		arcadeDrive(moveValue, rotateValue);
 	}
 

@@ -80,5 +80,7 @@ public class DriveReplay extends Command {
 	protected void end() {
 		System.out.println("Replay ended");
 		Robot.drivetrain.safeArcadeDrive(0, 0);
+		timer.stop();
+		timer.reset();
 	}
 }

@@ -50,13 +50,27 @@ public class Robot extends IterativeRobot {
 	public static GearIntake gearIntake;
 	public static OI oi;
 	public static CsvLogger csvLogger;
-	String[] data_fields ={"time",
-			"move_value",
-			"rotate_value",
-			"average_encoder_rate",
-			"accel_y"
+
+	
+	//		Robot.csvLogger.writeData(time, moveValue, rotateValue, newMoveValue, newRotateValue, 
+//	currentSpeed, requestedSpeedChange, forwardAccelLimit ? 1 : 0, backwardAccelLimit ? 1 : 0, maxSpeed);
+	String[] data_fields ={
+			"time",
+			"moveValue",
+			"rotateValue",
+			"newMoveValue",
+			"newRotateValue",
+			"currentSpeed",
+			"requestedSpeedChange",
+			"forwardAccelLimit",
+			"backwardAccelLimit",
+			"accelY",
+			"maxSpeed"
 	};
+
 	private String recordMode;
+	private boolean teleopRan;
+	private boolean autoRan;
 	private static String replayName;
 
 
@@ -69,6 +83,7 @@ public class Robot extends IterativeRobot {
 
 		//always make sure we set vision to peg
 		NetworkTable.getTable("vision").putString("model", "peg");
+		System.out.println("Robot init...");
 
 		prefs = Preferences.getInstance();
 
@@ -80,23 +95,18 @@ public class Robot extends IterativeRobot {
 
 		// instantiate the command used for the autonomous period
 		chooser = new SendableChooser<Command>();
-		chooser.addDefault("Cross Baseline", new AutoCrossBaseline());
+		chooser.addObject("Cross Baseline", new AutoCrossBaseline());
 		chooser.addObject("Middle Peg Auto", new AutoMiddlePeg());
 		chooser.addObject("Right Peg Auto", new AutoSidePeg("right"));
 		chooser.addObject("Left Peg Auto", new AutoSidePeg("left"));
 		chooser.addObject("Two Gear to Right", new AutoTwoGear("right"));
 		chooser.addObject("Two Gear to Left", new AutoTwoGear("left"));
 		chooser.addObject("Get Gear with Vision", new GetGearWithVision(true));
-		chooser.addObject("Replay", new DriveReplay());
+		chooser.addDefault("Replay", new DriveReplay());
 		SmartDashboard.putData("Autonomous Chooser", chooser);
 		autonomousCommand = chooser.getSelected();
 
-		stringChooser = new SendableChooser<String>();
-		stringChooser.addDefault("Just Drive", "justDrive");
-		stringChooser.addObject("Replay", "replay");
-		SmartDashboard.putData("RecordMode", stringChooser);
-		SmartDashboard.putString("Replay Name", "MyReplay");
-		recordMode = stringChooser.getSelected();
+		setupRecordMode();
 
 		listReplays();
 
@@ -113,7 +123,17 @@ public class Robot extends IterativeRobot {
 
 	}
 
+	private void setupRecordMode() {
+		stringChooser = new SendableChooser<String>();
+		stringChooser.addDefault("Just Drive", "justDrive");
+		stringChooser.addObject("Replay", "replay");
+		SmartDashboard.putData("RecordMode", stringChooser);
+		SmartDashboard.putString("Replay Name", "MyReplay");
+		recordMode = stringChooser.getSelected();
+	}
+
 	private void listReplays() {
+		System.out.println("Listing replays...");
 		replayChooser = new SendableChooser<String>();
 		Iterator<Path> replayFiles = null;
 		try {
@@ -137,10 +157,15 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void autonomousInit() {
-		csvLogger.init(data_fields, Constants.dataDir, false, null);
-		SmartDashboard.putString("Autonomous Mode: ", chooser.getSelected().getName());
-		autonomousCommand = chooser.getSelected();
+		autoRan = true;
 		replayName = replayChooser.getSelected();
+
+		csvLogger.init(data_fields, Constants.dataDir, false, null);
+
+		autonomousCommand = chooser.getSelected();
+		SmartDashboard.putString("Autonomous Command: ", autonomousCommand.getName());
+		System.out.println("Autonomous command: " + autonomousCommand.getName());
+		System.out.println("Selected replay: " + replayName);
 
 		autonomousCommand.start(); // schedule the autonomous command
 	}
@@ -156,16 +181,17 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void teleopInit() {
+		teleopRan = true;
 		autonomousCommand.cancel();
-
+		SmartDashboard.putString("Autonomous Mode: ", chooser.getSelected().getName());
 		//always make sure we set vision to peg
 		NetworkTable.getTable("vision").putString("model", "peg");
 		listReplays();
 
 		recordMode = stringChooser.getSelected();
 
-		String replayName = SmartDashboard.getString("Replay Name", "MyReplay");
-		csvLogger.init(data_fields, Constants.dataDir, recordMode.equals("replay"), replayName);
+		String newReplayName = SmartDashboard.getString("Replay Name", "MyReplay");
+		csvLogger.init(data_fields, Constants.dataDir, recordMode.equals("replay"), newReplayName);
 	}
 
 	/**
@@ -191,7 +217,12 @@ public class Robot extends IterativeRobot {
 
 	public void disabledPeriodic() {
 
-		//System.out.println("Disabling robot...");
+		if (teleopRan) {
+			System.out.println("Disabling robot after a teleop run...");
+			listReplays();
+			setupRecordMode();
+			teleopRan = false;
+		}
 		csvLogger.close();
 	}
 	/**
