@@ -4,6 +4,7 @@ import org.usfirst.frc.team5700.robot.Constants;
 import org.usfirst.frc.team5700.robot.Robot;
 import org.usfirst.frc.team5700.robot.RobotMap;
 import org.usfirst.frc.team5700.robot.commands.ArcadeDriveWithJoysticks;
+import org.usfirst.frc.team5700.utils.BoostFilter;
 import org.usfirst.frc.team5700.utils.BumpUpFilter;
 import org.usfirst.frc.team5700.utils.ReluFilter;
 import org.usfirst.frc.team5700.utils.SoftMaxFilter;
@@ -55,6 +56,7 @@ public class DriveTrain extends Subsystem {
 	private Encoder rightEncoder = new Encoder(3, 4, false);
 	private double distanceRecord;
 	private double angleRecord;
+	private double previousMoveValue;
 
 	final static double distancePerPulseIn = Math.PI * WHEEL_DIAMETER / PULSE_PER_REVOLUTION;
 
@@ -110,7 +112,41 @@ public class DriveTrain extends Subsystem {
 
 		drive.arcadeDrive(bumpedY, leftStickX, squaredInputs);	
 	}
-
+	/**
+	 * Limits move input changes
+	 * @param moveValue input for forward/backward motion
+	 * @param rotateValue input for rotation
+	 * 
+	 * After change limit is applied, the input is passed to boosted arcadeDrive.
+	 * Input from joystick should already be filtered for sensitivity
+	 */
+	public void safeArcadeDriveNew(double moveValue, double rotateValue) {
+		double requestedMoveChange = moveValue - previousMoveValue;
+		
+		Preferences prefs = Preferences.getInstance();
+		boolean useInputLimit = prefs.getBoolean("useInputLimit", true);
+		if (useInputLimit) {
+			//check positive change
+			
+		}
+		
+	}
+	
+	/**
+	 * Applies BoostFilter to input
+	 * @param moveValue input for forward/backward motion
+	 * @param rotateValue input for rotation
+	 * 
+	 * After change limit is applied, the input is passed to boosted arcadeDrive
+	 */
+	public void boostedArcadeDrive(double moveValue, double rotateValue) {
+		
+		Preferences prefs = Preferences.getInstance();
+		double boost = prefs.getDouble("boost", 0.3);
+		BoostFilter boostFilter = new BoostFilter(boost);
+		arcadeDrive(boostFilter.output(moveValue), rotateValue);
+		
+	}
 	public void safeArcadeDrive(double moveValue, double rotateValue) {
 		
 		SmartDashboard.putNumber("Move Value", moveValue);

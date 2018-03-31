@@ -19,15 +19,13 @@ public class BoostFilter {
 		
 		this.boost = boost;
 	}
-	
+
 	public double output(double input) {
 		
 		double sign = Math.signum(input);
 		double magn = Math.abs(input);
 		
-		//https://www.desmos.com/calculator/uq5ngfl0kl
-		
-		return sign * (magn / (1 - boost) + boost);
+		return sign * (magn * (1 - boost) + boost);
 	}
 
 }
