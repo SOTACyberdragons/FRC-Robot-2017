@@ -52,20 +52,24 @@ public class Robot extends IterativeRobot {
 	public static CsvLogger csvLogger;
 
 	
-	//		Robot.csvLogger.writeData(time, moveValue, rotateValue, newMoveValue, newRotateValue, 
-//	currentSpeed, requestedSpeedChange, forwardAccelLimit ? 1 : 0, backwardAccelLimit ? 1 : 0, maxSpeed);
+//	Robot.csvLogger.writeData(timer.get(), 
+//			moveValue, //move input
+//			rotateValue, //rotate input
+//			getAverageEncoderRate(),
+//			rightEncoder.getRate(),
+//			leftEncoder.getRate(),
+//			rightEncoder.getDistance(),
+//			leftEncoder.getDistance()
+//			);
 	String[] data_fields ={
 			"time",
 			"moveValue",
 			"rotateValue",
-			"newMoveValue",
-			"newRotateValue",
-			"currentSpeed",
-			"requestedSpeedChange",
-			"forwardAccelLimit",
-			"backwardAccelLimit",
-			"accelY",
-			"maxSpeed"
+			"speed",
+			"rightSpeed",
+			"leftSpeed",
+			"rightDistance",
+			"leftDistance"
 	};
 
 	private String recordMode;

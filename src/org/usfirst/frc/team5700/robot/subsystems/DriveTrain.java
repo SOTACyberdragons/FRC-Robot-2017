@@ -56,9 +56,21 @@ public class DriveTrain extends Subsystem {
 	private Encoder rightEncoder = new Encoder(3, 4, false);
 	private double distanceRecord;
 	private double angleRecord;
-	private double previousMoveValue;
+
 
 	final static double distancePerPulseIn = Math.PI * WHEEL_DIAMETER / PULSE_PER_REVOLUTION;
+	Preferences prefs = Preferences.getInstance();
+	
+	//input limiting fields
+	private double previousMoveValue = 0;
+	private double positiveInputChangeLimit;
+	private double moveBoost;
+	private double rotateBoost;
+	private double requestedMoveChange;
+	private double limitedMoveValue;
+	private double negativeInputChangeLimit;
+	private boolean positiveInputLimitActive;
+	private boolean negativeInputLimitActive;
 
 	public DriveTrain() {
 		leftEncoder.setDistancePerPulse(distancePerPulseIn);
@@ -75,43 +87,6 @@ public class DriveTrain extends Subsystem {
 		reset();
 	}
 
-
-	/**
-	 * Arcade Drive
-	 * @param rightStick joystick is for moving forwards and backwards
-	 * @param leftStick joystick is for turning
-	 */
-	public void arcadeDrive(Joystick leftStick, Joystick rightStick) {
-
-		double rightStickY = rightStick.getY();
-		double leftStickX = leftStick.getX();
-		double averageEncoderRate = getAverageEncoderRate();
-		double accelY = accel.getY();
-		double accelX = accel.getX();
-		double time = timer.get();
-		Preferences prefs = Preferences.getInstance();
-		boolean squaredInputs = prefs.getBoolean("squaredInputs", false);
-		BumpUpFilter bumpUpFilter = new BumpUpFilter();
-
-		//		SmartDashboard.putNumber("averageEncoderRate", averageEncoderRate);
-		//		SmartDashboard.putNumber("rightStickY", rightStickY);
-		//		SmartDashboard.putNumber("leftStickX", leftStickX);
-		//		SmartDashboard.putNumber("accelX", accelX);
-		//		SmartDashboard.putNumber("accelY", accelY);
-		//		SmartDashboard.putNumber("time", timer.get());
-
-		//		data fields for reference		
-		//		String[] data_fields ={"time",
-		//				"average_encoder_rate",
-		//				"right_stick_y",
-		//				"accel_y"
-		//				};
-
-		Robot.csvLogger.writeData(time, averageEncoderRate, rightStickY, accelY);
-		double bumpedY = bumpUpFilter.output(rightStickY);
-
-		drive.arcadeDrive(bumpedY, leftStickX, squaredInputs);	
-	}
 	/**
 	 * Limits move input changes
 	 * @param moveValue input for forward/backward motion
@@ -120,18 +95,38 @@ public class DriveTrain extends Subsystem {
 	 * After change limit is applied, the input is passed to boosted arcadeDrive.
 	 * Input from joystick should already be filtered for sensitivity
 	 */
-	public void safeArcadeDriveNew(double moveValue, double rotateValue) {
-		double requestedMoveChange = moveValue - previousMoveValue;
-		
-		Preferences prefs = Preferences.getInstance();
+	public void safeArcadeDrive(double moveValue, double rotateValue) {
+		requestedMoveChange = moveValue - previousMoveValue;
+		limitedMoveValue = moveValue;
+		positiveInputLimitActive = false;
+		negativeInputLimitActive = false;
+
 		boolean useInputLimit = prefs.getBoolean("useInputLimit", true);
+		SmartDashboard.putBoolean("useInputLimit", useInputLimit);
 		if (useInputLimit) {
 			//check positive change
-			
+			positiveInputChangeLimit = prefs.getDouble("positiveInputChangeLimit", 0.025);
+			negativeInputChangeLimit = prefs.getDouble("negativeInputChangeLimit", 0.025);
+			if (requestedMoveChange > positiveInputChangeLimit) {
+				positiveInputLimitActive = true;
+				limitedMoveValue = previousMoveValue + positiveInputChangeLimit;
+				
+			}
+			if (requestedMoveChange < - negativeInputChangeLimit) {
+				negativeInputLimitActive = true;
+				limitedMoveValue = previousMoveValue - negativeInputChangeLimit;
+			}
 		}
 		
+		SmartDashboard.putBoolean("positiveInputLimitActive", positiveInputLimitActive);
+		SmartDashboard.putBoolean("negativeInputLimitActive", negativeInputLimitActive);
+		SmartDashboard.putNumber("accelerometer -Y", - accel.getY());
+		
+		previousMoveValue = limitedMoveValue;
+		boostedArcadeDrive(limitedMoveValue, rotateValue);
+
 	}
-	
+
 	/**
 	 * Applies BoostFilter to input
 	 * @param moveValue input for forward/backward motion
@@ -140,15 +135,16 @@ public class DriveTrain extends Subsystem {
 	 * After change limit is applied, the input is passed to boosted arcadeDrive
 	 */
 	public void boostedArcadeDrive(double moveValue, double rotateValue) {
-		
-		Preferences prefs = Preferences.getInstance();
-		double boost = prefs.getDouble("boost", 0.3);
-		BoostFilter boostFilter = new BoostFilter(boost);
-		arcadeDrive(boostFilter.output(moveValue), rotateValue);
-		
+
+		moveBoost = prefs.getDouble("moveBoost", 0.38);
+		rotateBoost = prefs.getDouble("rotateBoost", 0.30);
+		BoostFilter moveBoostFilter = new BoostFilter(moveBoost);
+		BoostFilter rotateBoostFilter = new BoostFilter(rotateBoost);
+		arcadeDrive(moveBoostFilter.output(moveValue), rotateBoostFilter.output(rotateValue));
+
 	}
-	public void safeArcadeDrive(double moveValue, double rotateValue) {
-		
+	public void safeArcadeDriveOld(double moveValue, double rotateValue) {
+
 		SmartDashboard.putNumber("Move Value", moveValue);
 		SmartDashboard.putNumber("Rotate Value", rotateValue);
 
@@ -171,7 +167,7 @@ public class DriveTrain extends Subsystem {
 
 		BumpUpFilter bumpUpFilter = new BumpUpFilter(exp, threshold, target);
 		double newMoveValue = bumpUpFilter.output(moveValue); //convert to desired joystick response
-		
+
 		//Bump-up filter parameters
 		double respThreshold = prefs.getDouble("respThreshold", 0.1);
 		ReluFilter reluFilter = new ReluFilter(respThreshold);
@@ -248,7 +244,15 @@ public class DriveTrain extends Subsystem {
 
 	public void arcadeDrive(double moveValue, double rotateValue) {
 
-		Robot.csvLogger.writeData(timer.get(), moveValue, rotateValue, 0, 0);
+		Robot.csvLogger.writeData(timer.get(), 
+				moveValue, //move input
+				rotateValue, //rotate input
+				getAverageEncoderRate(),
+				rightEncoder.getRate(),
+				leftEncoder.getRate(),
+				rightEncoder.getDistance(),
+				leftEncoder.getDistance()
+				);
 		drive.arcadeDrive(moveValue, rotateValue);
 	}
 
