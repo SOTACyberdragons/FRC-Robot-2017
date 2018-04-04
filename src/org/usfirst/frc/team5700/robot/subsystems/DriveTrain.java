@@ -38,7 +38,7 @@ public class DriveTrain extends Subsystem {
 	private SpeedController frontRightMotor = new Spark(RobotMap.FRONT_RIGHT_DRIVE_MOTOR);
 	private SpeedController rearRightMotor = new Spark(RobotMap.BACK_RIGHT_DRIVE_MOTOR);		
 
-	private RobotDrive drive = new RobotDrive(frontLeftMotor, rearLeftMotor, frontRightMotor, rearRightMotor);
+	public RobotDrive drive = new RobotDrive(frontLeftMotor, rearLeftMotor, frontRightMotor, rearRightMotor);
 
 	private BuiltInAccelerometer accel = new BuiltInAccelerometer();
 
@@ -60,7 +60,7 @@ public class DriveTrain extends Subsystem {
 
 	final static double distancePerPulseIn = Math.PI * WHEEL_DIAMETER / PULSE_PER_REVOLUTION;
 	Preferences prefs = Preferences.getInstance();
-	
+
 	//input limiting fields
 	private double previousMoveValue = 0;
 	private double positiveInputChangeLimit;
@@ -110,18 +110,14 @@ public class DriveTrain extends Subsystem {
 			if (requestedMoveChange > positiveInputChangeLimit) {
 				positiveInputLimitActive = true;
 				limitedMoveValue = previousMoveValue + positiveInputChangeLimit;
-				
+
 			}
 			if (requestedMoveChange < - negativeInputChangeLimit) {
 				negativeInputLimitActive = true;
 				limitedMoveValue = previousMoveValue - negativeInputChangeLimit;
 			}
 		}
-		
-		SmartDashboard.putBoolean("positiveInputLimitActive", positiveInputLimitActive);
-		SmartDashboard.putBoolean("negativeInputLimitActive", negativeInputLimitActive);
-		SmartDashboard.putNumber("accelerometer -Y", - accel.getY());
-		
+
 		//rotational accel.
 
 		//		double turnRadiusIn = -Math.log(newTurnInput) * WHEEL_BASE_WIDTH_IN;
@@ -139,10 +135,19 @@ public class DriveTrain extends Subsystem {
 		//		SmartDashboard.putNumber("MAX_SPEED_IN_PER_SEC", MAX_SPEED_IN_PER_SEC);
 		//		SmartDashboard.putNumber("X Acceleration", accel.getX());
 		//		SmartDashboard.putNumber("Y Acceleration", accel.getY());
-		
+
 		previousMoveValue = limitedMoveValue;
 		boostedArcadeDrive(limitedMoveValue, rotateValue);
 
+		SmartDashboard.putBoolean("positiveInputLimitActive", positiveInputLimitActive);
+		SmartDashboard.putBoolean("negativeInputLimitActive", negativeInputLimitActive);
+		SmartDashboard.putNumber("accelerometer -Y", - accel.getY());
+
+	}
+	
+	public void safeArcadeDriveDelayed(double moveValue, double rotateValue) {
+		Timer.delay(0.02);
+		safeArcadeDrive(moveValue, rotateValue);
 	}
 
 	/**
@@ -162,27 +167,48 @@ public class DriveTrain extends Subsystem {
 
 	}
 	public void arcadeDriveDelayed(double moveValue, double rotateValue) {
-		timer.delay(0.02);
+		Timer.delay(0.02);
 		arcadeDrive(moveValue, rotateValue);
 	}
 
+	@SuppressWarnings("deprecation")
 	public void arcadeDrive(double moveValue, double rotateValue) {
 
-		Robot.csvLogger.writeData(timer.get(), 
+		double leftMotorSpeed;
+		double rightMotorSpeed;
+		if (moveValue > 0.0) {
+			if (rotateValue > 0.0) {
+				leftMotorSpeed = moveValue - rotateValue;
+				rightMotorSpeed = Math.max(moveValue, rotateValue);
+			} else {
+				leftMotorSpeed = Math.max(moveValue, -rotateValue);
+				rightMotorSpeed = moveValue + rotateValue;
+			}
+		} else {
+			if (rotateValue > 0.0) {
+				leftMotorSpeed = -Math.max(-moveValue, rotateValue);
+				rightMotorSpeed = moveValue + rotateValue;
+			} else {
+				leftMotorSpeed = moveValue - rotateValue;
+				rightMotorSpeed = -Math.max(-moveValue, -rotateValue);
+			}
+		}
+
+		Robot.csvLogger.writeData(
+				timer.get(), 
 				moveValue, //move input
 				rotateValue, //rotate input
+				leftMotorSpeed,
+				rightMotorSpeed,
 				getAverageEncoderRate(),
-				rightEncoder.getRate(),
 				leftEncoder.getRate(),
-				rightEncoder.getDistance(),
-				leftEncoder.getDistance()
+				rightEncoder.getRate(),
+				leftEncoder.getDistance(),
+				rightEncoder.getDistance()
 				);
-		drive.arcadeDrive(moveValue, rotateValue);
-	}
 
-	public void tankDrive(double left, double right) {
-		//rightMotor.set(right);
-		//leftMotor.set(-left + 0.065);
+		drive.tankDrive(leftMotorSpeed, rightMotorSpeed); //squared input by default
+		//drive.arcadeDrive(moveValue, rotateValue);
 	}
 
 	public void stop() {

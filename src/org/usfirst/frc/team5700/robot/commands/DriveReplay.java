@@ -12,6 +12,7 @@ import org.usfirst.frc.team5700.utils.CsvReader;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Drive the given distance straight (negative values go backwards). Uses a
@@ -23,9 +24,11 @@ public class DriveReplay extends Command {
 	private CsvReader csvReader;
 	private Iterator<float[]> valuesIterator;
 	private Timer timer = new Timer();
-	private float replayStartTime;
 	private boolean timerStarted;
-	private double offset;
+	private double timeOffset;
+	private double kPReplay;
+	private double leftDistanceOffset;
+	private double rightDistanceOffset;
 
 	public DriveReplay() {
 		requires(Robot.drivetrain);
@@ -35,6 +38,9 @@ public class DriveReplay extends Command {
 	protected void initialize() {
 
 		timer.reset();
+		timerStarted = false;
+		kPReplay = Robot.prefs.getDouble("kPReplay", 0);
+		Robot.prefs.putDouble("kPReplay", kPReplay);
 		try {
 			csvReader = new CsvReader(Robot.getReplayName());
 			valuesIterator = csvReader.getValues().iterator();
@@ -49,25 +55,53 @@ public class DriveReplay extends Command {
 		System.out.println("Init completed");
 	}
 
+	//	Robot.csvLogger.writeData(
+	//			timer.get(), 
+	//			moveValue, //move input
+	//			rotateValue, //rotate input
+	//			leftMotorSpeed,
+	//			rightMotorSpeed,
+	//			getAverageEncoderRate(),
+	//			leftEncoder.getRate(),
+	//			rightEncoder.getRate(),
+	//			leftEncoder.getDistance(),
+	//			rightEncoder.getDistance()
+	//			);
+	
 	@Override
 	protected void execute() {
-		float[] nextLine;
+		float[] line;
+		double leftEncoderDistance = Robot.drivetrain.getLeftEncoder().getDistance();
+		double rightEncoderDistance = Robot.drivetrain.getRightEncoder().getDistance();
 		if (valuesIterator.hasNext()) {
-			nextLine = valuesIterator.next();
+			line = valuesIterator.next();
+			System.out.println("columns: " + line.length);
 			if (!timerStarted) {
-				replayStartTime = nextLine[0];
-				//System.out.println("Starting timer");
 				timer.start();
-				offset = replayStartTime - timer.get();
-				System.out.println("Offset: " + offset);
+				timeOffset = line[0] - timer.get();
+				leftDistanceOffset = line[8] - leftEncoderDistance;
+				rightDistanceOffset = line[9] - rightEncoderDistance;
+				System.out.println("Offset: " + timeOffset);
 				timerStarted = true;
 			}
 			
-			double periodic_offset = Math.max(nextLine[0] - timer.get() - offset, 0);
+			double periodic_offset = Math.max(line[0] - timer.get() - timeOffset, 0);
 			System.out.println("In execute, time difference: " + periodic_offset);
 
+			double leftError = leftEncoderDistance - line[8] + leftDistanceOffset;
+			double rightError = rightEncoderDistance - line[9] + rightDistanceOffset;
+			double leftMotorSpeed = line[3] + kPReplay * leftError;
+			double rightMotorSpeed = line[4] + kPReplay * rightError;
+			SmartDashboard.putNumber("leftError", leftError);
+			SmartDashboard.putNumber("rightError", rightError);
+			
+			System.out.println("Left motor output: " + leftMotorSpeed + ", right motor output: " + rightMotorSpeed);
+			
+			
 			Timer.delay(periodic_offset);
-			Robot.drivetrain.arcadeDrive(nextLine[1], nextLine[2]);
+			//Robot.drivetrain.arcadeDrive(nextLine[1], nextLine[2]);
+			Robot.drivetrain.drive.tankDrive(leftMotorSpeed, rightMotorSpeed);
+			
 		}
 	}
 

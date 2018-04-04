@@ -17,19 +17,33 @@ public class CsvReader {
 		Scanner scanner = new Scanner(new File(fileName));
 		scanner.useDelimiter("\n");
 		scanner.nextLine(); //skip header
+		
+//		String[] data_fields ={
+//				"time",
+//				"moveValue",
+//				"rotateValue",
+//				"leftMotorSpeed",
+//				"rightMotorSpeed",
+//				"speed",
+//				"leftSpeed",
+//				"rightSpeed",
+//				"leftDistance",
+//				"rightDistance"
+//		};
 
 		while (scanner.hasNext()) {
-			String[] strings = scanner.next().split(",");
-			float[] numbers = new float[3];
-			numbers[0] = Float.parseFloat(strings[0].trim()); //time
-			numbers[1] = Float.parseFloat(strings[1].trim()); //right joystick
-			numbers[2] = Float.parseFloat(strings[2].trim());	 //left joystick
+			String string = scanner.next();
+			//System.out.println("File line: " + string);
+			String[] strings = string.split(",");
+			int length = strings.length - 1; //last element is empty, line terminated by comma
+			float[] numbers = new float[length];
+			for (int i = 0; i < length; i ++) {
+				//System.out.println(strings[i] + ", ");
+			    numbers[i] = Float.parseFloat(strings[i].trim());
+			}
 			values.add(numbers);
 		}
-
-//		for (float[] element : values) {
-//			System.out.println("move_value: " + element[1] + ", rotate_value: " + element[2]);
-//		}
+		
 		scanner.close();
 	}
 

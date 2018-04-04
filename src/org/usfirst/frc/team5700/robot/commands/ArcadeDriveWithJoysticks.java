@@ -30,7 +30,7 @@ public class ArcadeDriveWithJoysticks extends Command {
 		SensitivityFilter rotateSensitivityFilter = new SensitivityFilter(rotateSensitivityThreshold);
 
 		//Robot.drivetrain.boostedArcadeDrive(moveValue, rotateValue);
-		Robot.drivetrain.safeArcadeDrive(moveSensitivityFilter.output(moveValue),
+		Robot.drivetrain.safeArcadeDriveDelayed(moveSensitivityFilter.output(moveValue),
 				rotateSensitivityFilter.output(rotateValue));
 	}
 

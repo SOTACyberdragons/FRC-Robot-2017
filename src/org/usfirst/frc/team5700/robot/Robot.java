@@ -51,25 +51,31 @@ public class Robot extends IterativeRobot {
 	public static OI oi;
 	public static CsvLogger csvLogger;
 
-	
-//	Robot.csvLogger.writeData(timer.get(), 
-//			moveValue, //move input
-//			rotateValue, //rotate input
-//			getAverageEncoderRate(),
-//			rightEncoder.getRate(),
-//			leftEncoder.getRate(),
-//			rightEncoder.getDistance(),
-//			leftEncoder.getDistance()
-//			);
+
+	//	Robot.csvLogger.writeData(
+	//			timer.get(), 
+	//			moveValue, //move input
+	//			rotateValue, //rotate input
+	//			leftMotorSpeed,
+	//			rightMotorSpeed,
+	//			getAverageEncoderRate(),
+	//			leftEncoder.getRate(),
+	//			rightEncoder.getRate(),
+	//			leftEncoder.getDistance(),
+	//			rightEncoder.getDistance()
+	//			);
+
 	String[] data_fields ={
 			"time",
 			"moveValue",
 			"rotateValue",
+			"leftMotorSpeed",
+			"rightMotorSpeed",
 			"speed",
-			"rightSpeed",
 			"leftSpeed",
-			"rightDistance",
-			"leftDistance"
+			"rightSpeed",
+			"leftDistance",
+			"rightDistance"
 	};
 
 	private String recordMode;
@@ -99,6 +105,8 @@ public class Robot extends IterativeRobot {
 
 		// instantiate the command used for the autonomous period
 		chooser = new SendableChooser<Command>();
+		
+		chooser.addDefault("Replay", new DriveReplay());
 		chooser.addObject("Cross Baseline", new AutoCrossBaseline());
 		chooser.addObject("Middle Peg Auto", new AutoMiddlePeg());
 		chooser.addObject("Right Peg Auto", new AutoSidePeg("right"));
@@ -106,7 +114,6 @@ public class Robot extends IterativeRobot {
 		chooser.addObject("Two Gear to Right", new AutoTwoGear("right"));
 		chooser.addObject("Two Gear to Left", new AutoTwoGear("left"));
 		chooser.addObject("Get Gear with Vision", new GetGearWithVision(true));
-		chooser.addDefault("Replay", new DriveReplay());
 		SmartDashboard.putData("Autonomous Chooser", chooser);
 		autonomousCommand = chooser.getSelected();
 
