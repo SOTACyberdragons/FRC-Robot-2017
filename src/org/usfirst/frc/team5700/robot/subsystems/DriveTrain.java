@@ -8,6 +8,7 @@ import org.usfirst.frc.team5700.utils.BoostFilter;
 import org.usfirst.frc.team5700.utils.BumpUpFilter;
 import org.usfirst.frc.team5700.utils.ReluFilter;
 import org.usfirst.frc.team5700.utils.SoftMaxFilter;
+import org.usfirst.frc.team5700.utils.SquareFilter;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
@@ -193,21 +194,28 @@ public class DriveTrain extends Subsystem {
 				rightMotorSpeed = -Math.max(-moveValue, -rotateValue);
 			}
 		}
+		
+		double fastClimb = Robot.oi.fastClimb().get() ? 1.0 : 0.0;
+		
+		double filteredLeftMotorSpeed = SquareFilter.output(leftMotorSpeed);
+		double filteredRightMotorSpeed = SquareFilter.output(rightMotorSpeed);
 
 		Robot.csvLogger.writeData(
 				timer.get(), 
 				moveValue, //move input
 				rotateValue, //rotate input
-				leftMotorSpeed,
-				rightMotorSpeed,
+				filteredLeftMotorSpeed,
+				filteredRightMotorSpeed,
 				getAverageEncoderRate(),
 				leftEncoder.getRate(),
 				rightEncoder.getRate(),
 				leftEncoder.getDistance(),
-				rightEncoder.getDistance()
+				rightEncoder.getDistance(),
+				gyro.getAngle(),
+				fastClimb
 				);
 
-		drive.tankDrive(leftMotorSpeed, rightMotorSpeed); //squared input by default
+		drive.tankDrive(filteredLeftMotorSpeed, filteredRightMotorSpeed, false); //squared input by default
 		//drive.arcadeDrive(moveValue, rotateValue);
 	}
 

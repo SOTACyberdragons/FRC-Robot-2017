@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 public class CsvReader {
 
-	List<float[]> values = new ArrayList<float[]>();
+	List<double[]> values = new ArrayList<double[]>();
 
 	public CsvReader(String replayName) throws FileNotFoundException {
 		String fileName = "/home/lvuser/data_capture/" + replayName + ".rpl";
@@ -36,10 +36,10 @@ public class CsvReader {
 			//System.out.println("File line: " + string);
 			String[] strings = string.split(",");
 			int length = strings.length - 1; //last element is empty, line terminated by comma
-			float[] numbers = new float[length];
+			double[] numbers = new double[length];
 			for (int i = 0; i < length; i ++) {
 				//System.out.println(strings[i] + ", ");
-			    numbers[i] = Float.parseFloat(strings[i].trim());
+			    numbers[i] = Double.parseDouble(strings[i].trim());
 			}
 			values.add(numbers);
 		}
@@ -47,7 +47,7 @@ public class CsvReader {
 		scanner.close();
 	}
 
-	public List<float[]> getValues() {
+	public List<double[]> getValues() {
 		return values;
 	}
 }

@@ -14,6 +14,7 @@ import org.usfirst.frc.team5700.robot.commands.AutoTwoGear;
 import org.usfirst.frc.team5700.robot.commands.DriveReplay;
 import org.usfirst.frc.team5700.robot.commands.DriveStraight;
 import org.usfirst.frc.team5700.robot.commands.GetGearWithVision;
+import org.usfirst.frc.team5700.robot.commands.ReplayWithCommands;
 import org.usfirst.frc.team5700.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team5700.robot.subsystems.GearIntake;
 import org.usfirst.frc.team5700.robot.subsystems.RopeClimber;
@@ -75,10 +76,12 @@ public class Robot extends IterativeRobot {
 			"leftSpeed",
 			"rightSpeed",
 			"leftDistance",
-			"rightDistance"
+			"rightDistance",
+			"headingError",
+			"fastClimb"
 	};
 
-	private String recordMode;
+	private static String recordMode;
 	private boolean teleopRan;
 	private boolean autoRan;
 	private static String replayName;
@@ -106,15 +109,16 @@ public class Robot extends IterativeRobot {
 		// instantiate the command used for the autonomous period
 		chooser = new SendableChooser<Command>();
 		
-		chooser.addDefault("Replay", new DriveReplay());
-		chooser.addObject("Cross Baseline", new AutoCrossBaseline());
-		chooser.addObject("Middle Peg Auto", new AutoMiddlePeg());
-		chooser.addObject("Right Peg Auto", new AutoSidePeg("right"));
-		chooser.addObject("Left Peg Auto", new AutoSidePeg("left"));
-		chooser.addObject("Two Gear to Right", new AutoTwoGear("right"));
-		chooser.addObject("Two Gear to Left", new AutoTwoGear("left"));
-		chooser.addObject("Get Gear with Vision", new GetGearWithVision(true));
-		SmartDashboard.putData("Autonomous Chooser", chooser);
+		chooser.addDefault("Replay", new ReplayWithCommands());
+//		chooser.addObject("Cross Baseline", new AutoCrossBaseline());
+//		chooser.addObject("Middle Peg Auto", new AutoMiddlePeg());
+//		chooser.addObject("Right Peg Auto", new AutoSidePeg("right"));
+//		chooser.addObject("Left Peg Auto", new AutoSidePeg("left"));
+//		chooser.addObject("Two Gear to Right", new AutoTwoGear("right"));
+//		chooser.addObject("Two Gear to Left", new AutoTwoGear("left"));
+//		chooser.addObject("Get Gear with Vision", new GetGearWithVision(true));
+//		SmartDashboard.putData("Autonomous Chooser", chooser);
+		SmartDashboard.putData("Another Autonomous Chooser", chooser);
 		autonomousCommand = chooser.getSelected();
 
 		setupRecordMode();
@@ -248,5 +252,9 @@ public class Robot extends IterativeRobot {
 	public static String getReplayName() {
 		// TODO Auto-generated method stub
 		return replayName;
+	}
+	
+	public static String recordMode() {
+		return recordMode;
 	}
 }

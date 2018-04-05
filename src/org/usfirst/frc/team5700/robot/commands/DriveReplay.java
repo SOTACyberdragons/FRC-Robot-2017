@@ -7,6 +7,7 @@ package org.usfirst.frc.team5700.robot.commands;
 import java.io.FileNotFoundException;
 import java.util.Iterator;
 
+import org.usfirst.frc.team5700.robot.AutoControls;
 import org.usfirst.frc.team5700.robot.Robot;
 import org.usfirst.frc.team5700.utils.CsvReader;
 
@@ -22,13 +23,26 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class DriveReplay extends Command {
 	private CsvReader csvReader;
-	private Iterator<float[]> valuesIterator;
+	private Iterator<double[]> valuesIterator;
 	private Timer timer = new Timer();
 	private boolean timerStarted;
 	private double timeOffset;
-	private double kPReplay;
+	private double replayKProp;
 	private double leftDistanceOffset;
 	private double rightDistanceOffset;
+	private double leftError;
+	private double rightError;
+	private double leftErrorChange;
+	private double rightErrorChange;
+	private double lastLeftError = 0;
+	private double lastRightError = 0;
+	private double replayKDiff;
+	private double headingOffset;
+	private double headingError;
+	private double replayKHeadingProp;
+	private double lastHeadingError;
+	private double headingErrorChange;
+	private double replayKHeadingDiff;
 
 	public DriveReplay() {
 		requires(Robot.drivetrain);
@@ -39,8 +53,16 @@ public class DriveReplay extends Command {
 
 		timer.reset();
 		timerStarted = false;
-		kPReplay = Robot.prefs.getDouble("kPReplay", 0);
-		Robot.prefs.putDouble("kPReplay", kPReplay);
+		Robot.drivetrain.reset();
+		replayKProp = Robot.prefs.getDouble("replayKProp", 0);
+		Robot.prefs.putDouble("replayKProp", replayKProp);
+		replayKDiff = Robot.prefs.getDouble("replayKDiff", 0);
+		Robot.prefs.putDouble("replayKDiff", replayKDiff);
+		replayKHeadingProp = Robot.prefs.getDouble("replayKHeadingProp", 0);
+		Robot.prefs.putDouble("replayKHeadingProp", replayKHeadingProp);
+		replayKHeadingDiff = Robot.prefs.getDouble("replayKHeadingDiff", 0);
+		Robot.prefs.putDouble("replayKHeadingDiff", replayKHeadingDiff);
+		
 		try {
 			csvReader = new CsvReader(Robot.getReplayName());
 			valuesIterator = csvReader.getValues().iterator();
@@ -65,14 +87,16 @@ public class DriveReplay extends Command {
 	//			leftEncoder.getRate(),
 	//			rightEncoder.getRate(),
 	//			leftEncoder.getDistance(),
-	//			rightEncoder.getDistance()
+	//			rightEncoder.getDistance(),
+	//			gyro.getAngle()
 	//			);
 	
 	@Override
 	protected void execute() {
-		float[] line;
+		double[] line;
 		double leftEncoderDistance = Robot.drivetrain.getLeftEncoder().getDistance();
 		double rightEncoderDistance = Robot.drivetrain.getRightEncoder().getDistance();
+		double heading = Robot.drivetrain.getHeading();
 		if (valuesIterator.hasNext()) {
 			line = valuesIterator.next();
 			System.out.println("columns: " + line.length);
@@ -81,6 +105,7 @@ public class DriveReplay extends Command {
 				timeOffset = line[0] - timer.get();
 				leftDistanceOffset = line[8] - leftEncoderDistance;
 				rightDistanceOffset = line[9] - rightEncoderDistance;
+				headingOffset = line[10] - heading;
 				System.out.println("Offset: " + timeOffset);
 				timerStarted = true;
 			}
@@ -88,19 +113,36 @@ public class DriveReplay extends Command {
 			double periodic_offset = Math.max(line[0] - timer.get() - timeOffset, 0);
 			System.out.println("In execute, time difference: " + periodic_offset);
 
-			double leftError = leftEncoderDistance - line[8] + leftDistanceOffset;
-			double rightError = rightEncoderDistance - line[9] + rightDistanceOffset;
-			double leftMotorSpeed = line[3] + kPReplay * leftError;
-			double rightMotorSpeed = line[4] + kPReplay * rightError;
+			leftError = leftEncoderDistance - line[8] + leftDistanceOffset;
+			rightError = rightEncoderDistance - line[9] + rightDistanceOffset;
+			headingError = heading - line[10] + headingOffset;
+			leftErrorChange = lastLeftError - leftError;
+			rightErrorChange = lastRightError - rightError;
+			headingErrorChange = lastHeadingError - headingError;
+			lastLeftError = leftError;
+			lastRightError = rightError;
+			lastHeadingError = headingError;
+			
+			double leftMotorSpeed = line[3] + replayKProp * leftError - replayKDiff * leftErrorChange
+					- replayKHeadingProp * headingError - replayKHeadingDiff * headingErrorChange;
+			double rightMotorSpeed = line[4] + replayKProp * rightError - replayKDiff * rightErrorChange
+					+ replayKHeadingProp * headingError + replayKHeadingDiff * headingErrorChange;
+			
 			SmartDashboard.putNumber("leftError", leftError);
 			SmartDashboard.putNumber("rightError", rightError);
+			SmartDashboard.putNumber("headingError", headingError);
+
+			boolean fastClimb =  line[11] != 0.0;
+			AutoControls.setFastClimb(fastClimb);
+			SmartDashboard.putBoolean("fastClimb", fastClimb);
+			
 			
 			System.out.println("Left motor output: " + leftMotorSpeed + ", right motor output: " + rightMotorSpeed);
 			
 			
 			Timer.delay(periodic_offset);
 			//Robot.drivetrain.arcadeDrive(nextLine[1], nextLine[2]);
-			Robot.drivetrain.drive.tankDrive(leftMotorSpeed, rightMotorSpeed);
+			Robot.drivetrain.drive.tankDrive(leftMotorSpeed, rightMotorSpeed, false); //disable squared
 			
 		}
 	}
