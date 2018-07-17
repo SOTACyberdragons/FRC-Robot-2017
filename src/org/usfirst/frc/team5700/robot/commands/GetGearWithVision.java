@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * @author romandimov
  *
  */
-
+/*
 public class GetGearWithVision extends Command {
 
 	private PIDController pidAngle;
@@ -128,3 +128,4 @@ public class GetGearWithVision extends Command {
 		end();
 	}
 }
+*/

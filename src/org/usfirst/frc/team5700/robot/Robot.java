@@ -3,8 +3,8 @@ package org.usfirst.frc.team5700.robot;
 import org.usfirst.frc.team5700.robot.commands.AutoCrossBaseline;
 import org.usfirst.frc.team5700.robot.commands.AutoMiddlePeg;
 import org.usfirst.frc.team5700.robot.commands.AutoSidePeg;
-import org.usfirst.frc.team5700.robot.commands.AutoTwoGear;
-import org.usfirst.frc.team5700.robot.commands.DriveStraight;
+//import org.usfirst.frc.team5700.robot.commands.AutoTwoGear;
+//import org.usfirst.frc.team5700.robot.commands.DriveStraight;
 import org.usfirst.frc.team5700.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team5700.robot.subsystems.GearIntake;
 import org.usfirst.frc.team5700.robot.subsystems.RopeClimber;
@@ -60,8 +60,8 @@ public class Robot extends IterativeRobot {
 		chooser.addObject("Middle Peg Auto", new AutoMiddlePeg());
 		chooser.addObject("Right Peg Auto", new AutoSidePeg("right"));
 		chooser.addObject("Left Peg Auto", new AutoSidePeg("left"));
-		chooser.addObject("Two Gear to Right", new AutoTwoGear("right"));
-		chooser.addObject("Two Gear to Left", new AutoTwoGear("left"));
+		//chooser.addObject("Two Gear to Right", new AutoTwoGear("right"));
+		//chooser.addObject("Two Gear to Left", new AutoTwoGear("left"));
 		SmartDashboard.putData("Autonomous Chooser", chooser);
 		autonomousCommand = chooser.getSelected();
 
@@ -69,8 +69,8 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putData(drivetrain);
 		SmartDashboard.putData(gearIntake);
 		SmartDashboard.putData(ropeClimber);
-		SmartDashboard.putData("DriveStraight", new DriveStraight(prefs.getDouble("DriveStraight Distance", 200)));
-		SmartDashboard.putData("DriveStraightToPeg", new DriveStraight(Dimensions.DISTANCE_TO_PEG-Dimensions.LENGTH_IN/2));
+		//SmartDashboard.putData("DriveStraight", new DriveStraight(prefs.getDouble("DriveStraight Distance", 200)));
+		//SmartDashboard.putData("DriveStraightToPeg", new DriveStraight(Dimensions.DISTANCE_TO_PEG-Dimensions.LENGTH_IN/2));
 	}
 
 	@Override

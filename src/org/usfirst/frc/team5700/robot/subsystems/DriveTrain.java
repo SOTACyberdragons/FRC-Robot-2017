@@ -47,10 +47,15 @@ public class DriveTrain extends Subsystem {
     final double distancePerPulse = (WHEEL_DIAMETER * Math.PI) / PULSE_PER_REVOLUTION;
     
 	private double angleRecord;
+<<<<<<< HEAD
 	private double distanceRecord;
 	
 	double limitedY = 0;
 	double limitedX = 0;
+=======
+	private double leftDistanceRecord;
+	private double rightDistanceRecord;
+>>>>>>> 42a40af8ab8742bb57c82a72bd06b494b47a5469
 
 	public DriveTrain() {
 		super();
@@ -90,7 +95,8 @@ public class DriveTrain extends Subsystem {
 		SmartDashboard.putNumber("Gyro", gyro.getAngle());
 		
 	}
-
+	
+	
 	/**
 	 * Arcade Drive
 	 * @param rightStick joystick is for moving forwards and backwards
@@ -134,7 +140,7 @@ public class DriveTrain extends Subsystem {
 
 		drive.arcadeDrive(-limitedY, -limitedX, squaredInputs);	
 	}	
-	
+
 	/**
 	 * Tank Drive
 	 * @param leftStick left set of wheels
@@ -167,6 +173,7 @@ public class DriveTrain extends Subsystem {
 	public void drive(double outputMagnitude, double curve) {
 		drive.drive(outputMagnitude, curve);
 	}
+	
 	/**
 	 * Reset the robots sensors to the zero states.
 	 */
@@ -176,6 +183,15 @@ public class DriveTrain extends Subsystem {
 		rightEncoder.reset();
 	}
 	
+	public void runRightMotors(double d) {
+		frontLeftMotor.set(d);
+		rearLeftMotor.set(d);
+	}
+	
+	public void runLeftMotors(double d) {
+		frontRightMotor.set(d);
+		rearLeftMotor.set(d);
+	}
 	/**
 	 * @return The robots heading in degrees.
 	 */
@@ -186,11 +202,15 @@ public class DriveTrain extends Subsystem {
 	/**
 	 * @return The distance driven (average of left and right encoders).
 	 */
-	public double getDistance() {
+	
+	public double getRightDistance() {
 		//return (leftEncoder.getDistance() + rightEncoder.getDistance()) / 2;
 		return (rightEncoder.getDistance());
 	}
 	
+	public double getLeftDistance() {
+		return (leftEncoder.getDistance());
+	}
 	
 	public PIDSource getGyro() {
 		return gyro;
@@ -200,14 +220,22 @@ public class DriveTrain extends Subsystem {
 		drive.drive(0.0, 0.0);
 	}
 	
-	public void recordDrivenDistanceIn() {
-		distanceRecord = this.getDistance();
+	public void recordRightDrivenDistanceIn() {
+		rightDistanceRecord = this.getRightDistance();
 	}
 	
-	public double getRecordedDistance() {
-		return distanceRecord;
+	public double getRightRecordedDistance() {
+		return rightDistanceRecord;
 	}
-
+	
+	public void recordLeftDrivenDistanceIn() {
+		leftDistanceRecord = this.getLeftDistance();
+	}
+	
+	public double getLeftRecordedDistance() {
+		return leftDistanceRecord;
+	}
+	
 	public void recordAngle() {
 		angleRecord = this.getHeading();
 	}

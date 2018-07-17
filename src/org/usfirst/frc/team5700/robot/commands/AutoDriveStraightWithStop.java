@@ -21,10 +21,14 @@ import org.usfirst.frc.team5700.utils.LinearAccelerationFilter;
  * encoders.
  */
 public class AutoDriveStraightWithStop extends Command {
-	private PIDController pidDistance;
-	private PIDController pidAngle;
-	private double driveOutput = 0;
-	private double driveCurve = 0;
+	private PIDController pidDistanceLeft;
+	private PIDController pidDistanceRight;
+	private PIDController pidAngleLeft;
+	private PIDController pidAngleRight;
+	private double driveOutputLeft;
+	private double driveOutputRight;
+	private double driveCurveLeft;
+	private double driveCurveRight;
 
 	private double distanceKp = 0.05;
 	private double distanceKi = 0.005;
@@ -40,7 +44,7 @@ public class AutoDriveStraightWithStop extends Command {
 
 	public AutoDriveStraightWithStop(double distance) {
 		requires(Robot.drivetrain);
-		pidDistance = new PIDController(distanceKp, 
+		pidDistanceLeft = new PIDController(distanceKp, 
 				distanceKi, 
 				distanceKd, 
 				new PIDSource() {
@@ -48,7 +52,7 @@ public class AutoDriveStraightWithStop extends Command {
 
 			@Override
 			public double pidGet() {
-				return Robot.drivetrain.getDistance();
+				return Robot.drivetrain.getLeftDistance();
 			}
 
 			@Override
@@ -64,40 +68,93 @@ public class AutoDriveStraightWithStop extends Command {
 				new PIDOutput() {
 			@Override
 			public void pidWrite(double d) {
-				driveOutput = d;
+				driveOutputLeft = d;
 			}
 		});
-		pidAngle = new PIDController(angleKp,
+		pidAngleLeft = new PIDController(angleKp,
 				angleKi,
 				angleKd, 
 				Robot.drivetrain.getGyro(), 
 				new PIDOutput() {
 			@Override
 			public void pidWrite(double c) {
-				driveCurve = c;
+				driveCurveLeft = c;
 			}
 		});
+		
+		pidDistanceRight = new PIDController(distanceKp, 
+				distanceKi, 
+				distanceKd, 
+				new PIDSource() {
+			PIDSourceType m_sourceType = PIDSourceType.kDisplacement;
 
-		pidDistance.setOutputRange(-1.0, 1.0);
-		pidDistance.setAbsoluteTolerance(0.5);
-		pidDistance.setSetpoint(distance);
+			@Override
+			public double pidGet() {
+				return Robot.drivetrain.getRightDistance();
+			}
+
+			@Override
+			public void setPIDSourceType(PIDSourceType pidSource) {
+				m_sourceType = pidSource;
+			}
+
+			@Override
+			public PIDSourceType getPIDSourceType() {
+				return m_sourceType;
+			}
+		}, 
+				new PIDOutput() {
+			@Override
+			public void pidWrite(double d) {
+				driveOutputLeft = d;
+			}
+		});
+		pidAngleRight = new PIDController(angleKp,
+				angleKi,
+				angleKd, 
+				Robot.drivetrain.getGyro(), 
+				new PIDOutput() {
+			@Override
+			public void pidWrite(double c) {
+				driveCurveRight = c;
+			}
+		});
 		
-		pidAngle.setOutputRange(-1.0, 1.0);
-		pidAngle.setAbsoluteTolerance(0.5);
-		pidAngle.setSetpoint(0.0);
+		pidDistanceLeft.setOutputRange(-1.0, 1.0);
+		pidDistanceLeft.setAbsoluteTolerance(0.5);
+		pidDistanceLeft.setSetpoint(distance);
 		
-		LiveWindow.addActuator("Drive", "Distance Controller", pidDistance);
-		LiveWindow.addActuator("Drive", "Angle controller", pidAngle);
+		pidAngleLeft.setOutputRange(-1.0, 1.0);
+		pidAngleLeft.setAbsoluteTolerance(0.5);
+		pidAngleLeft.setSetpoint(0.0);
+		
+		LiveWindow.addActuator("Left Drive", "Left Distance Controller", pidDistanceLeft);
+		LiveWindow.addActuator("Left Drive", "Left Angle controller", pidAngleLeft);
+		
+		pidDistanceRight.setOutputRange(-1.0, 1.0);
+		pidDistanceRight.setAbsoluteTolerance(0.5);
+		pidDistanceRight.setSetpoint(distance);
+		
+		pidAngleRight.setOutputRange(-1.0, 1.0);
+		pidAngleRight.setAbsoluteTolerance(0.5);
+		pidAngleRight.setSetpoint(0.0);
+		
+		LiveWindow.addActuator("Right Drive", "Right Distance Controller", pidDistanceRight);
+		LiveWindow.addActuator("Right Drive", "Right Angle controller", pidAngleRight);
 	}
 
 	@Override
 	protected void initialize() {
 		// Get everything in a safe starting state.
 		Robot.drivetrain.reset();
-		pidDistance.reset();
-		pidAngle.reset();
-		pidDistance.enable();
-		pidAngle.enable();
+		pidDistanceLeft.reset();
+		pidDistanceRight.reset();
+		pidAngleLeft.reset();
+		pidAngleRight.reset();
+		pidDistanceLeft.enable();
+		pidDistanceRight.enable();
+		pidAngleLeft.enable();
+		pidAngleRight.enable();
 		System.out.println("DriveStraightWithStop initialize");
 		
 		double filterSlopeTime = Robot.prefs.getDouble("FilterSlopeTime", 0.5);
@@ -108,25 +165,29 @@ public class AutoDriveStraightWithStop extends Command {
 
 	@Override
 	protected void execute() {
-		Robot.drivetrain.drive(driveOutput * filter.output() * autoPower, driveCurve);
+		Robot.drivetrain.drive(driveOutputLeft * filter.output() * autoPower, driveCurveLeft);
+		Robot.drivetrain.drive(driveOutputRight * filter.output() * autoPower, driveCurveRight);
 	}
 
 	@Override
 	protected boolean isFinished() {
-		return pidDistance.onTarget();
+		return pidDistanceLeft.onTarget();
 	}
 
 	@Override
 	protected void end() {
 
 		// Stop PID and the wheels
-		pidDistance.disable();
-		pidAngle.disable();
+		pidDistanceLeft.disable();
+		pidDistanceRight.disable();
+		pidAngleLeft.disable();
 		Robot.drivetrain.drive(0, 0);
 		
 		Robot.drivetrain.reset();
-		pidDistance.reset();
-		pidAngle.reset();
+		pidDistanceLeft.reset();
+		pidDistanceRight.reset();
+		pidAngleLeft.reset();
+		pidAngleRight.reset();
 		
 		System.out.println("DriveStraightWithStop ended");
 	}
