@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Joystick.AxisType;
 import edu.wpi.first.wpilibj.PIDSource;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.SpeedController;
@@ -47,6 +48,9 @@ public class DriveTrain extends Subsystem {
     
 	private double angleRecord;
 	private double distanceRecord;
+	
+	double limitedY = 0;
+	double limitedX = 0;
 
 	public DriveTrain() {
 		super();
@@ -95,7 +99,40 @@ public class DriveTrain extends Subsystem {
 	public void arcadeDrive(Joystick leftStick, Joystick rightStick, boolean squaredInputs) {
 		double speed = Robot.oi.driveSlow() ? 0.6 : 1;
 		double direction = Robot.oi.directionToggle() ? -1 : 1;
-		drive.arcadeDrive(-rightStick.getY() * direction * speed, -leftStick.getX() * speed, squaredInputs);
+		//drive.arcadeDrive(-rightStick.getY() * direction * speed, -leftStick.getX() * speed, squaredInputs);
+		Preferences prefs = Preferences.getInstance();
+		//get max change rates  from Preferences Table
+		double maxChangeY = prefs.getDouble("MaxChangeY", 0.05);
+		double maxChangeX = prefs.getDouble("MaxChangeX", 0.05);
+		double shiftX = prefs.getDouble("ShiftX", 0.1);
+		double shiftY = prefs.getDouble("ShiftY", 0.1);
+		
+		double y = rightStick.getY();
+		double x = leftStick.getX();
+		
+		y = (y > 0) ? (y + shiftY)/(1 + shiftY) : (y - shiftY)/(1 + shiftY);
+		x = (x > 0) ? (x + shiftX)/(1 + shiftX) : (x - shiftY)/(1 + shiftX);
+
+
+		double changeY = y - limitedY;
+		double changeX = x - limitedX;
+		
+		if (Math.abs(changeY) > maxChangeY)	{
+			limitedY += (changeY > 0) ? maxChangeY : - maxChangeY;
+			System.out.println("Limiting y to " + limitedY);
+		}
+		else
+			limitedY = y;
+		
+		if (Math.abs(changeX) > maxChangeX)	{
+			limitedX += (changeX > 0) ? maxChangeX : - maxChangeX;
+			System.out.println("Limiting x to " + limitedX);
+		}
+		else
+			limitedX = x;
+
+
+		drive.arcadeDrive(-limitedY, -limitedX, squaredInputs);	
 	}	
 	
 	/**
