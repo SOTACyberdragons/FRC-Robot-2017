@@ -2,6 +2,7 @@ package org.usfirst.frc.team5700.robot;
 
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import org.usfirst.frc.team5700.robot.commands.AntiClimb;
 import org.usfirst.frc.team5700.robot.commands.ClimbUp;
@@ -18,98 +19,50 @@ public class OI {
 	private boolean toggle = false;
 	private boolean hasBeenPressed = false;
 
-	private Joystick rightStick = new Joystick(0);
-	private Joystick leftStick = new Joystick(1);
-
+	private XboxController controller = new XboxController(0);
+	
 	// Setting squaredInput to true decreases the sensitivity for tankdrive at lower speeds
 	private boolean squaredInput = true;
 
-	JoystickButton slowDrive;
-	JoystickButton toggleDirection;
-
-	//gear intake
-	JoystickButton intakeGear;
-	JoystickButton hangGear;
-	JoystickButton spitOut;
-
-	//climber
-	JoystickButton fastClimb;
-	JoystickButton slowClimb;
-	JoystickButton anticlimb;
-
-	JoystickButton light;
+	
 
 	public OI() {
 		////set buttons
 		//drivetrain
-		slowDrive = new JoystickButton(rightStick, ButtonMap.SLOW_DRIVE);
-		toggleDirection = new JoystickButton(rightStick, ButtonMap.TOGGLE_DIRECTION);
-
-		//gear intake
-		intakeGear = new JoystickButton(rightStick, ButtonMap.INTAKE_GEAR);
-		hangGear = new JoystickButton(leftStick, ButtonMap.HANG_GEAR);
-		spitOut = new JoystickButton(leftStick, ButtonMap.SPIT_OUT);
-
-		//climber
-		fastClimb = new JoystickButton(leftStick, ButtonMap.FAST_CLIMB);
-		slowClimb = new JoystickButton(leftStick, ButtonMap.SLOW_CLIMB);
-		anticlimb = new JoystickButton(leftStick, ButtonMap.ANTICLIMB);
-
-		light = new JoystickButton(rightStick, 10);
-
+		
 		//set commands
 		//gear intake
-		intakeGear.whileHeld(new ManualIntakeGear(-0.6, -0.3));
-		hangGear.whileHeld(new ManualHangGear());
-		spitOut.whileHeld(new SpitOutGear());
+		controller.a.whileHeld(new ManualIntakeGear(-0.6, -0.3));
+		controller.b.whileHeld(new ManualHangGear());
+		controller.x.whileHeld(new SpitOutGear());
 
 		//climber
-		fastClimb.whileHeld(new ClimbUp(1));
-		slowClimb.whileHeld(new ClimbUp(0.4));
-		anticlimb.whileHeld(new AntiClimb());
+		controller.y.whileHeld(new ClimbUp(1)); //fast climb
+		controller.lb.whileHeld(new ClimbUp(0.4)); // slow climb
+		controller.rb.whileHeld(new AntiClimb()); 
 
 		//test vision
-		light.whileHeld(new TurnOnLight());
+		controller.back.whileHeld(new TurnOnLight()); //light
 	}
 
-	public Joystick getLeftStick() {
-		return leftStick;	
+	public XboxController.Thumbstick getLeftStick() {
+		return controller.leftStick;	
 	}
 
-	public Joystick getRightStick() {
-		return rightStick;
+	public XboxController.Thumbstick getRightStick() {
+		return controller.rightStick;
 	}
 
 	public boolean getSquaredInput() {
 		return squaredInput;
 	}
 
-	public boolean driveSlow() {
-		return slowDrive.get();
+	public Button slowClimb() {
+		return controller.start;
 	}
 
-	public boolean directionToggle() {
-		if (toggleDirection.get() && !hasBeenPressed) {
-			toggle = !toggle;
-			hasBeenPressed = true;
-		}
-
-		if(!toggleDirection.get()) {
-			hasBeenPressed = false;
-		}
-		return toggle;
-	}
-
-	public double getSpeed() {
-		return (-rightStick.getZ() + 1)/2;
-	}
-
-	public JoystickButton slowClimb() {
-		return slowClimb;
-	}
-
-	public JoystickButton fastClimb() {
-		return fastClimb;
+	public Button fastClimb() {
+		return controller.dPad;
 	}
 }
 
